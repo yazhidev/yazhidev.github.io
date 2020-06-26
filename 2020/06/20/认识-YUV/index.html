@@ -90,14 +90,14 @@
 <meta property="og:site_name" content="美丽新世界">
 <meta property="og:description" content="什么是 YUVYUV是一种颜色编码格式，可以说YUV流媒体是原始流数据，大部分的视频领域都在使用。与RGB类似，但RGB更多的用于渲染时，而YUV则用在数据传输，因为它占用更少的频宽。当然，实时通讯为了降低带宽都会采用H264/H265编码。YUV的含义：Y代表亮度信息（灰度），UV分别代表色彩信息。YUV的常用名称有许多，例如YUV422、YUV420、YUV444等。 采样格式YUV 后面常带">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100350_20200622214237817_1530731484.png =480x">
-<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100351_20200622214254540_149960528.png =482x">
-<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200626_200450_20200624233949868_1857835977.png =310x">
-<meta property="og:updated_time" content="2020-06-26T12:09:30.074Z">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100350_20200622214237817_1530731484.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100351_20200622214254540_149960528.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200626_200450_20200624233949868_1857835977.png">
+<meta property="og:updated_time" content="2020-06-26T12:28:48.333Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="认识 YUV">
 <meta name="twitter:description" content="什么是 YUVYUV是一种颜色编码格式，可以说YUV流媒体是原始流数据，大部分的视频领域都在使用。与RGB类似，但RGB更多的用于渲染时，而YUV则用在数据传输，因为它占用更少的频宽。当然，实时通讯为了降低带宽都会采用H264/H265编码。YUV的含义：Y代表亮度信息（灰度），UV分别代表色彩信息。YUV的常用名称有许多，例如YUV422、YUV420、YUV444等。 采样格式YUV 后面常带">
-<meta name="twitter:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100350_20200622214237817_1530731484.png =480x">
+<meta name="twitter:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100350_20200622214237817_1530731484.png">
 
 
 
@@ -350,9 +350,9 @@
 </ol>
 <p>以 YUV420 为例，Y 数据有效字节数为=Height×Width；U数据有效字节数=(Height/2)×(Width/2)；V数据有效字节数=(Height/2)×(Width/2)；</p>
 <p>YUV420 是一类格式的集合，包含 I420、NV21 等不同格式，格式不同，YUV 的排列顺序也不同（Y 的顺序是一样的，UV 不一样）。官方将 YUV 三个平面都称为颜色平面（color plane）。Android 中使用 <code>ImageProxy</code> 的 <code>getPlanes()</code> 方法可得三个平面。</p>
-<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100350_20200622214237817_1530731484.png =480x" alt="i420"></p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100350_20200622214237817_1530731484.png" alt="i420"></p>
 <p>NV21 是，planes[1] 是 UVU，planes[2] 是 VUV。</p>
-<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100351_20200622214254540_149960528.png =482x" alt="nv21"></p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200623_100351_20200622214254540_149960528.png" alt="nv21"></p>
 <p>NV21 存储的 UV 数据是有冗余的，取 planes[1] 每一排的奇数字节可得所有 U 数据，取 planes[2] 每一排的偶数字节可得所有 V 数据。</p>
 <h2 id="存储方式"><a href="#存储方式" class="headerlink" title="存储方式"></a>存储方式</h2><p>上面提到的 planes 是平面的，YUV 存储在三个独立的数组中。还有另外一种存储方式：packed（打包的），YUV 是连续交错存储的。</p>
 <p>例如 YUY2 就属于 packed 类型，数据以第一个字节存放 Y0，第二个字节存放 U0，再 Y1、V0、Y1 等等，每四个字节，Y0 和 Y1 共用 U0、V0 分量，依次类推。</p>
@@ -363,7 +363,7 @@
 <p>得到 <a href="https://github.com/yazhidev/AndroidDemo/blob/yuv/1dev/nv21.yuv" target="_blank" rel="noopener">yuv 格式图片</a> 后，存放到手机目录下，然后编写测试代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">val file = File(Environment.getExternalStorageDirectory().path + <span class="string">"/1dev/nv21.yuv"</span>)</span><br><span class="line"><span class="keyword">if</span> (file.exists()) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//从本地读取 yuv 图片字节数据</span></span><br><span class="line">        val fileInputStream = FileInputStream(file)</span><br><span class="line">        var data = ByteArray(fileInputStream.available())</span><br><span class="line">        fileInputStream.read(data)</span><br><span class="line">        fileInputStream.close()</span><br><span class="line">        <span class="comment">//测试图片分辨率</span></span><br><span class="line">        val width = <span class="number">960</span></span><br><span class="line">        val height = <span class="number">960</span></span><br><span class="line">        <span class="comment">//将 yuv 图片字节数据存放到 YuvImage 中</span></span><br><span class="line">        var  yuvImage = YuvImage(data, ImageFormat.NV21, width, height, <span class="keyword">null</span>)</span><br><span class="line">        val out = ByteArrayOutputStream()</span><br><span class="line">        <span class="comment">//使用 compressToJpeg 将存储的 yuv 数据转化为 RGB 图像</span></span><br><span class="line">        yuvImage.compressToJpeg(Rect(<span class="number">0</span>, <span class="number">0</span>, width, height), <span class="number">50</span>, out)</span><br><span class="line">        val imageBytes = out.toByteArray()</span><br><span class="line">        val bitmap = BitmapFactory.decodeByteArray(imageBytes, <span class="number">0</span>, imageBytes.size)</span><br><span class="line">        iv.setImageBitmap(bitmap)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: FileNotFoundException) &#123;</span><br><span class="line">        e.printStackTrace()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>获得 bitmap 后就可以使用 ImageView 显示了。</p>
-<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200626_200450_20200624233949868_1857835977.png =310x" alt="YUV 转换 RGB 后显示"></p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200626_200450_20200624233949868_1857835977.png" alt="YUV 转换 RGB 后显示"></p>
 <p>到这里其实还只是 api 层面的使用，后续还应该深入了解 YUV 到 RGB 的转换原理。另外 YUV 视频渲染、OpenGL es 的使用等，后续再学习记录~</p>
 
       
