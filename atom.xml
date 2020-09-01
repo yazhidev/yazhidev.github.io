@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://yazhidev.github.io/"/>
-  <updated>2020-06-26T12:28:48.333Z</updated>
+  <updated>2020-09-01T12:54:05.369Z</updated>
   <id>https://yazhidev.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java 类型转换精度问题</title>
+    <link href="https://yazhidev.github.io/2020/08/01/Java-%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E7%B2%BE%E5%BA%A6%E9%97%AE%E9%A2%98/"/>
+    <id>https://yazhidev.github.io/2020/08/01/Java-类型转换精度问题/</id>
+    <published>2020-08-01T12:41:06.000Z</published>
+    <updated>2020-09-01T12:54:05.369Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="基本数据类型占用内存大小"><a href="#基本数据类型占用内存大小" class="headerlink" title="基本数据类型占用内存大小"></a>基本数据类型占用内存大小</h2><p>最近项目中修复了一个关于类型转换精度丢失的问题，以前对于类型转换会丢失精度只知其然，不知其所以然，这次了解了下相关原理，也分享给大家。先来回顾一下 Java 的基本数据类型中整型与浮点型及其所占用的内存大小：</p><p><strong>整型：</strong></p><ul><li>int：4 字节 32 位</li><li>long：8 字节 64 位</li></ul><p><strong>浮点型：</strong></p><ul><li>float：4 字节 32 位</li><li>double：8 字节 64 位</li></ul><p>Java 运算时，当两个不同类型的数进行基本运算符操作时，低精度会自动向高精度转换，字节短的会自动向字节长的转换。</p><p>《Java 核心技术》一书中这么归纳到：</p><blockquote><p>如果两个操作数其中有一个是 double 类型，另一个操作就会转换为 double 类型。<br>否则，如果其中一个操作数是 float 类型，另一个将会转换为 float 类型。<br>否则，如果其中一个操作数是 long 类型，另一个会转换为 long 类型。<br>否则，两个操作数都转换为 int 类型。</p></blockquote><p>需要注意 Java 自动转换类型可能会带来精度的丢失，附上一张不会丢失精度的合法类型转换说明图：</p><p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200901_204139_20200824075634064_585870421.png" alt="合法转换"></p><p>图中实现箭头类型转换代表不会丢失精度，虚线箭头类型转换可能会丢失精度。</p><h2 id="基本数据类型表示范围"><a href="#基本数据类型表示范围" class="headerlink" title="基本数据类型表示范围"></a>基本数据类型表示范围</h2><p>精度和数据类型可表示的数值大小范围息息相关，计算机中所有数值归根到底都是使用二进制 0、1 来组成，因此一个数据类型所占用的内存大小越大，就意味着可用的二进制位数越多，当然可表示的范围就越大。回顾一下几个常见的参与运算的基本数据类型的取值范围：</p><p><strong>int</strong></p><p>二进制位数：32<br>最小值：Integer.MIN_VALUE= -2147483648 （-2 的 31 次方）<br>最大值：Integer.MAX_VALUE= 2147483647 （2 的 31 次方 -1）</p><p><strong>long</strong></p><p>二进制位数：64<br>最小值：Long.MIN_VALUE=-9223372036854775808 （-2 的 63 次方）<br>最大值：Long.MAX_VALUE=9223372036854775807 （2 的 63 次方 -1）</p><p><strong>float</strong></p><p>二进制位数：32<br>最小值：Float.MIN_VALUE=1.4E-45 （2 的 -149 次方）<br>最大值：Float.MAX_VALUE=3.4028235E38 （2 的 128 次方 -1）</p><p><strong>double</strong></p><p>二进制位数：64<br>最小值：Double.MIN_VALUE=4.9E-324 （2 的 -1074 次方）<br>最大值：Double.MAX_VALUE=1.7976931348623157E308 （2 的 1024 次方 -1）</p><p>当 long 类型的数大于 <code>Integer.MAX_VALUE</code> 时，long 强制转换 int，就会出现丢失精度。转换过程是将 long 类型数值的二进制数从低位到高位截取 32 位，再将 32 位二进制数转为 int。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">long l3 = 24696061952L; //10111000000000000000000000000000000</span><br><span class="line">int c3 = (int)l3; //-1073741824</span><br><span class="line">System.out.println(Integer.toBinaryString(c3)); //1000000000000000000000000000000</span><br></pre></td></tr></table></figure><p>上面的例子中，long 类型截取 32 位后转为 int，最高位作为符号位，1 代表负数，强转后的 int 值为  <code>-1073741824</code>。<br>类似这种不合理的强制转换丢失的已经不仅仅是精度了。</p><p>不知道有没有人注意到，long 类型的二进制位数是 64，float 类型的二进制位数是 32，但是 float 类型可表示范围却远远大于 long 类型。更不用提一样是 32 位的 int 了，float 到底啥家庭啊？谜底就在内存结构中。</p><h2 id="浮点类型数值的内存结构"><a href="#浮点类型数值的内存结构" class="headerlink" title="浮点类型数值的内存结构"></a>浮点类型数值的内存结构</h2><p>与整形类型的内存结构不同，float 在内存中是这样的：</p><p><code>SEEE EEEE EMMM MMMM MMMM MMMM MMMM MMMM</code></p><ul><li>S：最高位 S 代表符号位</li><li>E：后面 8 位 E 代表指数域，二进制中就是 2 的 n 次方，采用移位存储(127+指数)的二进制方式。</li><li>M：剩下的 23 位 M 代表小数域。规定小数点前的数必须为 1，因此只记录小数点后的数。（从左往右，低位补零）</li></ul><p>以 7.8125 为例，整数十进制转二进制，除 2 取余，逆序排列，求得 7 二进制为 <code>111</code>。小数十进制转二进制，乘 2 取整，顺序排列，求得 0.8125 二进制为：<code>0.1101</code>，组合起来是 <code>111.1101</code>。</p><p>根据规范，小数点前的数只保留 1，因此将 <code>111.1101</code> 小数点左移两位得 <code>1.111101 * 2^2</code>。</p><p>符号位 0，指数位为 2+127=129，即二进制 <code>10000001</code>，小数域为 <code>111101</code>。因此 float 数 7.8125 在内存中存储的格式为：<code>0 10000001 111101</code> 低位补零补齐到 32 位，得：<code>0100 0000 1111 1010 0000 0000 0000 0000</code>。</p><p>可以使用 Java 提供的 API 验证一下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int i = Float.floatToIntBits(7.8125F); //得到 7.8125F 底层数据（十进制）</span><br><span class="line">Integer.toBinaryString(i); //得到指定 int 值的二进制数</span><br><span class="line">//输出 1000000111110100000000000000000</span><br><span class="line">//补上最高位符号位 0，结果与上面计算的一样。</span><br></pre></td></tr></table></figure><p>通过对浮点类型数值内存结构的了解，我们知道了 float 虽然可用于存储数值的位数没有 long 型多，但是 float 通过使用指数进行降维打击，可表示范围蹭蹭蹭往上涨。</p><p>double 的内存结构同理，只不过 double 二进制位数更多，总共 64 位分别分配给：符号位 1 位，指数位 11 位，小数位 52 位。</p><p>需要注意的是，虽然 float 因为有指数的概念，可表示范围变大了，但是其用于存储小数的位数却只有 23 位。这就意味着当一个整型类型数值的二进制位大于 24 位时，类型转换到 float 就会带来精度丢失了。</p><h2 id="整型转换浮点型的精度丢失问题"><a href="#整型转换浮点型的精度丢失问题" class="headerlink" title="整型转换浮点型的精度丢失问题"></a>整型转换浮点型的精度丢失问题</h2><p>看到上图中的int 转 float、long 转 float 都是虚线表示，代表运算时自动类型转换可能会出现精度丢失的问题。经过上面对浮点型数据内存结构的学习，我们应该不难理解，float 能表示的数的大小靠指数位，但是表示的数的精度需要靠小数位。而 float 的小数位只有 23 位，而 int 是 32 位。</p><p>举个例子：int 值 16777217，二进制数 <code>1 0000 0000 0000 0000 0000 0001</code>，除去最高位符号位后，需要 25 位表示。</p><p>顺带提一下，计算某个数值除了符号位外需要多少位二进制位可以表示，除了挨个去数二进制数外，还可以直接计算 log2 的值：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int i = 16777217;</span><br><span class="line">double num = Math.log(i) / Math.log(2.0);</span><br><span class="line">//num = 24.000000085991324，即需要 25 位二进制位表示</span><br></pre></td></tr></table></figure><p>int 转 float，转换过程是先将 int 的数值由十进制转为二进制，再通过对二进制数左移小数点直到个位为 1，变为：<code>1. 0000 0000 0000 0000 0000 0001 * 2 ^ 24</code>，转换后的数小数点后有 24 位，对 float 来说只能舍弃掉无法表示的位数，只保留 23 位小数位，指数位 24 + 127 = 151，二进制为 <code>10010111</code>，因此转换后的 float 二进制数为 <code>110010111 + 23个0</code>，float 值为 1.6777216E7，已经丢失了精度。</p><p>同理，int 转 double，由于 double 有 52 位小数位，因此足以 hold 住 int 的精度，而 long 需要 64 位表示精度，因此 long 转 double 也可能出现精度丢失。另外需要注意的是，单位秒的时间戳，也需要 31 位来表示，用 int 表示是够的，但是转 float 也一样会丢失精度。</p><p>以上就是对 Java 类型转换精度问题的分析，希望对你有帮助 :P</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;基本数据类型占用内存大小&quot;&gt;&lt;a href=&quot;#基本数据类型占用内存大小&quot; class=&quot;headerlink&quot; title=&quot;基本数据类型占用内存大小&quot;&gt;&lt;/a&gt;基本数据类型占用内存大小&lt;/h2&gt;&lt;p&gt;最近项目中修复了一个关于类型转换精度丢失的问题，以前对于类型
+      
+    
+    </summary>
+    
+    
+      <category term="Java" scheme="https://yazhidev.github.io/tags/Java/"/>
+    
+  </entry>
   
   <entry>
     <title>认识 YUV</title>
@@ -102,9 +125,9 @@
     </summary>
     
     
-      <category term="读书笔记" scheme="https://yazhidev.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
-    
       <category term="Kotlin" scheme="https://yazhidev.github.io/tags/Kotlin/"/>
+    
+      <category term="读书笔记" scheme="https://yazhidev.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
@@ -322,9 +345,9 @@
     </summary>
     
     
-      <category term="C++" scheme="https://yazhidev.github.io/tags/C/"/>
-    
       <category term="读书笔记" scheme="https://yazhidev.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    
+      <category term="C++" scheme="https://yazhidev.github.io/tags/C/"/>
     
   </entry>
   
@@ -468,26 +491,6 @@
       <category term="Android" scheme="https://yazhidev.github.io/tags/Android/"/>
     
       <category term="JNI" scheme="https://yazhidev.github.io/tags/JNI/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Nginx 入门</title>
-    <link href="https://yazhidev.github.io/2018/08/18/Nginx%20%E5%85%A5%E9%97%A8/"/>
-    <id>https://yazhidev.github.io/2018/08/18/Nginx 入门/</id>
-    <published>2018-08-18T10:24:52.000Z</published>
-    <updated>2020-06-24T16:01:56.775Z</updated>
-    
-    <content type="html"><![CDATA[<p>Docker 部署 Nginx，以及 Nginx 反向代理的配置。</p><a id="more"></a><h2 id="Docker-部署-Nginx"><a href="#Docker-部署-Nginx" class="headerlink" title="Docker 部署 Nginx"></a>Docker 部署 Nginx</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker container run \</span><br><span class="line">  -d \</span><br><span class="line">  -p 8099:80 \</span><br><span class="line">  --name mynginx \</span><br><span class="line">  nginx</span><br></pre></td></tr></table></figure><p>以上命令会部署一个 nginx 容器， 各参数含义：</p><ul><li><code>-d</code><br>后台运行</li><li><code>-p 8099:80</code><br>容器的 80 端口映射宿主的 8099 的端口</li><li><code>--name mynginx</code><br>指定容器的名字为 mynginx</li></ul><p>部署成功后，访问 <code>IP:8099</code> ，即可看到 nginx 的默然欢迎页。</p><h2 id="挂载宿主目录"><a href="#挂载宿主目录" class="headerlink" title="挂载宿主目录"></a>挂载宿主目录</h2><p>Nginx 容器的默认配置文件位于 <code>/etc/nginx/conf.d/default.conf</code>，其默认配置的地址为 <code>/usr/share/nginx/html/index.html</code></p><p>为了更加直观地看到是否成功挂载目录，我们新建一个 html 文件代替 Nginx 的默然欢迎页。</p><p>首先在宿主中新建目录 <code>mkdir  /nginx-demo/html/</code>，并在该目录下新建一个 html 文件 <code>vim index.html</code>，输入 <code>&lt;h1&gt;Hello World&lt;/h1&gt;</code> 并保存。重新运行一下容器：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker container run \</span><br><span class="line">  -d \</span><br><span class="line">  -p 8099:80 \</span><br><span class="line">  -v /nginx-demo/html/:/usr/share/nginx/html \</span><br><span class="line">  --rm \</span><br><span class="line">  --name mynginx \</span><br><span class="line">  nginx</span><br></pre></td></tr></table></figure></p><p>现在访问 <code>IP:8099</code> 应该就可以看到 hello world 了。 <code>-v 宿主目录:容器目录</code> 命令即可实现目录挂载。</p><h2 id="映射配置目录"><a href="#映射配置目录" class="headerlink" title="映射配置目录"></a>映射配置目录</h2><p>把容器 mynginx 的 <code>/etc/nginx</code> 拷贝到宿主 <code>/nginx-demo/conf</code> 目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker cp mynginx:/etc/nginx /nginx-demo/conf</span><br></pre></td></tr></table></figure></p><p>可以把配置修改后再挂载到容器中，已解决 Nginx 容器中无法使用 vim 命令的问题。</p><h2 id="代理其他容器"><a href="#代理其他容器" class="headerlink" title="代理其他容器"></a>代理其他容器</h2><p>连接容器  <code>--link tomcat001:t01</code></p><p><code>-–link</code> 表示当前命令启动的容器要和另一个名叫 tomcat001 的容器建立连接，<code>tomcat001:t01</code> 中的 t01 表示 t01 是连接建立后 tomcat001 的别名，或者可以理解为容器启动后，在容器的 <code>/etc/hosts</code> 文件中加入了一条记录，ip 是 tomcat001 的 ip，name 是 t01。</p><p>我们输入 <code>docke exec -it mynginx /bin/bash</code> 登录 mynginx，再输入 <code>cat /etc/hosts</code> 即可看到 t01 指代的 ip 地址。</p><p>另外在容器内使用 env 可查看环境变量</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T01_PORT_8080_TCP_PORT=8080 //可以看到容器t01端口为8080</span><br></pre></td></tr></table></figure><h2 id="反向代理，负载均衡"><a href="#反向代理，负载均衡" class="headerlink" title="反向代理，负载均衡"></a>反向代理，负载均衡</h2><p>修改 <code>/etc/nginx/con.f/default.conf</code> 配置文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">upstream mytomcat&#123;</span><br><span class="line">    //如果代理多个容器可以配置 weight 权重实现负载均衡</span><br><span class="line">    server t01:8080 weight=1; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    ...</span><br><span class="line">    location / &#123;  </span><br><span class="line">        # 注释之前的 root、index</span><br><span class="line">        # 添加</span><br><span class="line">        proxy_pass http://mytomcat;  </span><br><span class="line">    &#125;       </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>重新运行一下容器</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker container run \</span><br><span class="line">  -d \</span><br><span class="line">  -p 8099:80 \</span><br><span class="line">  -v /nginx-demo/html/:/usr/share/nginx/html \</span><br><span class="line">  -v /nginx-demo/conf/:/etc/nginx \</span><br><span class="line">  --rm \</span><br><span class="line">  --name mynginx \</span><br><span class="line">  --link tomcat001:t01 \</span><br><span class="line">  nginx</span><br></pre></td></tr></table></figure><p>这时访问 <code>IP:8099</code> 已不再指向原来的 hello world 页面，而是反向代理到了 tomcat 的主页。</p><h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="docker-已关闭，却依然可以访问-nginx-页面？"><a href="#docker-已关闭，却依然可以访问-nginx-页面？" class="headerlink" title="docker 已关闭，却依然可以访问 nginx 页面？"></a>docker 已关闭，却依然可以访问 nginx 页面？</h3><p>可能是浏览器缓存</p><h3 id="代理宿主机"><a href="#代理宿主机" class="headerlink" title="代理宿主机"></a>代理宿主机</h3><p>一番操作后突然想到，直接在部署 nginx 时映射主机的 80 端口不就可以了 <em>(:з」∠)</em> 。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://www.ruanyifeng.com/blog/2018/02/nginx-docker.html" target="_blank" rel="noopener">阮一峰 Nginx 容器教程</a> 等等</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Docker 部署 Nginx，以及 Nginx 反向代理的配置。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Nginx" scheme="https://yazhidev.github.io/tags/Nginx/"/>
     
   </entry>
   
