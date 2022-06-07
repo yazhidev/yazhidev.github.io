@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="在日常工作中，相信每个开发都接触过一些检索、替换字符串/文本的问题。对于一些简单的问题例如查找字符串中是否存在某个子串，可能直接使用各类开发语言自带的 api 接口就可以很方便地实现。但是一旦规则复杂起来可能就会比较棘手，例如校验邮箱、手机号、版本号等，如果自行实现可能需要写不少逻辑代码，正则表达式就是为了解决这类问题的。举个例子，以下是 CI 构建组件时对版本号的校验，你能够快速读懂其规则吗？如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="每个开发都应该懂的正则表达式">
+<meta property="og:url" content="https://yazhidev.github.io/2022/06/08/每个开发都应该懂的正则表达式/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="在日常工作中，相信每个开发都接触过一些检索、替换字符串/文本的问题。对于一些简单的问题例如查找字符串中是否存在某个子串，可能直接使用各类开发语言自带的 api 接口就可以很方便地实现。但是一旦规则复杂起来可能就会比较棘手，例如校验邮箱、手机号、版本号等，如果自行实现可能需要写不少逻辑代码，正则表达式就是为了解决这类问题的。举个例子，以下是 CI 构建组件时对版本号的校验，你能够快速读懂其规则吗？如">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162137759-133720640.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162451369-1690426277.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162531592-966771931.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162626485-947049259.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162758899-66629481.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162831138-1197056065.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162925232-1750092847.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162939541-23603090.png">
+<meta property="og:updated_time" content="2022-06-07T23:15:00.755Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="每个开发都应该懂的正则表达式">
+<meta name="twitter:description" content="在日常工作中，相信每个开发都接触过一些检索、替换字符串/文本的问题。对于一些简单的问题例如查找字符串中是否存在某个子串，可能直接使用各类开发语言自带的 api 接口就可以很方便地实现。但是一旦规则复杂起来可能就会比较棘手，例如校验邮箱、手机号、版本号等，如果自行实现可能需要写不少逻辑代码，正则表达式就是为了解决这类问题的。举个例子，以下是 CI 构建组件时对版本号的校验，你能够快速读懂其规则吗？如">
+<meta name="twitter:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162137759-133720640.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2022/06/08/每个开发都应该懂的正则表达式/">
+
+
+
+
+
+  <title>每个开发都应该懂的正则表达式 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2022/06/08/每个开发都应该懂的正则表达式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Taki">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/link.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">每个开发都应该懂的正则表达式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-06-08T07:13:37+08:00">
+                2022-06-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在日常工作中，相信每个开发都接触过一些检索、替换字符串/文本的问题。对于一些简单的问题例如查找字符串中是否存在某个子串，可能直接使用各类开发语言自带的 api 接口就可以很方便地实现。但是一旦规则复杂起来可能就会比较棘手，例如校验邮箱、手机号、版本号等，如果自行实现可能需要写不少逻辑代码，正则表达式就是为了解决这类问题的。举个例子，以下是 CI 构建组件时对版本号的校验，你能够快速读懂其规则吗？如果你对此不甚了解，那相信这篇文章一定能给你带来一些收获。</p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162137759-133720640.png" alt="版本号校验"></p>
+<h2 id="什么是正则表达式"><a href="#什么是正则表达式" class="headerlink" title="什么是正则表达式"></a>什么是正则表达式</h2><p>如上图所示，正则表达式就是一串字符<code>/^[0-9]+.[0-9].+[0-9]+$/</code>，正则表达式规定了由一个或几个特殊的字符组合成一个规则，并且多个规则可以自由组合。</p>
+<p>在学习正则表达式时，不要被表达式里的特殊符号所迷惑，觉得看起来好复杂，其实说白了这些字符只是一些规则的映射而已，并且需要注意的是，如果字符串里使用到这些符号还需要转义。</p>
+<p>常见的字符有 <code>* . ? + ^ - $ | \ / [ ] ( ) { }</code>。另外有的开发语言在使用时需要将正则表达式使用 / 符号抱起来，形如 /xxx/，这个了解下即可。</p>
+<p>既然正则表达式由一系列规则组成，每个规则都描述了一套匹配的逻辑，那么学习正则表达式其实就是在学习这些匹配规则。让我们先从最直观的匹配字符开始入手。在开始之前，推荐大家两个网站，一个是用于测试的 <a href="https://tool.oschina.net/regex" target="_blank" rel="noopener">正则表达式规则测试</a>，一个<a href="https://regexper.com/#" target="_blank" rel="noopener">正则表达式图形化工具</a>，便于我们理解。</p>
+<h2 id="匹配字符"><a href="#匹配字符" class="headerlink" title="匹配字符"></a>匹配字符</h2><h3 id="精确匹配"><a href="#精确匹配" class="headerlink" title="精确匹配"></a>精确匹配</h3><p>例如从 abcde 里寻找 abc，那么很明显，我们的匹配规则就是需要精确匹配 abc，其规则自然就是 abc。这个不多赘述。</p>
+<h3 id="模糊匹配"><a href="#模糊匹配" class="headerlink" title="模糊匹配"></a>模糊匹配</h3><p>除了精确匹配以外，我们可能还需要一些模糊的规则，以便于发现/容纳更多可能。比如我们需要某处的字符是可变的，或者我们对于某处的字符数量不确定。因此就产生了横向和纵向两种字符模糊匹配。</p>
+<h4 id="横向（字符次数匹配）"><a href="#横向（字符次数匹配）" class="headerlink" title="横向（字符次数匹配）"></a>横向（字符次数匹配）</h4><p>某处的字符数量可变，可以使用次数匹配规则。</p>
+<p>常见的次数匹配规则有：</p>
+<ul>
+<li>{n}：限定n次</li>
+<li>{m,n}：上下限次数（闭区间）</li>
+<li>+：一次或多次，等效于 {1,}</li>
+<li>？：零次或一次，等效于 {0,1}</li>
+<li>*：任意多次</li>
+</ul>
+<p>这些规则跟在某个字符后面，代表规则前面的字符长度可变。</p>
+<p>例如正则表达式： a{2,3}c，代表 a 字符出现2次或3次，例如 aac、aaac 都是可以匹配的。但是 ac 是无法匹配的。</p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162451369-1690426277.png" alt="正则"></p>
+<h4 id="纵向"><a href="#纵向" class="headerlink" title="纵向"></a>纵向</h4><p>某处的字符可变，比如需要匹配 dog 和 log。第一个字符有多种可能。</p>
+<p>常见的字符可变规则有：</p>
+<ul>
+<li>. ：点代表任意字符</li>
+<li>| ：或匹配。可以配合 () ，将多个子表达式组合</li>
+<li>[]：区间里的字符都是允许的，例如 [123]，代表该处的字符可以是 1 或 2 或 3</li>
+<li>-：区间里使用，表示范围，例如 [1-3] 等同于 [123]，[a-z] 代表所有小写英文字母</li>
+<li>^：区间里使用，表示取反，例如 [^1-3] 代表除了 1、2、3 以外的字符<br>这些规则放在某处，代表某处的字符是可变的。</li>
+</ul>
+<p>例如  [dl]og ，代表中括号处（第一个字符）可以是 d 或 l，因此 log、dog 都是可以匹配的</p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162531592-966771931.png" alt="正则"></p>
+<p>除此之外，还会有一些常用的简写：</p>
+<ul>
+<li>\d：数字</li>
+<li>\D：非数字</li>
+<li>\w：数字大小写下划线，等同于 [0-9a-zA-Z_]​</li>
+<li>\W：非单词字符，等同于 [^0-9a-zA-Z_]</li>
+<li>\s：空白字符，包括空白、tab、换行</li>
+</ul>
+<h2 id="匹配位置"><a href="#匹配位置" class="headerlink" title="匹配位置"></a>匹配位置</h2><p>一个字符串，除了我们最直观看到字符以外，其实还暗含了许许多多的位置。这也是正则匹配的另一大块。什么是位置？首先用一张图来表示：</p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162626485-947049259.png" alt="位置"></p>
+<p>如图所示，一个字符串 hello，除了五个字符以外，每个字符首尾都有一个位置，这些位置都可以被匹配规则所扫描到。</p>
+<p>常用的匹配位置的符号有：</p>
+<ul>
+<li>^ ：代表一行的开头</li>
+<li>$ ：代表一行的结尾</li>
+<li>\b：单词边界。具体就是单词字符和非单词字符之间的位置。包括非单词字符和开头、结尾之间的位置</li>
+<li>\B：非单词边界</li>
+</ul>
+<p>可能有人对匹配位置的用法不太了解，举个例子，有一个字符串 123123，这时候如果你使用精确匹配规则 123，那么会匹配到两个123。但是如果配合 ^ 使用，将规则修改为 ^123，那么就只会匹配到第一个开头的 123，后续的 123 则不会被匹配到。</p>
+<p>除此之外，关于匹配位置还有一个很灵活的特性：前瞻后顾</p>
+<p>相关的规则有：</p>
+<ul>
+<li>exp1(?=exp2)​：前瞻，查找后面是exp2的exp1 = 查找exp2前面的exp1​（exp1、exp2 代表一个表达式）</li>
+<li>(?&lt;=exp2)exp1：后顾，查找exp2后面的exp1​</li>
+<li>exp1(?!exp2)：负前瞻，查找后面不是exp2的exp1​</li>
+<li>(?&lt;!exp2)exp1：负后顾：查找前面不是exp2的exp1​</li>
+</ul>
+<p>这个在过滤日志时十分有用。例如有一些重复关键字的日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">receive some error</span><br><span class="line">receive yuv</span><br><span class="line">receive yuv</span><br><span class="line">receive yuv</span><br><span class="line">receive yuv</span><br><span class="line"></span><br><span class="line">//receive(?! yuv)</span><br><span class="line">可以使用负前瞻过滤掉一些不想要的日志。只会匹配到 receive some error 这一行的 rece</span><br></pre></td></tr></table></figure>
+<h2 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h2><p>在对正则表达式有个大致的认识后，让我们回到文章的开头，看一下文章开头的版本号验证正则表达式代表什么含义：<code>^[0-9]+.[0-9].+[0-9]+$</code></p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162758899-66629481.png" alt="正则"></p>
+<p>这里可以明显看出是有问题的，例如表达式里的 . 应该需要转义，否则就代表任意字符，这明显不符合版本号要求。经过确认后得知是前端显示问题，并了解到他们实际校验使用的正则表达式是：<code>^\d+\.\d+\.(\d+\.)*\d+((-rc\.\d+)|(\d*))$</code></p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162831138-1197056065.png" alt="正则"></p>
+<p>在对正则规则有个大致了解后，借助图形化工具可以很方便地了解正则表达式规则所代表的含义。<br>例如 1.1.1.1.1 这样的版本号也是允许的，经了解 CI 之前有特殊原因没限制版本号一定是 3 位。并且可以看到除了 rc 字符以外，不允许其他英文字母。<br>但同时我们也会发现另一个小问题，那就是类似 01.1.1 这样的版本号也是被允许的：<br>如果让你来优化会怎么做呢？我认为优化后的规则可以这么写：<code>^(0\.|[1-9][0-9]*\.)\d+\.(\d+\.)*\d+((-rc\.\d+)|(\d*))$</code>。<br>使用<code>(0\.|[1-9][0-9]*\.)</code>限制要么是0，要么是非0的两位以上数字，即可过滤 01.1.1 这样的不合理版本号。</p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162925232-1750092847.png" alt="优化后的正则"></p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607162939541-23603090.png" alt="正则校验"></p>
+<p>相信看到这里，大家都对正则表达式有了一个大致的了解。对于正则表达式还有一些特性（例如捕获、贪婪等）没有提及，这里抛砖引玉，感兴趣的小伙伴可以自行了解。<br>有了正则表达式的帮助可以让我们少写很多字符串判断逻辑的代码，除了让代码更简洁以外，也会大大提高代码的可读性。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/08/11/Android-OpenGL-ES-开发/" rel="next" title="Android OpenGL ES 开发">
+                <i class="fa fa-chevron-left"></i> Android OpenGL ES 开发
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/link.png" alt="Taki">
+            
+              <p class="site-author-name" itemprop="name">Taki</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是正则表达式"><span class="nav-number">1.</span> <span class="nav-text">什么是正则表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匹配字符"><span class="nav-number">2.</span> <span class="nav-text">匹配字符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#精确匹配"><span class="nav-number">2.1.</span> <span class="nav-text">精确匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模糊匹配"><span class="nav-number">2.2.</span> <span class="nav-text">模糊匹配</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#横向（字符次数匹配）"><span class="nav-number">2.2.1.</span> <span class="nav-text">横向（字符次数匹配）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#纵向"><span class="nav-number">2.2.2.</span> <span class="nav-text">纵向</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匹配位置"><span class="nav-number">3.</span> <span class="nav-text">匹配位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实际应用"><span class="nav-number">4.</span> <span class="nav-text">实际应用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Taki</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
