@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="相关概念Window是一个抽象类，唯一的实现类是 PhoneWindow 分类：  父 Window  子 Window，不能单独存在，需要依附在父 window 上，例如 dialog  系统 Window，例如 toast   PhoneWindow在 Activity attach 时构造了 PhoneWindow 的实例对象。 WindowManager是一个接口，用于操作 Window，">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解 WindowManagerService">
+<meta property="og:url" content="https://yazhidev.github.io/2019/04/15/理解 WindowManagerService /index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="相关概念Window是一个抽象类，唯一的实现类是 PhoneWindow 分类：  父 Window  子 Window，不能单独存在，需要依附在父 window 上，例如 dialog  系统 Window，例如 toast   PhoneWindow在 Activity attach 时构造了 PhoneWindow 的实例对象。 WindowManager是一个接口，用于操作 Window，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1929170-32447838580d50e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.445Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="理解 WindowManagerService">
+<meta name="twitter:description" content="相关概念Window是一个抽象类，唯一的实现类是 PhoneWindow 分类：  父 Window  子 Window，不能单独存在，需要依附在父 window 上，例如 dialog  系统 Window，例如 toast   PhoneWindow在 Activity attach 时构造了 PhoneWindow 的实例对象。 WindowManager是一个接口，用于操作 Window，">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1929170-32447838580d50e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2019/04/15/理解 WindowManagerService /">
+
+
+
+
+
+  <title>理解 WindowManagerService | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2019/04/15/理解 WindowManagerService /">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">理解 WindowManagerService</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-15T08:20:00+08:00">
+                2019-04-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h2><h3 id="Window"><a href="#Window" class="headerlink" title="Window"></a>Window</h3><p>是一个抽象类，唯一的实现类是 PhoneWindow</p>
+<p>分类：</p>
+<ol>
+<li><p>父 Window</p>
+</li>
+<li><p>子 Window，不能单独存在，需要依附在父 window 上，例如 dialog</p>
+</li>
+<li><p>系统 Window，例如 toast</p>
+</li>
+</ol>
+<h3 id="PhoneWindow"><a href="#PhoneWindow" class="headerlink" title="PhoneWindow"></a>PhoneWindow</h3><p>在 Activity attach 时构造了 PhoneWindow 的实例对象。</p>
+<h3 id="WindowManager"><a href="#WindowManager" class="headerlink" title="WindowManager"></a>WindowManager</h3><p>是一个接口，用于操作 Window，继承了 ViewManager。实现类是 WindowManagerImpl</p>
+<p>ViewManager 的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void addView(View view, ViewGroup.LayoutParams params);</span><br><span class="line">public void updateViewLayout(View view, ViewGroup.LayoutParams params);</span><br><span class="line">public void removeView(View view);</span><br></pre></td></tr></table></figure>
+<p>可以看到三个操作方法都是针对 View 的，View 是 Window 的实体类</p>
+<h3 id="WindowManagerImpl"><a href="#WindowManagerImpl" class="headerlink" title="WindowManagerImpl"></a>WindowManagerImpl</h3><p>没有直接操作 View，而是交个了 mGlobal（WindowManagerGlobal）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> @Override</span><br><span class="line">public void addView(@NonNull View view, @NonNull ViewGroup.LayoutParams params) &#123;</span><br><span class="line">    applyDefaultToken(params);</span><br><span class="line">    mGlobal.addView(view, params, mContext.getDisplay(), mParentWindow);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="WindowManagerGlobal"><a href="#WindowManagerGlobal" class="headerlink" title="WindowManagerGlobal"></a>WindowManagerGlobal</h3><p>保存了所有的 ViewRootImpl，在 addView 时会创建 ViewRootImpl 实例，并将要 add 的 View 设置给 ViewRootImpl（见源码 1.1）</p>
+<p>View 的绘制过程是由 ViewRootImpl 来完成的。在新建一个 Activity 时，这个要 add 的 View 就是 DecorView。</p>
+<h3 id="IWindowSession"><a href="#IWindowSession" class="headerlink" title="IWindowSession"></a>IWindowSession</h3><p>(AIDL)窗口令牌，描述了一个显示行为，并且WMS要求每一个窗口必须隶属于某一个显示令牌。</p>
+<h3 id="WindowState"><a href="#WindowState" class="headerlink" title="WindowState"></a>WindowState</h3><p>当向WMS添加一个窗口时，WMS会为其创建一个WindowState。</p>
+<h3 id="WindowManagerService（WMS）"><a href="#WindowManagerService（WMS）" class="headerlink" title="WindowManagerService（WMS）"></a>WindowManagerService（WMS）</h3><p>WMS为所有窗口分配Surface，掌管Surface的显示顺序（Z-order）以及位置尺寸，控制窗口动画，并且还是输入系统的一重要的中转站。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929170-32447838580d50e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Window 体系图"></p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><h3 id="1-1"><a href="#1-1" class="headerlink" title="1.1"></a>1.1</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//WindowManagerGlobal </span><br><span class="line"></span><br><span class="line">private final ArrayList&lt;ViewRootImpl&gt; mRoots = new ArrayList&lt;ViewRootImpl&gt;();</span><br><span class="line"></span><br><span class="line">public void addView(View view, ViewGroup.LayoutParams params,</span><br><span class="line">            Display display, Window parentWindow) &#123;</span><br><span class="line">    ViewRootImpl root;</span><br><span class="line">    root = new ViewRootImpl(view.getContext(), display);</span><br><span class="line">	mRoots.add(root);</span><br><span class="line">	root.setView(view, wparams, panelParentView);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/yhaolpz/article/details/68936932" target="_blank" rel="noopener">Android 带你彻底理解 Window 和 WindowManager</a></p>
+<p><a href="https://blog.csdn.net/wf_fln/article/details/78593080" target="_blank" rel="noopener">深入理解WindowManagerService</a></p>
+<p><a href="https://blog.csdn.net/afu10086/article/details/80138154" target="_blank" rel="noopener">WindowManagerService 分析</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/02/HandlerThread、IntentService理解/" rel="next" title="HandlerThread、IntentService 理解">
+                <i class="fa fa-chevron-left"></i> HandlerThread、IntentService 理解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/17/《Kotlin-核心编程》读书笔记/" rel="prev" title="《Kotlin 核心编程》读书笔记">
+                《Kotlin 核心编程》读书笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#相关概念"><span class="nav-number">1.</span> <span class="nav-text">相关概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Window"><span class="nav-number">1.1.</span> <span class="nav-text">Window</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PhoneWindow"><span class="nav-number">1.2.</span> <span class="nav-text">PhoneWindow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WindowManager"><span class="nav-number">1.3.</span> <span class="nav-text">WindowManager</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WindowManagerImpl"><span class="nav-number">1.4.</span> <span class="nav-text">WindowManagerImpl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WindowManagerGlobal"><span class="nav-number">1.5.</span> <span class="nav-text">WindowManagerGlobal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IWindowSession"><span class="nav-number">1.6.</span> <span class="nav-text">IWindowSession</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WindowState"><span class="nav-number">1.7.</span> <span class="nav-text">WindowState</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WindowManagerService（WMS）"><span class="nav-number">1.8.</span> <span class="nav-text">WindowManagerService（WMS）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码"><span class="nav-number">2.</span> <span class="nav-text">源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1"><span class="nav-number">2.1.</span> <span class="nav-text">1.1</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

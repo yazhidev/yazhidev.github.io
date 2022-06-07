@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="上一篇博客介绍了AS的一些常用设置方法，当工具调教妥当后，自然就要开始项目的开发啦。从零开始新建一个项目，这个简单，不必多说，这篇博客会分享我从旧平台eclipse导入项目到AS的过程，以及遇到的一些问题并如何解决。开篇先粗略的提一些需要注意的地方。 结构目录和eclipse不同，在android 视图下的项目目录分为java，res和manifests。    manifests目录存放清单文件">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="eclipse再见，android studio 新手入门教程（二）项目的导入">
+<meta property="og:url" content="https://yazhidev.github.io/2016/04/18/eclipse再见，android-studio-新手入门教程（二）项目的导入/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="上一篇博客介绍了AS的一些常用设置方法，当工具调教妥当后，自然就要开始项目的开发啦。从零开始新建一个项目，这个简单，不必多说，这篇博客会分享我从旧平台eclipse导入项目到AS的过程，以及遇到的一些问题并如何解决。开篇先粗略的提一些需要注意的地方。 结构目录和eclipse不同，在android 视图下的项目目录分为java，res和manifests。    manifests目录存放清单文件">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-a404eee9e10904c7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-c2354d4a8c4b7bf9?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-23481307269cb81a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-6c2c33971c037031?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-58870600f1ba11ba?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-d10f0e37a4b94aab?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-ae381bf31e93ff16?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-48e387c354a41d6e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-d81ec1eb2bbf7937?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-ab3921e0e3b169d4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-295889bb5987dc15?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-78e918f208857de7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-073923906a23de64?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-4b301565a0323f59?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-a87b31cd42989154?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-34f7ed2ccede61ec?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-3cbe1b6263b977dc?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-c3239b7dd31ea460?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-e89011dfd15a1c79?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-a710829e87ed0b3b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.441Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="eclipse再见，android studio 新手入门教程（二）项目的导入">
+<meta name="twitter:description" content="上一篇博客介绍了AS的一些常用设置方法，当工具调教妥当后，自然就要开始项目的开发啦。从零开始新建一个项目，这个简单，不必多说，这篇博客会分享我从旧平台eclipse导入项目到AS的过程，以及遇到的一些问题并如何解决。开篇先粗略的提一些需要注意的地方。 结构目录和eclipse不同，在android 视图下的项目目录分为java，res和manifests。    manifests目录存放清单文件">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1929170-a404eee9e10904c7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2016/04/18/eclipse再见，android-studio-新手入门教程（二）项目的导入/">
+
+
+
+
+
+  <title>eclipse再见，android studio 新手入门教程（二）项目的导入 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2016/04/18/eclipse再见，android-studio-新手入门教程（二）项目的导入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">eclipse再见，android studio 新手入门教程（二）项目的导入</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-18T15:43:25+08:00">
+                2016-04-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上一篇博客介绍了AS的一些常用设置方法，当工具调教妥当后，自然就要开始项目的开发啦。从零开始新建一个项目，这个简单，不必多说，这篇博客会分享我从旧平台eclipse导入项目到AS的过程，以及遇到的一些问题并如何解决。开篇先粗略的提一些需要注意的地方。</p>
+<h2 id="结构目录"><a href="#结构目录" class="headerlink" title="结构目录"></a>结构目录</h2><p>和eclipse不同，在android 视图下的项目目录分为java，res和manifests。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-a404eee9e10904c7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="测试"> </p>
+<ul>
+<li>manifests目录存放清单文件，不必多说。</li>
+<li>java目录会默认生成三个文件夹，其中test为在本机执行单元测试代码的目录， androidTest为在Android设备上执行单元测试代码的目录，第一个不带后缀的目录就是存放我们代码的目录。</li>
+<li>res目录存放资源文件，包括图片资源文件、layout布局等，这个和eclispe类似，但有个新东西：mipmap目录，进入会看到里面存放着app的启动图标。查看官方文档，看到这么一句：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-c2354d4a8c4b7bf9?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="mipmap文件夹"></p>
+<blockquote>
+<p>To avoid these display issues, apps should use the mipmap/ resource folders for launcher icons. The Android system preserves these resources regardless of density stripping, and ensures that launcher apps can pick icons with the best resolution for display.<br>出处：<a href="http://developer.android.com/tools/projects/index.html#mipmap" target="_blank" rel="noopener">http://developer.android.com/tools/projects/index.html#mipmap</a></p>
+</blockquote>
+<p>大意是为了避免设备显示问题，app应该使用mipmap目录存放应用图标。所以app的启动图标应该放置在mipmap文件夹中，至于其他的用处还不是很清楚，之前也遇到过导入eclipse项目时.9图片报错，网络上有人说.9图应该放在mipmap里，但是我把.9图片放到mipmap目录后仍然不能解决我的问题，最后因为项目里.9图不多，使用AS的工具重绘后解决了问题。</p>
+<h2 id="库依赖"><a href="#库依赖" class="headerlink" title="库依赖"></a>库依赖</h2><p>eclipse里添加<strong>存在本地的第三方库</strong>的方式：</p>
+<ul>
+<li>将第三方库导入workspace- 右键项目-android-add LibraryAS里添加库的方式：</li>
+<li>导入第三方库工程到project，第三方库作为一个新的module存在于project中- File-project structure，选择项目，添加库</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-23481307269cb81a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-6c2c33971c037031?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>通过对比可以发现，AS里的project就相当于eclipse里的workspace的概念，module相当于eclipse里独立的项目。也可以发现，其实二者在依赖存在于本地的第三方库的操作上是类似的，添加jar包的操作也是一样，只要把jar包复制到lib目录下（切换到Project Files视图下会看到Lib目录），然后同样操作project structure，选择file dependency后选择依赖lib库下刚添加进的jar包即可。</p>
+<p>但是如果是添加线上开源库的话，二者的差距就体现出来了，以往在github上看到优秀的开源库，想要应用到自己的项目中，就得先把项目下载下来，然后再添加依赖，虽然操作不繁琐，但是我渐渐发现github上越来越多的开发者都转向AS，不再单独提供eclipse上使用的版本。这个不赘述，因为想转平台，能看到这篇博客的朋友，肯定或多或少都有些同感。总之一句话：<strong>google大法好</strong>。退eclipse保平安，赶紧转AS吧。</p>
+<h2 id="初识gradle"><a href="#初识gradle" class="headerlink" title="初识gradle"></a>初识gradle</h2><p>在android视图gradle目录下，可以看到有多个build.gradle，其中<strong>后缀module + 项目名</strong> 的就是平时添加第三方库时需要配置的gradle文件了，以Github上CircleImageview这个开源库为示例，其github主页上有这么一段代码：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-58870600f1ba11ba?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="github上的导入gradle教程"></p>
+<p>我们唯一要做的，就是将这段代码拷贝到项目的gradle-dependencies语句块下</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-d10f0e37a4b94aab?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="gradle"></p>
+<p>然后点击工具栏图标</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-ae381bf31e93ff16?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Sync Now"></p>
+<p>之后gradle就会自动从远程仓库下载该库所需要的jar包等依赖文件，一键搞定，简直不要太爽！</p>
+<p>然而gradle爽是爽，但是后续也会提到在导入项目时因为gradle版本不同而出现一些麻烦的地方。</p>
+<h2 id="导入Eclipse项目"><a href="#导入Eclipse项目" class="headerlink" title="导入Eclipse项目"></a>导入Eclipse项目</h2><p>上面说了如何依赖库，但有些朋友需要开发旧项目而不是新建项目，光导入eclipse项目时报的错都够喝一壶了，更别提如何正确的依赖库，所以接下来就示范一下如何正确的导入eclipse的项目。不同项目会出现的问题不尽相同，这里权且算是抛砖引玉，给大家提供一些解决问题的思路。<br>首先在eclipse里，右键-export，导出项目的gradle目录</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-48e387c354a41d6e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="导出gradle"></p>
+<p>选中要导出的项目，一路next，最后一步建议force overriding一栏打勾（我理解为是已存在gradle文件，选中的话将强制重写），导出成功后会出现提示：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-d81ec1eb2bbf7937?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="导出成功提示"></p>
+<blockquote>
+<p>请选择以下目录： …build.gradle，不要导入Eclipse项目本身！</p>
+</blockquote>
+<p>别人我不知道，反正我是照着这个提示在AS里导入目录下的build.gradle文件，然后结果就把整个工作目录里的项目都给导入了(╯‵□′)╯︵┻━┻。什么鬼！一定是我打开的方式不对！后来在AS里尝试</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-ab3921e0e3b169d4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="导入1"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-295889bb5987dc15?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="导入2"></p>
+<p>导入时选择项目本身，而不是build.gradle文件，这才导入成功。但是不要高兴的太早，这才只是麻烦的开始。</p>
+<h3 id="问题1-找不到类"><a href="#问题1-找不到类" class="headerlink" title="问题1 找不到类"></a>问题1 找不到类</h3><p><img src="http://upload-images.jianshu.io/upload_images/1929170-78e918f208857de7?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="问题1"></p>
+<p>解决办法：找不到相关的类，定位到代码，发现是recyclerview的一些类报错，于是猜测是因为依赖的问题，在项目依赖库里添加recyclerview库，问题解决！</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-073923906a23de64?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="添加recyclerview库"></p>
+<h3 id="问题2-库重复依赖"><a href="#问题2-库重复依赖" class="headerlink" title="问题2 库重复依赖"></a>问题2 库重复依赖</h3><p><img src="http://upload-images.jianshu.io/upload_images/1929170-4b301565a0323f59?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="库重复依赖"></p>
+<p>错误提示中可以看到是因为有多个同名的库报错，因为我从eclipse导出项目时就自带了supportV7的recyclerview的库，而我刚刚有添加了新的recyclerview库，所以二者重复依赖了，解决办法很简单，去除之前的recyclerview依赖即可，问题解决！</p>
+<h3 id="问题3-清单文件合并出错-Manifest-merger-failed"><a href="#问题3-清单文件合并出错-Manifest-merger-failed" class="headerlink" title="问题3 清单文件合并出错 Manifest merger failed"></a>问题3 清单文件合并出错 Manifest merger failed</h3><p><img src="http://upload-images.jianshu.io/upload_images/1929170-a87b31cd42989154?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="清单文件合并出错"></p>
+<p>整个报错信息是这样的：</p>
+<blockquote>
+<p>java.lang.RuntimeException: Manifest merger failed : uses-sdk:minSdkVersion 1 cannot be smaller than version 7 declared in library [com.android.support:appcompat-v7:23.2.1] D:\studioCode\NewOneBuy\lib_CircleImageView\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.2.1\AndroidManifest.xmlSuggestion: use tools:overrideLibrary=”android.support.v7.appcompat” to force usage</p>
+</blockquote>
+<p>可以看到是是因为circleimageview的minSdkVersion低于appcompatV7定义的version而导致的清单文件合并出错，提示中也告诉了我们解决方法，只要在circleimageview的清单文件中配置好即可。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-34f7ed2ccede61ec?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="清单文件配置"></p>
+<h3 id="问题4-程序包不存在"><a href="#问题4-程序包不存在" class="headerlink" title="问题4 程序包不存在"></a>问题4 程序包不存在</h3><p><img src="http://upload-images.jianshu.io/upload_images/1929170-3cbe1b6263b977dc?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="程序包不存在"></p>
+<p>这个问题也简单，定位到相关的代码，使用快捷键：ctrl+alt+O， 去除无效的导包即可。</p>
+<h3 id="重复文件（jar包）-Duplicate-files"><a href="#重复文件（jar包）-Duplicate-files" class="headerlink" title="重复文件（jar包） Duplicate files"></a>重复文件（jar包） Duplicate files</h3><p><img src="http://upload-images.jianshu.io/upload_images/1929170-c3239b7dd31ea460?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="重复jar包"></p>
+<p>提示信息中也标明了是在File1，File2中两个不同的库含有相同的文件（jar包）导出出错，在prodect视图下查看lib目录，可以看到确实是有重复文件</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-e89011dfd15a1c79?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="重复文件"></p>
+<p>解决问题也很简单：删除jar包，去除依赖即可</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-a710829e87ed0b3b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="去除依赖"></p>
+<h3 id="问题6-finished-with-non-zero-exit-value-2"><a href="#问题6-finished-with-non-zero-exit-value-2" class="headerlink" title="问题6 finished with non-zero exit value 2"></a>问题6 finished with non-zero exit value 2</h3><blockquote>
+<ul>
+<li>What went wrong:Execution failed for task ‘:newOneBuy:transformClassesWithDexForDebug’.&gt; com.android.build.api.transform.TransformException: com.android.ide.common.process.ProcessException: java.util.concurrent.ExecutionException: com.android.ide.common.process.ProcessException: org.gradle.process.internal.ExecException: Process ‘command ‘C:\Program Files (x86)\Java\jdk1.8.0_60\bin\java.exe’’ finished with non-zero exit value 2</li>
+</ul>
+</blockquote>
+<p>这个没看懂错误原因，但是最后通过在项目的module的build.gradle里添加配置multiDexEnabled true后解决了问题，但是不知其所以然。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">  applicationId &quot;com.example.newonebuy&quot; </span><br><span class="line">  minSdkVersion 11 </span><br><span class="line">  targetSdkVersion 21 </span><br><span class="line">  multiDexEnabled true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在导入之前，看着一行又一行红彤彤的报错我的内心是崩溃的，但其实只要耐着性子根据提示逐个排查，遇到不懂的就谷歌，毕竟这都是些很初级的问题，总是会解决的。最近生活里的烦心事不少，在码代码时渐渐能感受到一种很奇妙的感情。在代码的世界里，1是1，0是0，只要你愿意付出心血，错误总会消失，bug总会修复。不像现实世界，很多事情人心难测，即便人心可测本心也难移，很多时候会感觉到深深的无力和无可奈何。</p>
+<p>不多扯了，这篇先分享这些吧。下篇博客会分享一下在AS上使用github进行版本控制的一些事，还有在导入module时因为gradle版本而导致的一些问题。</p>
+<p>另外最近看到kotlin这门新兴的语言似乎挺有意思，等到下个项目尝试一下看kotlin能否高效、有效的解决一些问题，如果后面有什么收获，也有写出来分享的。</p>
+<p>有一分热发一分光，写的文章只要有一个人看到，解决了一个人的问题，那文章就有价值。即使都没人看，那就当做写给自己，作为对所思所学的一个总结吧。</p>
+<p>但行善事，莫问前程。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/29/eclipse再见，android-studio-新手入门教程（一）基本设置/" rel="next" title="eclipse再见，android studio 新手入门教程（一）基本设置">
+                <i class="fa fa-chevron-left"></i> eclipse再见，android studio 新手入门教程（一）基本设置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/22/第一个开源控件：Google官方下拉刷新控件SwipeRefreshLayout强化版，支持上拉刷新/" rel="prev" title="第一个开源控件：Google官方下拉刷新控件SwipeRefreshLayout强化版，支持上拉刷新">
+                第一个开源控件：Google官方下拉刷新控件SwipeRefreshLayout强化版，支持上拉刷新 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#结构目录"><span class="nav-number">1.</span> <span class="nav-text">结构目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#库依赖"><span class="nav-number">2.</span> <span class="nav-text">库依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初识gradle"><span class="nav-number">3.</span> <span class="nav-text">初识gradle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#导入Eclipse项目"><span class="nav-number">4.</span> <span class="nav-text">导入Eclipse项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题1-找不到类"><span class="nav-number">4.1.</span> <span class="nav-text">问题1 找不到类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题2-库重复依赖"><span class="nav-number">4.2.</span> <span class="nav-text">问题2 库重复依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题3-清单文件合并出错-Manifest-merger-failed"><span class="nav-number">4.3.</span> <span class="nav-text">问题3 清单文件合并出错 Manifest merger failed</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题4-程序包不存在"><span class="nav-number">4.4.</span> <span class="nav-text">问题4 程序包不存在</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重复文件（jar包）-Duplicate-files"><span class="nav-number">4.5.</span> <span class="nav-text">重复文件（jar包） Duplicate files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题6-finished-with-non-zero-exit-value-2"><span class="nav-number">4.6.</span> <span class="nav-text">问题6 finished with non-zero exit value 2</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

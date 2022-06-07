@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="翻译,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="原文地址：Testing Views in Isolation with Espresso 原文作者：Ataul Munim 译文出自：掘金翻译计划 译者：yazhi1992 校对者：lovexiaov, Phoenix   使用 Espresso 隔离测试视图在这篇文章里，我将会告诉你为何并且如何使用 Espresso 在 Android 设备上测试你的自定义视图。 你可以使用 Espres">
+<meta name="keywords" content="翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[译] 使用 Espresso 隔离测试视图">
+<meta property="og:url" content="https://yazhidev.github.io/2017/05/02/译-使用-Espresso-隔离测试视图/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="原文地址：Testing Views in Isolation with Espresso 原文作者：Ataul Munim 译文出自：掘金翻译计划 译者：yazhi1992 校对者：lovexiaov, Phoenix   使用 Espresso 隔离测试视图在这篇文章里，我将会告诉你为何并且如何使用 Espresso 在 Android 设备上测试你的自定义视图。 你可以使用 Espres">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.447Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[译] 使用 Espresso 隔离测试视图">
+<meta name="twitter:description" content="原文地址：Testing Views in Isolation with Espresso 原文作者：Ataul Munim 译文出自：掘金翻译计划 译者：yazhi1992 校对者：lovexiaov, Phoenix   使用 Espresso 隔离测试视图在这篇文章里，我将会告诉你为何并且如何使用 Espresso 在 Android 设备上测试你的自定义视图。 你可以使用 Espres">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2017/05/02/译-使用-Espresso-隔离测试视图/">
+
+
+
+
+
+  <title>[译] 使用 Espresso 隔离测试视图 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2017/05/02/译-使用-Espresso-隔离测试视图/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[译] 使用 Espresso 隔离测试视图</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-02T21:50:33+08:00">
+                2017-05-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<ul>
+<li>原文地址：<a href="https://www.novoda.com/blog/testing-views-in-isolation-with-espresso/" target="_blank" rel="noopener">Testing Views in Isolation with Espresso</a></li>
+<li>原文作者：<a href="https://www.novoda.com/blog/author/ataulm/" target="_blank" rel="noopener">Ataul Munim</a></li>
+<li>译文出自：<a href="https://github.com/xitu/gold-miner" target="_blank" rel="noopener">掘金翻译计划</a></li>
+<li>译者：<a href="https://github.com/yazhi1992" target="_blank" rel="noopener">yazhi1992</a></li>
+<li>校对者：<a href="https://github.com/lovexiaov" target="_blank" rel="noopener">lovexiaov</a>, <a href="https://github.com/wbinarytree" target="_blank" rel="noopener">Phoenix</a></li>
+</ul>
+</blockquote>
+<h1 id="使用-Espresso-隔离测试视图"><a href="#使用-Espresso-隔离测试视图" class="headerlink" title="使用 Espresso 隔离测试视图"></a>使用 Espresso 隔离测试视图</h1><p>在这篇文章里，我将会告诉你为何并且如何使用 Espresso 在 Android 设备上测试你的自定义视图。</p>
+<p>你可以使用 Espresso 来一次性测试所有界面或流程。这些测试用例会启动某个页面，并像用户一般执行操作，包括等待数据的加载或跳转到其他页面。</p>
+<p>这样做是非常有用的，因为你需要端到端的测试用例来验证常见的用户使用流程。这些自动化测试应该定期地执行，从而可以节约手工 QA 的时间来进行探索性测试。</p>
+<p>即便如此，这些不是可以频繁运行的测试。运行一整套可能会花费数小时的时间（想象一下验证媒体内容的脱机同步），所以你可以选择在夜间运行它们。</p>
+<p>这很困难，因为这些类型的测试包含了多个潜在的故障点。理想情况是，当某个测试失败时，你会希望它是由于单个逻辑断言而导致的。</p>
+<p>大多数（或者说很多）可以引入的回归测试点都在 UI 上。这些问题很可能是十分细微的，以至于我们在添加新特性时并不会注意到，但是敏锐的 QA 团队却往往可以。</p>
+<p>这样就浪费太多时间了。</p>
+<h2 id="你能做些什么？"><a href="#你能做些什么？" class="headerlink" title="你能做些什么？"></a>你能做些什么？</h2><p>让我们来看下如何使用 Espresso 来测试正确地绑定了数据的视图。</p>
+<p>在 Novoda 里，我们编写的大多数视图都是继承自 Android 已有的 View 和 ViewGroup 类。这些视图一般只会暴露了一到两个方法用来绑定回调函数和数据对象/视图模型，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public class MovieItemView extends RelativeLayout &#123;  </span><br><span class="line">  private TextView titleTextView;</span><br><span class="line">  private Callback callback;</span><br><span class="line"></span><br><span class="line">  public void attach(Callback callback) &#123;</span><br><span class="line">    this.callback = callback;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public void bind(Movie movie) &#123;</span><br><span class="line">    titleTextView.setText(movie.name());</span><br><span class="line">    setOnClickListener(new OnClickListener() &#123;</span><br><span class="line">      @Override </span><br><span class="line">      public void onClick(View v) &#123;</span><br><span class="line">        callback.onClick(movie);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>他们将 UI 的逻辑部分组合在一起，并且通常还包含来自业务领域的命名规范。在<br> Novoda 的页面布局中你很少会看到“原始”的 Android 视图。</p>
+<p>让我们使用 BDD 风格来编写这些视图测试，比如“当 MovieItemView 被绑定到 Edward Scissorhands 上，标题就被设置成 Edward Scissorhands”或者“MovieItemView 被绑定到 Edward Scissorhands 上，当点击视图时，onClick(Edward Scissorhands) 就会被调用”，等等。（译者注：BDD（Behaviour Driven Development），倾向于断言被测对象的行为特征而非输入输出。一个典型的 BDD 的测试用例包活完整的三段式上下文，测试大多可以翻译为 <code>Given-When-Then</code> 的格式，即某种场景下，发生了事件，导致了什么结果。）</p>
+<h2 id="难道不能使用单元测试来捕获这些问题吗？"><a href="#难道不能使用单元测试来捕获这些问题吗？" class="headerlink" title="难道不能使用单元测试来捕获这些问题吗？"></a>难道不能使用单元测试来捕获这些问题吗？</h2><p>如果你正在使用像 MVP 或者 MVVM 这样可被单元测试的表现模式，为什么还需要 Espresso 来运行这些测试呢？</p>
+<p>首先，让我们来看一下展示信息的流程并且描述一下目前所能做的测试，然后再看看使用 Espresso 测试能多做些什么。</p>
+<ul>
+<li><p>Presenters 订阅发送事件的数据生成器</p>
+</li>
+<li><p>事件可以处于<code>加载中</code>，<code>空闲</code>或<code>错误</code>状态，并且可能带有要展示的数据</p>
+</li>
+<li><p>Presenters 将使用 <code>display(List&lt;Movie&gt;)</code>，<code>displayCachedDataWhileLoading(List&lt;Movie&gt;)</code> 或 <code>displayEmptyScreen()</code> 等方法将这些事件转发给“displayers”（MVP 中的“View”）。</p>
+</li>
+<li><p>displayers 的具体实现类将显示/隐藏 Android 视图，并执行诸如 <code>moviesView.bind(List&lt;Movie&gt;)</code> 之类的操作</p>
+</li>
+</ul>
+<p>你可以对 presenters 进行单元测试，验证是否调用了 displayers 正确的方法并且带有正确的参数。</p>
+<p>你可以用相同的方式测试 displayers 吗？是的，你是可以模拟 Android 视图，并验证是否调用了正确的方法。但这样的粒度并不是我们想要的：</p>
+<ul>
+<li><p>displayer 可能确实构建或更新了 RecyclerView 或 ViewPager 适配器，但这并不代表显示了正确的内容。</p>
+</li>
+<li><p>Android 视图是通过在代码中加载 XML（布局和样式）设置的；验证方法的调用不足以断言显示的内容是否正确</p>
+</li>
+</ul>
+<h2 id="设置测试用例"><a href="#设置测试用例" class="headerlink" title="设置测试用例"></a>设置测试用例</h2><p>就从使用 <a href="https://github.com/novoda/spikes/tree/master/espresso-support" target="_blank" rel="noopener"><code>espresso-support</code></a> 这个库开始吧。</p>
+<p>在你的 build.gradle（JCenter 可用）里添加依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">debugCompile &apos;com.novoda:espresso-support-extras:0.0.3&apos;  </span><br><span class="line">androidTestCompile &apos;com.novoda:espresso-support:0.0.3&apos;</span><br></pre></td></tr></table></figure>
+<p><code>extras</code> 依赖包中包含了 <code>ViewActivity</code>，在测试时需要将其添加到你的应用中。你可以在该 Activity 持有想要使用 Espresso 测试的单一视图。</p>
+<p>核心部分（包含自定义测试规则）只需要作为 <code>androidTest</code> 依赖中的一部分。</p>
+<p><code>ViewTestRule</code> 使用方法与 <code>ActivityTestRule</code> 类似。只不过是将传递的参数从想要启动的 Activity 类替换成了包含你想要测试的视图的布局文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@RunWith(AndroidJUnit4.class)publicclassMovieItemViewTest&#123;  </span><br><span class="line">  @Rule</span><br><span class="line">  public ViewTestRule&lt;MovieItemView&gt; viewTestRule=newViewTestRule&lt;&gt;(R.layout.test_movie_item_view);</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+<p>你可以使用 <code>ViewTestRule&lt;MovieItemView&gt;</code> 指定根布局的视图类型。</p>
+<p><code>ViewTestRule</code> 继承了 <code>ActivityTestRule&lt;ViewActivity&gt;</code>，所以它总会打开 <code>ViewActivity</code>。 <code>getActivityIntent()</code> 被重写了，所以你可以将 <code>R.layout.test_movie_item_view</code> 作为 Intent 的附加数据传递给 <code>ViewActivity</code>。</p>
+<p>你可以在测试中使用 Mockito 代替回调函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Rule</span><br><span class="line">public MockitoRule mockitoRule = MockitoJUnit.rule();</span><br><span class="line"></span><br><span class="line">@Mock</span><br><span class="line">MovieItemView.Listener movieItemListener;</span><br><span class="line"></span><br><span class="line">@Before</span><br><span class="line">publicvoidsetUp()&#123;  </span><br><span class="line">  MovieItemView view = viewTestRule.getView();</span><br><span class="line">  view.attachListener(movieItemListener);</span><br><span class="line">  ...</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>ViewTestRule 有一个 <code>bindViewUsing(Binder)</code> 方法，该方法会返回视图的引用，以便你与之进行交互。当你使用 <code>viewTestRule.getView()</code> 直接访问视图时，你会希望与视图的所有交互都是在主线程上执行的，而非测试线程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Before</span><br><span class="line">public void setUp() &#123;  </span><br><span class="line">  MovieItemView view = viewTestRule.getView();</span><br><span class="line">  view.attachListener(movieItemListener);</span><br><span class="line">  viewTestRule.bindViewUsing(new ViewTestRule.Binder&lt;MovieItemView&gt;() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void bind(MovieItemView view) &#123;</span><br><span class="line">      view.bind(EDWARD_SCISSORHANDS);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="准备测试"><a href="#准备测试" class="headerlink" title="准备测试"></a>准备测试</h2><p>从用户的角度上来看，应用其实只做了两件事情：</p>
+<ul>
+<li><p>展示信息</p>
+</li>
+<li><p>响应用户的操作</p>
+</li>
+</ul>
+<p>要为这两种情况编写测试，你可以先从使用标准的 Espresso ViewMatchers 和 ViewAssertions 语句断言是否显示正确的信息开始：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void titleSetToMovieName() &#123;  </span><br><span class="line">  onView(withId(R.id.movie_item_text_name))</span><br><span class="line">      .check(matches(withText(EDWARD_SCISSORHANDS.name)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着，你应该确保用户的操作触发了正确的点击事件，并且具有正确的参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void clickMovieItemView() &#123;  </span><br><span class="line">  onView(withClassName(is(MovieItemView.class.getName())))</span><br><span class="line">      .perform(click());</span><br><span class="line"></span><br><span class="line">  verify(movieItemListener)</span><br><span class="line">      .onClick(eq(EDWARD_SCISSORHANDS));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到这里就完成了，希望这些知识对你有用。</p>
+<p>在接下来的文章里，我会介绍如何使用 Espresso 测试视图时支持 TalkBack 服务（译者注：Talkback 是一款由谷歌官方开发的系统工具软件，它的定位是帮助盲人或者有视力障碍的用户提供语言辅助）。</p>
+<hr>
+<blockquote>
+<p><a href="https://github.com/xitu/gold-miner" target="_blank" rel="noopener">掘金翻译计划</a> 是一个翻译优质互联网技术文章的社区，文章来源为 <a href="https://juejin.im" target="_blank" rel="noopener">掘金</a> 上的英文分享文章。内容覆盖 <a href="https://github.com/xitu/gold-miner#android" target="_blank" rel="noopener">Android</a>、<a href="https://github.com/xitu/gold-miner#ios" target="_blank" rel="noopener">iOS</a>、<a href="https://github.com/xitu/gold-miner#react" target="_blank" rel="noopener">React</a>、<a href="https://github.com/xitu/gold-miner#前端" target="_blank" rel="noopener">前端</a>、<a href="https://github.com/xitu/gold-miner#后端" target="_blank" rel="noopener">后端</a>、<a href="https://github.com/xitu/gold-miner#产品" target="_blank" rel="noopener">产品</a>、<a href="https://github.com/xitu/gold-miner#设计" target="_blank" rel="noopener">设计</a> 等领域，想要查看更多优质译文请持续关注 <a href="https://github.com/xitu/gold-miner" target="_blank" rel="noopener">掘金翻译计划</a>。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/翻译/" rel="tag"># 翻译</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/29/Mac-上使用-Shell-脚本-adb-shell-实现简单的-Android-模拟点击自动化测试/" rel="next" title="Mac 上使用 Shell 脚本 + adb shell 实现简单的 Android 模拟点击自动化测试">
+                <i class="fa fa-chevron-left"></i> Mac 上使用 Shell 脚本 + adb shell 实现简单的 Android 模拟点击自动化测试
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/03/JIRA-知多少：聊一聊-Android-Studio-、工作流相关设置/" rel="prev" title="JIRA 知多少：聊一聊 Android Studio 、工作流相关设置">
+                JIRA 知多少：聊一聊 Android Studio 、工作流相关设置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用-Espresso-隔离测试视图"><span class="nav-number">1.</span> <span class="nav-text">使用 Espresso 隔离测试视图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#你能做些什么？"><span class="nav-number">1.1.</span> <span class="nav-text">你能做些什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#难道不能使用单元测试来捕获这些问题吗？"><span class="nav-number">1.2.</span> <span class="nav-text">难道不能使用单元测试来捕获这些问题吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置测试用例"><span class="nav-number">1.3.</span> <span class="nav-text">设置测试用例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备测试"><span class="nav-number">1.4.</span> <span class="nav-text">准备测试</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

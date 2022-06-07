@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Hello Shortcuts从Android7.1（API level25）开始，开发者可以为自己的app定制shortcuts。shortcuts使用户更便捷、快速的使用app。我个人感觉有点像ios的压力感应，但是我认为Google的shortcuts动画做的更好看：）。 shortcuts分为两种：  Static shortcuts：静态shortcuts是在资源文件中定义的，所以你只能">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="App Shortcuts 快捷方式 Android7.1 的&#39;3D Touch&#39;">
+<meta property="og:url" content="https://yazhidev.github.io/2017/01/10/App-Shortcuts-快捷方式-Android7-1-的-3D-Touch/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="Hello Shortcuts从Android7.1（API level25）开始，开发者可以为自己的app定制shortcuts。shortcuts使用户更便捷、快速的使用app。我个人感觉有点像ios的压力感应，但是我认为Google的shortcuts动画做的更好看：）。 shortcuts分为两种：  Static shortcuts：静态shortcuts是在资源文件中定义的，所以你只能">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-b57b2d7e2706065b.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.436Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="App Shortcuts 快捷方式 Android7.1 的&#39;3D Touch&#39;">
+<meta name="twitter:description" content="Hello Shortcuts从Android7.1（API level25）开始，开发者可以为自己的app定制shortcuts。shortcuts使用户更便捷、快速的使用app。我个人感觉有点像ios的压力感应，但是我认为Google的shortcuts动画做的更好看：）。 shortcuts分为两种：  Static shortcuts：静态shortcuts是在资源文件中定义的，所以你只能">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1929170-b57b2d7e2706065b.gif?imageMogr2/auto-orient/strip">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2017/01/10/App-Shortcuts-快捷方式-Android7-1-的-3D-Touch/">
+
+
+
+
+
+  <title>App Shortcuts 快捷方式 Android7.1 的'3D Touch' | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2017/01/10/App-Shortcuts-快捷方式-Android7-1-的-3D-Touch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">App Shortcuts 快捷方式 Android7.1 的'3D Touch'</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-10T23:02:02+08:00">
+                2017-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Hello-Shortcuts"><a href="#Hello-Shortcuts" class="headerlink" title="Hello Shortcuts"></a>Hello Shortcuts</h2><p>从Android7.1（API level25）开始，开发者可以为自己的app定制shortcuts。shortcuts使用户更便捷、快速的使用app。我个人感觉有点像ios的压力感应，但是我认为Google的shortcuts动画做的更好看：）。</p>
+<p>shortcuts分为两种：</p>
+<ol>
+<li><p><strong>Static shortcuts</strong>：静态shortcuts是在资源文件中定义的，所以你只能通过升级你的app来更新静态shortcuts的相关信息。</p>
+</li>
+<li><p><strong>Dynamic shortcuts</strong>：动态shortcuts是通过ShortcutManager相关的API来实现运行时新增、修改、移除shortcuts的。</p>
+</li>
+</ol>
+<p>另外关于shortcuts有以下几点小tips：</p>
+<ol>
+<li><p>最多可以设置5个快捷方式，（但经测试最多只能显示4个）。有些启动器（launcher app）不会显示出你添加的所有的快捷方式。</p>
+</li>
+<li><p>用户可以长按shortcuts将其固定到桌面，Google称其为“pinned shortcuts”，pinned shortcuts的数量是没有限制的，并且开发者无权移除这些pinned shorcuts(只能用户自己移除或者删除app后自动移除，如果某个shortcuts已经被固定到桌面，即使动态删除了该shortcuts，桌面的shortcuts也不会消失且可以正常使用)，但可以将其设为不可用状态（disbale）。</p>
+</li>
+<li><p>虽然其他app无法通过shortcuts访问你的app的元数据（metadata），但启动器（laucher）可以，所以在使用shortcuts时要注意保护用户的隐私信息。</p>
+</li>
+</ol>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-b57b2d7e2706065b.gif?imageMogr2/auto-orient/strip" alt="这里写图片描述">    </p>
+<h2 id="静态shortcuts（Static-Shortcuts）的使用"><a href="#静态shortcuts（Static-Shortcuts）的使用" class="headerlink" title="静态shortcuts（Static Shortcuts）的使用"></a>静态shortcuts（Static Shortcuts）的使用</h2><ol>
+<li><p>清单文件Manifest中在启动页添加meta-data</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;activity android:name=&quot;.MainActivity&quot;&gt;</span><br><span class="line">    &lt;intent-filter&gt;</span><br><span class="line">        &lt;action android:name=&quot;android.intent.action.MAIN&quot;/&gt;</span><br><span class="line">        &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot;/&gt;</span><br><span class="line">    &lt;/intent-filter&gt;</span><br><span class="line">    &lt;meta-data android:name=&quot;android.app.shortcuts&quot;</span><br><span class="line">               android:resource=&quot;@xml/shortcuts&quot; /&gt;</span><br><span class="line">&lt;/activity&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>res文件夹内新建文件夹xml，新建文件shortcuts.xml</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">//shortcuts.xml</span><br><span class="line"></span><br><span class="line">&lt;shortcuts xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</span><br><span class="line">&lt;shortcut</span><br><span class="line">    android:shortcutId=&quot;shortCutId1&quot;</span><br><span class="line">    android:enabled=&quot;true&quot;</span><br><span class="line">    android:icon=&quot;@drawable/icon_android&quot;</span><br><span class="line">    android:shortcutShortLabel=&quot;@string/compose_shortcut_short_label1&quot;</span><br><span class="line">    android:shortcutLongLabel=&quot;@string/compose_shortcut_long_label1&quot;</span><br><span class="line">    android:shortcutDisabledMessage=&quot;@string/compose_disabled_message1&quot;&gt;</span><br><span class="line">    &lt;intent</span><br><span class="line">        android:action=&quot;android.intent.action.VIEW&quot;</span><br><span class="line">        android:targetPackage=&quot;com.example.zengyazhi.myapplication&quot;</span><br><span class="line">        android:targetClass=&quot;com.example.zengyazhi.myapplication.Main1Activity&quot; /&gt;</span><br><span class="line">    &lt;intent</span><br><span class="line">        android:action=&quot;android.intent.action.VIEW&quot;</span><br><span class="line">        android:targetPackage=&quot;com.example.zengyazhi.myapplication&quot;</span><br><span class="line">        android:targetClass=&quot;com.example.zengyazhi.myapplication.Main2Activity&quot; /&gt;</span><br><span class="line">    &lt;categories android:name=&quot;android.shortcut.conversation&quot; /&gt;</span><br><span class="line">&lt;/shortcut&gt;</span><br><span class="line"></span><br><span class="line">&lt;shortcut</span><br><span class="line">    android:shortcutId=&quot;shortCutId2&quot;</span><br><span class="line">    android:enabled=&quot;true&quot;</span><br><span class="line">    android:icon=&quot;@drawable/icon_google&quot;</span><br><span class="line">    android:shortcutShortLabel=&quot;@string/compose_shortcut_short_label2&quot;</span><br><span class="line">    android:shortcutLongLabel=&quot;@string/compose_shortcut_long_label2&quot;</span><br><span class="line">    android:shortcutDisabledMessage=&quot;@string/compose_disabled_message2&quot;&gt;</span><br><span class="line">    &lt;intent</span><br><span class="line">        android:action=&quot;android.intent.action.VIEW&quot;</span><br><span class="line">        android:targetPackage=&quot;com.example.zengyazhi.myapplication&quot;</span><br><span class="line">        android:targetClass=&quot;com.example.zengyazhi.myapplication.Main2Activity&quot; /&gt;</span><br><span class="line">    &lt;categories android:name=&quot;android.shortcut.conversation&quot; /&gt;</span><br><span class="line">&lt;/shortcut&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>解释一下shortcut标签里的各个的属性：</p>
+<ul>
+<li>shortcutId：shortcuts的ID</li>
+<li>enabled：如果为false则不会在长按shortcuts列表中显示</li>
+<li>icon：shortcuts的图标</li>
+<li>shortcutShortLabel：当shortcuts固定到桌面时的标题（注意字符串只能使用string资源文件引用，不可以直接使用字符串）</li>
+<li>shortcutLongLabel：长按app出现shortcuts时的标题，如果太长或未设置默认会显示shortcutShortLabel</li>
+<li>shortcutDisabledMessage： 当pinned shortcuts不可用时的toast提示信息</li>
+<li>shortcuts标签内的<intent>标签可以有多个，例如页面1、页面2、页面3，用户点击shortcuts后进入的是列表的最后一个（即页面3），并且可以依次回退到页面2、页面1.</intent></li>
+</ul>
+<h2 id="动态shortcuts（Dynamic-Shortcuts）的使用"><a href="#动态shortcuts（Dynamic-Shortcuts）的使用" class="headerlink" title="动态shortcuts（Dynamic Shortcuts）的使用"></a>动态shortcuts（Dynamic Shortcuts）的使用</h2><p>使用ShortcutManager相关API来创建、更新、移除shortcuts。几种API的使用方法都类似。</p>
+<ol>
+<li><p>使用 setDynamicShortcuts() 和 addDynamicShortcuts() 来动态增加shortcuts。这两个方法有点相似，使用时要注意区别。<br>addDynamicShortcuts()：添加shortcuts，如果存在相同的ID的shortcuts则更新信息。<br>setDynamicShortcuts()：<strong>替换掉</strong>已有的动态shortcuts列表，如果存在相同的ID的shortcuts则更新信息。举个例子：<br>例如原本有shortcuts列表：</p>
+<ul>
+<li>标签一（lable：张三， id：one）</li>
+<li>标签二（lable：李四， id：two）</li>
+<li><p>标签三（lable：王五， id：three） </p>
+<p>使用 setDynamicShortcuts() 方法并传入两个ShortcutInfo：</p>
+</li>
+<li><p>标签三（lable：赵六， id：three）</p>
+</li>
+<li><p>标签四（lable：钱七， id：four）</p>
+<p>调用方法后会使shortcuts列表则变为：</p>
+</li>
+<li><p>标签三（lable：赵六， id：three）</p>
+</li>
+<li><p>标签四（lable：钱七， id：four）</p>
+<p>因为标签三的ID相同，所以更新标签三，而shortcuts列表中原来的标签一、二被移除，而且一开篇介绍shortcuts时也提到过是：<strong>如果shortcuts已被固定到桌面成为pinned shortcuts，即使shortcuts从列表中被移除了，但桌面的pinned shortcuts依然可以正常使用，除非你将其设置disable状态</strong>，即如果张三、李四被固定到桌面，即使调用 setDynamicShortcuts() 后长按app不会显示张三、李四，但桌面上的张三李四不会消失且可以正常使用。</p>
+</li>
+</ul>
+</li>
+<li><p>使用 updateShortcuts() 更新shortcuts的信息</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);</span><br><span class="line">ShortcutInfo shortCutId1 = new ShortcutInfo.Builder(MainActivity.this, &quot;shortCutId3&quot;)</span><br><span class="line">        .setShortLabel(&quot;更改桌面标签3&quot;)</span><br><span class="line">        .setLongLabel(&quot;更改快捷方式标签3&quot;)</span><br><span class="line">        .setIcon(Icon.createWithResource(this, R.drawable.icon_chrome))</span><br><span class="line">        .setDisabledMessage(&quot;更改不可用时提示信息3&quot;)</span><br><span class="line">        .setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse(&quot;https://www.baidu.com/&quot;), this, Main1Activity.class))</span><br><span class="line">        .build();</span><br><span class="line">shortcutManager.updateShortcuts(Arrays.asList(shortCutId1, shortCutId4));</span><br></pre></td></tr></table></figure>
+<p> 动态shortcuts也可以像静态shortcuts一样同时添加多个intent意图</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse(&quot;https://www.baidu.com/&quot;), this, Main1Activity.class);</span><br><span class="line">Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(&quot;https://www.baidu.com/&quot;), this, Main2Activity.class);</span><br><span class="line">Intent[] intents = &#123;intent1, intent2&#125;;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">.setIntents(intents)</span><br><span class="line">.build();</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 removeDynamicShortcuts() 移除单个或多个动态shortcuts，使用 removeAllDynamicShortcuts() 移除所有的动态shortcuts</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shortcutManager.removeDynamicShortcuts(Arrays.asList(&quot;shortCutId31&quot;, &quot;shortCutId4&quot;));</span><br><span class="line"></span><br><span class="line">shortcutManager.removeAllDynamicShortcuts();</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol start="4">
+<li>设置shortcuts为不可用状态： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shortcutManager.disableShortcuts(Arrays.asList(&quot;shortCutId3&quot;));</span><br><span class="line">//另一个重载的方法，可以在用户点击该shortcuts时显示错误信息</span><br><span class="line">shortcutManager.disableShortcuts(Arrays.asList(&quot;shortCutId4&quot;), &quot;快捷方式4已不可用&quot;);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>需要注意的是：<strong>以上API只能操作动态shortcuts（包括pinned shortcuts），不可操作静态shortcuts</strong>，如果传入静态shortcuts的id会报<code>IllegalArgumentException</code>错误：<code>Manifest shortcut ID=*** may not be manipulated via APIs</code></p>
+<h2 id="追踪shortcuts的使用"><a href="#追踪shortcuts的使用" class="headerlink" title="追踪shortcuts的使用"></a>追踪shortcuts的使用</h2><p>官网文档中提到以下两种情景需要调用<code>reportShortcutUsed()</code>:</p>
+<ol>
+<li><p>用户点击了shortcuts</p>
+</li>
+<li><p>用户操作了与shortcuts关联的操作</p>
+</li>
+</ol>
+<p>上报shortcuts的使用来预测shortcuts的优先级，帮助开发者更好得使用shortcuts。</p>
+<h2 id="shortcuts设计规范"><a href="#shortcuts设计规范" class="headerlink" title="shortcuts设计规范"></a>shortcuts设计规范</h2><p><a href="https://commondatastorage.googleapis.com/androiddevelopers/shareables/design/app-shortcuts-design-guidelines.pdf" target="_blank" rel="noopener">App Shortcuts Design Guidelines</a></p>
+<p>Android从material design设计规范推出开始到今天的Android7，个人觉得真的是不输iOS，然而至今没有广泛地被推崇，实在令人不免一声叹息。另外手上2013年发布的Nexus5升级Android7之后竟然感觉比以前还顺滑，什么叫良心？跟我一起大喊：Google大法好！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/03/Fresco-二三事：图片处理之旋转、缩放、裁剪切割图片/" rel="next" title="Fresco 二三事：图片处理之旋转、缩放、裁剪切割图片">
+                <i class="fa fa-chevron-left"></i> Fresco 二三事：图片处理之旋转、缩放、裁剪切割图片
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/28/《Effective-Java》读书笔记/" rel="prev" title="《Effective Java》读书笔记">
+                《Effective Java》读书笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hello-Shortcuts"><span class="nav-number">1.</span> <span class="nav-text">Hello Shortcuts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态shortcuts（Static-Shortcuts）的使用"><span class="nav-number">2.</span> <span class="nav-text">静态shortcuts（Static Shortcuts）的使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态shortcuts（Dynamic-Shortcuts）的使用"><span class="nav-number">3.</span> <span class="nav-text">动态shortcuts（Dynamic Shortcuts）的使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#追踪shortcuts的使用"><span class="nav-number">4.</span> <span class="nav-text">追踪shortcuts的使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shortcuts设计规范"><span class="nav-number">5.</span> <span class="nav-text">shortcuts设计规范</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

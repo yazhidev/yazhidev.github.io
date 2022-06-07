@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="网络上一提到 Python,总会有一些不知道是黑还是粉的人大喊着：Python 是世界上最好的语言。最近利用业余时间体验了下 Python 语言，并写了个爬虫爬取我 csdn 上关注的几个大神的博客，然后利用leancloud一站式后端云服务器存储数据，再写了一个 android app 展示数据，也算小试了一下这门语言，给我的感觉就是，像 Python 这类弱类型的动态语言相比于 Java 来说">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hello Python!用 Python 写一个抓取 CSDN 博客文章的简单爬虫">
+<meta property="og:url" content="https://yazhidev.github.io/2016/06/25/Hello Python!用python写一个抓取CSDN博客文章的简单爬虫/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="网络上一提到 Python,总会有一些不知道是黑还是粉的人大喊着：Python 是世界上最好的语言。最近利用业余时间体验了下 Python 语言，并写了个爬虫爬取我 csdn 上关注的几个大神的博客，然后利用leancloud一站式后端云服务器存储数据，再写了一个 android app 展示数据，也算小试了一下这门语言，给我的感觉就是，像 Python 这类弱类型的动态语言相比于 Java 来说">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img.blog.csdn.net/20160624232351976">
+<meta property="og:image" content="http://img.blog.csdn.net/20160624232724681">
+<meta property="og:image" content="http://img.blog.csdn.net/20160624233509024">
+<meta property="og:image" content="http://img.blog.csdn.net/20160624233545856">
+<meta property="og:image" content="http://img.blog.csdn.net/20160625104618199">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.437Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hello Python!用 Python 写一个抓取 CSDN 博客文章的简单爬虫">
+<meta name="twitter:description" content="网络上一提到 Python,总会有一些不知道是黑还是粉的人大喊着：Python 是世界上最好的语言。最近利用业余时间体验了下 Python 语言，并写了个爬虫爬取我 csdn 上关注的几个大神的博客，然后利用leancloud一站式后端云服务器存储数据，再写了一个 android app 展示数据，也算小试了一下这门语言，给我的感觉就是，像 Python 这类弱类型的动态语言相比于 Java 来说">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160624232351976">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2016/06/25/Hello Python!用python写一个抓取CSDN博客文章的简单爬虫/">
+
+
+
+
+
+  <title>Hello Python!用 Python 写一个抓取 CSDN 博客文章的简单爬虫 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2016/06/25/Hello Python!用python写一个抓取CSDN博客文章的简单爬虫/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hello Python!用 Python 写一个抓取 CSDN 博客文章的简单爬虫</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-06-25T00:14:47+08:00">
+                2016-06-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>网络上一提到 Python,总会有一些不知道是黑还是粉的人大喊着：Python 是世界上最好的语言。最近利用业余时间体验了下 Python 语言，并写了个爬虫爬取我 csdn 上关注的几个大神的博客，然后利用<a href="https://leancloud.cn/" title="leancloud" target="_blank" rel="noopener">leancloud</a>一站式后端云服务器存储数据，再写了一个 android app 展示数据，也算小试了一下这门语言，给我的感觉就是，像 Python 这类弱类型的动态语言相比于 Java 来说，开发者不需要分太多心去考虑编程问题，能够把精力集中于业务上，思考逻辑的实现。下面分享一下我此次写爬虫的一下小经验，抛砖引玉。</p>
+<h2 id="开发环境的搭建"><a href="#开发环境的搭建" class="headerlink" title="开发环境的搭建"></a>开发环境的搭建</h2><p>登录 <a href="https://www.python.org/" target="_blank" rel="noopener">Python 官网</a>下载客户端，Python 现在分为 Python3 和 Python2, 即对应的官网上的版本为3.5和2.7，二者的异同有兴趣可以搜索一下，就我的了解，2和3的语法会有不同，而且有的库支持2不支持3，有的支持3不支持2等等；又比如urllib2库（一个用来获取URLs的模块）在 Python2 上引用要 import urllib2, 而在 Python3 里就变成import urllib.request。等等。纠结使用哪个版本没有意义，代码是为逻辑服务的，无论2或3很明显都可以满足我们这些初学者的需求。这里推荐一下<a href="http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000" target="_blank" rel="noopener">廖学峰老师的 Python 教程</a>。很高质量的教程，2和3都有，嫌看视频学得慢的朋友可以试试。</p>
+<p><del>但是这里有一个坑要提醒一下：如果你也和我一样想要使用leancloud做后端服务器，那得使用 Python2，无他，因为人家文档里写着暂不支持 Python3。╮(╯_╰)╭</del>（6.28 更正：leancloud 现已支持 Python3）</p>
+<h3 id="搭建环境的一些小坑：error2502-2503"><a href="#搭建环境的一些小坑：error2502-2503" class="headerlink" title="搭建环境的一些小坑：error2502/2503"></a>搭建环境的一些小坑：error2502/2503</h3><p>下载客户端后，如果你点击安装后一切正常，那你可以忽略此步。如果出现安装失败 error2502/2503，解决办法如下：</p>
+<ol>
+<li>打开<strong>命令提示符（管理员）</strong>，如果你是win8：按win键进入桌面模式，左下角右键打开命令提示符（管理员）</li>
+<li>输入  msiexec /package “你安装程序包的路径”(例如：F:\python)</li>
+</ol>
+<p>安装成功后配置环境变量（我的电脑-右键 属性-高级系统设置-环境变量）添加安装的目录（C:\Python27）到path。之后打开命令行输入python，如果出现如下图三个小箭头则说明 Python 解释器已经安装成功了。</p>
+<p><img src="http://img.blog.csdn.net/20160624232351976" alt="Python安装成功"></p>
+<h3 id="安装pip和beautifulsoup："><a href="#安装pip和beautifulsoup：" class="headerlink" title="安装pip和beautifulsoup："></a>安装pip和beautifulsoup：</h3><p>pip，大家可以理解成相当于android studio的gradle，可以一键配置开源库到项目中（后续配置leancloud服务器也可以很方便的导入他们的模块）。beautifulsoup则是一个HTML解析器，使用它解析html标签方便又简单。</p>
+<ol>
+<li>首先<a href="https://pypi.python.org/pypi/pip#downloads" target="_blank" rel="noopener">下载pip</a>，下载 pip-8.1.2.tar.gz (md5, pgp)</li>
+<li>解压后，打开cmd命令行，切换盘符，再cd 进入解压的目录，例如： cd D:\pip-8.1.2</li>
+<li>命令行里输入 python setup.py install ，看到finished processing等字样即安装成功</li>
+<li>配置环境变量到path： C:\Python27\Scripts;</li>
+<li>cmd 运行 pip install beautifulsoup4  ，看到successfully installed即安装成功</li>
+</ol>
+<p><img src="http://img.blog.csdn.net/20160624232724681" alt="安装模块成功"></p>
+<p>另外再推荐一款编辑器：<a href="http://www.jetbrains.com/pycharm/download/#section=windows" target="_blank" rel="noopener">pycharm</a>，JetBrains出品你懂的，InteliJ系列风格，使用这款编辑器你会感觉像是在使用android studio一样，至少设置个字体大小啥的都不陌生。</p>
+<p>万事俱备，Let’s begin!</p>
+<h2 id="初识爬虫"><a href="#初识爬虫" class="headerlink" title="初识爬虫"></a>初识爬虫</h2><p>因为我也才刚接触 Python，所以有一些代码可能很无脑且未经过优化，仅仅只为实现需求，so~下面就开始分享我写的一些 Python 代码，以及写爬虫时遇到的一些小坑</p>
+<h3 id="伪装浏览器"><a href="#伪装浏览器" class="headerlink" title="伪装浏览器"></a>伪装浏览器</h3><p>CSDN禁止爬虫，所以要爬取之前就要把爬虫伪装成浏览器，在访问之前增加一个header：</p>
+<pre><code>user_agents = [ 
+    &apos;Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11&apos;,
+    &apos;Opera/9.25 (Windows NT 5.1; U; en)&apos;,
+    &apos;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)&apos;,
+    &apos;Mozilla/5.0 (compatible; Konqueror/3.5; Linux) KHTML/3.5.5 (like Gecko) (Kubuntu)&apos;,
+    &apos;Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12&apos;,
+    &apos;Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9&apos;,
+    &quot;Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Ubuntu/11.04 Chromium/16.0.912.77 Chrome/16.0.912.77 Safari/535.7&quot;,
+    &quot;Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0 &quot;,
+]
+agent = random.choice(user_agents) #每次随机抽取一个伪装的客户端浏览器版本号
+req = urllib2.Request(self.url) #将要请求的地址映射成request对象，然后可以对其添加HTTP头
+req.add_header(&apos;User-Agent&apos;, agent)
+req.add_header(&apos;Host&apos;, &apos;blog.csdn.net&apos;)
+req.add_header(&apos;Accept&apos;, &apos;*/*&apos;)
+req.add_header(&apos;Referer&apos;, &apos;http://blog.csdn.net/mangoer_ys?viewmode=list&apos;)
+req.add_header(&apos;GET&apos;, url)
+html = urllib2.urlopen(req) #将request对象传入urlopen方法，返回一个response对象
+page = html.read().decode(&apos;utf-8&apos;) #调用read方法就可以获得html网页的信息了，主要还要对其转码为utf-8
+</code></pre><p>这里就已经爬取到网页内容了（page），后面只要通过正则来解析你需要的数据，简单的爬虫其实就已经完成了。</p>
+<p>现在来整理一下，我们到底需要一些什么数据？我的目的是爬取一个，甚至几个博主的全部博客，然后在手机上展示。那么就需要：</p>
+<ul>
+<li>先访问给定的网址（博主的博客首页），并获取一篇博客的链接地址，然后让爬虫去访问该地址</li>
+<li>获得这篇博文的标题，作者，发表时间、文章内容。这些是最基础的，也是必要的展示内容</li>
+<li>获得这篇博文的id，作者的id，用来做后端存储数据的唯一标识</li>
+<li>获得这篇博文底部的上一篇/下一篇博文按钮所链接的地址，并让爬虫访问改地址</li>
+<li>循环往复，直到不存在上一篇/下一篇博文</li>
+</ul>
+<p>创建一个类来执行第一个业务：<br>要注意的是： Python 的规定方法定义<strong>必须有</strong>额外的参数self指代其本身，类似java的this。</p>
+<pre><code>class Get_First_Url: #用于获取博客首页第一篇博文的地址的类
+     def __init__(self, url2): #类构造器，这里我们还传入一个url，即博客首页的地址
+        self.url = url2 #将参数赋值给类，python里可以任意添加成员变量而不用提前声明，要用的时候直接调用self.xxx
+        &apos;&apos;&apos;
+           伪装浏览器
+        &apos;&apos;&apos;
+        self.page = page #获取的网页信息
+        self.beginurl = self.getFirstUrl() #下面我们会定义一个方法来解析网页并保存一篇的地址
+</code></pre><h3 id="解析html标签"><a href="#解析html标签" class="headerlink" title="解析html标签"></a>解析html标签</h3><p>上面获得的 page 包含了所有的网页里的 html 标签，我们现在就要解析标签，获得信息，举个例子，在<a href="http://blog.csdn.net/yazhi1992" target="_blank" rel="noopener">我的博客主页</a>里右键-查看源代码，可以看到整个网址包含的所有html标签，如何从中找到自己想要的信息是哪个标签呢？</p>
+<p><img src="http://img.blog.csdn.net/20160624233509024" alt="审查元素"></p>
+<p>以获取第一篇博客的链接地址为例，右键标题，审查元素，就可以看到该链接的html标签了</p>
+<p><img src="http://img.blog.csdn.net/20160624233545856" alt="标签"></p>
+<pre><code>&lt;span class=&quot;link_title&quot;&gt;
+    &lt;a href=&quot;/yazhi1992/article/details/51497576&quot;&gt;
+        eclipse再见，android studio 新手入门教程（三）Github（.ignore忽略规则）的使用            
+    &lt;/a&gt;
+&lt;/span&gt;
+</code></pre><p>很容易看出，博客地址就是 csdn 网址拼接span标签内的a标签的key为href对应的value值。为了得到这个值，就要使用 breautifulsoup 解析，我们定义一个方法：</p>
+<pre><code>def getFirstUrl(self):
+    bs = BeautifulSoup(self.page) #创建breautifulsoup对象
+    html_content_list = bs.find(&apos;span&apos;, class_=&apos;link_title&apos;) #获得key为class，value为link——title的span标签，因为class与python语法的关键字冲突，所以要使用 class_ 代替
+    if (html_content_list == None): #如果未找到该标签则返回&apos;nourl&apos;
+            return &quot;no url&quot;
+    try: #异常捕获
+        return &apos;http://blog.csdn.net&apos; + html_content_list.a[&apos;href&apos;]
+    except Exception, e:
+        return &quot;nourl&quot;
+</code></pre><p>所以到这里，我们就已经可以得到我们所需要的第一个数据了：</p>
+<pre><code>first_spider = Get_First_Url(now_url) 
+begin_url = first_spider.beginurl
+</code></pre><p>获取其他数据方法类似，值得一提的是另一种标签的解析，需要的数据是标签内部的文字：</p>
+<pre><code>&lt;div class=&quot;article_r&quot;&gt;
+    &lt;span class=&quot;link_postdate&quot;&gt;I want this&lt;/span&gt;
+&lt;/div&gt;
+</code></pre><p>想要获得标签的内容</p>
+<pre><code>bs = BeautifulSoup(self.page) #创建breautifulsoup对象        
+html_content_list = bs.find(&apos;span&apos;, class_=&apos;link_postdate&apos;)
+print html_content_list.string
+</code></pre><p>我还遇到过想要获取时间2015-10-10 16:24这个值，但是执行上述代码会报错，提说说soup没有string这个值，那就需要对其做个转变为字符串的操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print str(html_content_list.string)</span><br></pre></td></tr></table></figure>
+<p>更多breautifulsoup的用法可以参考<a href="http://cuiqingcai.com/1319.html" target="_blank" rel="noopener">Python爬虫利器二之Beautiful Soup的用法</a></p>
+<h3 id="编码问题：python-Non-ASCII-character-‘-xe5’-in-file"><a href="#编码问题：python-Non-ASCII-character-‘-xe5’-in-file" class="headerlink" title="编码问题：python Non-ASCII character ‘\xe5’ in file"></a>编码问题：python Non-ASCII character ‘\xe5’ in file</h3><p>如果你运行程序后报这个错，解决办法是在文件头添加：</p>
+<pre><code>#coding=utf-8
+import sys
+default_encoding = &apos;utf-8&apos;
+if sys.getdefaultencoding() != default_encoding:
+    reload(sys)
+    sys.setdefaultencoding(default_encoding)
+</code></pre><h3 id="关于-Python-的一些注意点："><a href="#关于-Python-的一些注意点：" class="headerlink" title="关于 Python 的一些注意点："></a>关于 Python 的一些注意点：</h3><p>talk is cheap, show you the code.</p>
+<h4 id="切割字符串"><a href="#切割字符串" class="headerlink" title="切割字符串"></a>切割字符串</h4><pre><code>str = &apos;this is test&apos;  
+print str[:4]  #输出结果  this
+print str[3:]  #输出结果  s is test
+print str[1:4]  #输出结果  his
+</code></pre><p>不用多说，冒号“ ： ”代表首或尾，和java一样的包左不包右。如果首尾都是数字，中间用冒号分割。</p>
+<h4 id="关于数组"><a href="#关于数组" class="headerlink" title="关于数组"></a>关于数组</h4><pre><code>list = []
+print list[-2] #数组倒数第二个的值
+</code></pre><h4 id="关于全局变量"><a href="#关于全局变量" class="headerlink" title="关于全局变量"></a>关于全局变量</h4><p>直接在外部定义全局变量，但是使用时需要用globla关键字表示</p>
+<pre><code>TEST = &apos;this is global variable&apos;
+
+class ...
+    def...
+        global TEST  #使用关键字标识这个TEST是全局变量
+        print TEST   #使用该变量
+</code></pre><h4 id="关于导包"><a href="#关于导包" class="headerlink" title="关于导包"></a>关于导包</h4><p>IDE好像不能自动导包（我也没认真去翻setting）导包的话直接在文件头import相应的包，例如</p>
+<pre><code>from bs4 import BeautifulSoup  #导breatifulsoup的包
+import urllib2  
+import random 
+...等等
+</code></pre><h4 id="关于布尔类型True、False"><a href="#关于布尔类型True、False" class="headerlink" title="关于布尔类型True、False"></a>关于布尔类型True、False</h4><p>Python 的布尔类型是<strong>首字母大写</strong>的（或者IDE可以设置忽略大小写联想，我没有去仔细翻）。(╯‵□′)╯︵┻━┻        </p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><pre><code>if(list==null||list.size == 0) {  //java
+    ...
+} else {
+    ...
+}
+
+if (list == None or len(list) == 0):  #python
+    ...
+else:  
+    ...
+</code></pre><p>因为我是爬取正文的html标签，然后在android端上使用webview展示，但是有个问题是webview里会显示电脑端的效果，字很小。查看手机端网页源代码后，发现在html标签头添加以下代码，就可以适配移动端浏览器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;head&gt;</span><br><span class="line">   &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</span><br><span class="line">    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=Edge&quot;&gt;</span><br><span class="line">    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no&quot;&gt;</span><br><span class="line">    &lt;meta name=&quot;apple-mobile-web-app-status-bar-style&quot; content=&quot;yes&quot;&gt;</span><br><span class="line">    &lt;script src=&quot;http://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</span><br><span class="line">    &lt;!--link( rel=&quot;stylesheet&quot; href=&quot;http://c.csdnimg.cn/public/common/toolbar/css/index.css&quot; )--&gt;</span><br><span class="line">    &lt;link rel=&quot;stylesheet&quot; href=&quot;http://csdnimg.cn/public/common/libs/bootstrap/css/bootstrap.css&quot;&gt;</span><br><span class="line">    &lt;link rel=&quot;stylesheet&quot; href=&quot;http://csdnimg.cn/public/static/css/avatar.css&quot;&gt;</span><br><span class="line">    &lt;link rel=&quot;stylesheet&quot; href=&quot;/static/css/common.css&quot;&gt;</span><br><span class="line">    &lt;!-- [if IE 7]--&gt;</span><br><span class="line">    &lt;!--link( rel=&quot;stylesheet&quot; href=&quot;assets/css/font-awesome-ie7.min.css&quot; )--&gt;</span><br><span class="line">    &lt;!-- [endif]--&gt;</span><br><span class="line">    &lt;link rel=&quot;stylesheet&quot; href=&quot;/static/css/main.css&quot;&gt;</span><br><span class="line">    &lt;!-- [if lt IE 9]--&gt;</span><br><span class="line">    &lt;script src=&quot;/static/js/libs/html5shiv.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">    &lt;!-- [endif]--&gt;</span><br><span class="line">    &lt;title&gt;&lt;/title&gt;</span><br><span class="line">    &lt;script type=&quot;text/javascript&quot; src=&quot;/static/js/apps/blog_mobile.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;/head&gt;</span><br></pre></td></tr></table></figure>
+<p>另外，关于webview网页里图片自适应，4.4以前只需要：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WebSettings webSettings= contentWeb.getSettings();</span><br><span class="line">webSettings.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);</span><br></pre></td></tr></table></figure>
+<p>但是在Android 4.4系统上 Google已经将系统默认的Webkit内核替换成自己的开源项目chromium，导致的一个问题就是上述代码失效了，解决方法请参考<a href="http://blog.csdn.net/xiaoxin_android/article/details/51194770" target="_blank" rel="noopener">Android 中 WebView 与 js 简单交互实现图文混排效果,解决图片自适应屏幕与查看大图问题</a>，亲测有效。</p>
+<p><img src="http://img.blog.csdn.net/20160625104618199" alt="webview图片自适应"></p>
+<p>Python 爬虫<a href="http://download.csdn.net/detail/yazhi1992/9559009" target="_blank" rel="noopener">源码下载</a>，请替换自己的leancloud应用的id和key，具体如何在爬虫里上传数据，以及在app里如何读取数据，请阅读<a href="https://leancloud.cn/docs/" target="_blank" rel="noopener">leancloud官方开发文档</a>。</p>
+<p>Stay hungry, Stay foolish。下篇博客见。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/25/eclipse再见，android-studio-新手入门教程（三）Github（-ignore忽略规则）的使用/" rel="next" title="eclipse再见，android studio 新手入门教程（三）Github（.ignore忽略规则）的使用">
+                <i class="fa fa-chevron-left"></i> eclipse再见，android studio 新手入门教程（三）Github（.ignore忽略规则）的使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/29/Adnroid源码学习笔记：Handler-线程间通讯/" rel="prev" title="Adnroid源码学习笔记：Handler 线程间通讯">
+                Adnroid源码学习笔记：Handler 线程间通讯 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#开发环境的搭建"><span class="nav-number">1.</span> <span class="nav-text">开发环境的搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#搭建环境的一些小坑：error2502-2503"><span class="nav-number">1.1.</span> <span class="nav-text">搭建环境的一些小坑：error2502/2503</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装pip和beautifulsoup："><span class="nav-number">1.2.</span> <span class="nav-text">安装pip和beautifulsoup：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初识爬虫"><span class="nav-number">2.</span> <span class="nav-text">初识爬虫</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#伪装浏览器"><span class="nav-number">2.1.</span> <span class="nav-text">伪装浏览器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析html标签"><span class="nav-number">2.2.</span> <span class="nav-text">解析html标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编码问题：python-Non-ASCII-character-‘-xe5’-in-file"><span class="nav-number">2.3.</span> <span class="nav-text">编码问题：python Non-ASCII character ‘\xe5’ in file</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于-Python-的一些注意点："><span class="nav-number">2.4.</span> <span class="nav-text">关于 Python 的一些注意点：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#切割字符串"><span class="nav-number">2.4.1.</span> <span class="nav-text">切割字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于数组"><span class="nav-number">2.4.2.</span> <span class="nav-text">关于数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于全局变量"><span class="nav-number">2.4.3.</span> <span class="nav-text">关于全局变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于导包"><span class="nav-number">2.4.4.</span> <span class="nav-text">关于导包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于布尔类型True、False"><span class="nav-number">2.4.5.</span> <span class="nav-text">关于布尔类型True、False</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他"><span class="nav-number">2.4.6.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

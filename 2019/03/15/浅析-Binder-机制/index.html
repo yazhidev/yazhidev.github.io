@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="几个概念 进程隔离  进程隔离，不同进程之间，不共享内存。而操作系统是多进程的，因此需要 IPC。  进程空间划分  Kernel 是操作系统的核心，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。因此把 Kernel 和上层的应用程序隔离，分为内核空间和用户空间。    Android 利用了 Linux 的动态可加载内核模块机制，使 Binder 驱动运行在内核空间，负责各个用户进程">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅析 Binder 机制">
+<meta property="og:url" content="https://yazhidev.github.io/2019/03/15/浅析-Binder-机制/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="几个概念 进程隔离  进程隔离，不同进程之间，不共享内存。而操作系统是多进程的，因此需要 IPC。  进程空间划分  Kernel 是操作系统的核心，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。因此把 Kernel 和上层的应用程序隔离，分为内核空间和用户空间。    Android 利用了 Linux 的动态可加载内核模块机制，使 Binder 驱动运行在内核空间，负责各个用户进程">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1929170-e63a92df044802ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1929170-f42db494f98df733.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.444Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅析 Binder 机制">
+<meta name="twitter:description" content="几个概念 进程隔离  进程隔离，不同进程之间，不共享内存。而操作系统是多进程的，因此需要 IPC。  进程空间划分  Kernel 是操作系统的核心，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。因此把 Kernel 和上层的应用程序隔离，分为内核空间和用户空间。    Android 利用了 Linux 的动态可加载内核模块机制，使 Binder 驱动运行在内核空间，负责各个用户进程">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1929170-e63a92df044802ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2019/03/15/浅析-Binder-机制/">
+
+
+
+
+
+  <title>浅析 Binder 机制 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2019/03/15/浅析-Binder-机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">浅析 Binder 机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-15T08:37:24+08:00">
+                2019-03-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="几个概念"><a href="#几个概念" class="headerlink" title="几个概念"></a>几个概念</h3><ol>
+<li><p>进程隔离</p>
+<p> 进程隔离，不同进程之间，不共享内存。而操作系统是多进程的，因此需要 IPC。</p>
+</li>
+<li><p>进程空间划分</p>
+<p> Kernel 是操作系统的核心，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。因此把 Kernel 和上层的应用程序隔离，分为内核空间和用户空间。</p>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929170-e63a92df044802ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="进程隔离"></p>
+<p>Android 利用了 Linux 的动态可加载内核模块机制，使 Binder 驱动运行在内核空间，负责各个用户进程通信。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929170-f42db494f98df733.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Binder 机制"></p>
+<h3 id="Binder-通信模型：C-S-模型"><a href="#Binder-通信模型：C-S-模型" class="headerlink" title="Binder 通信模型：C/S 模型"></a>Binder 通信模型：C/S 模型</h3><p>通信过程：</p>
+<ol>
+<li>Server 向 ServiceManager 也是通过发送 Binder 消息注册。ServiceManager 是比较特殊的服务，所有应用都能直接使用，因为ServiceManager对于Client端来说Handle句柄是固定的，都是0，所以ServiceManager服务并不需要查询，可以直接使用。</li>
+<li>client 通过 ServiceManager 获得一个 server 的 Binder 实体的代理，对 server 进行调用。代理接口中定义的方法与 server 中定义的方法时一一对应的。</li>
+<li>client 调用某个代理接口中的方法时，代理接口的方法会将 client 传递的参数打包成 Parcel 对象。client 线程挂起。</li>
+<li>代理接口将 Parcel 发送给内核中的 binder 驱动。驱动通过一系列调用，将请求派发给 server 的 Binder 本地对象的 onTransact 方法。</li>
+<li>onTransact 方法解包 Parcel 对象，处理并将结果返回给 binder 驱动，驱动唤醒 client 线程，并将结果返回。</li>
+</ol>
+<p>Android APP进程都是由Zygote进程孵化出来的。常见场景：点击桌面icon启动APP，或者startActivity启动一个新进程里面的Activity，最终都会由AMS去调用Process.start()方法去向Zygote进程发送请求，让Zygote去fork一个新进程，Zygote收到请求后会调用Zygote.forkAndSpecialize()来fork出新进程,之后会通过RuntimeInit.nativeZygoteInit来初始化Andriod APP运行需要的一些环境，而binder线程就是在这个时候新建启动的。</p>
+<p>IPC 是一个概念，Binder 是一种 IPC 的具体实现；AIDL 是 Binder 机制向外提供的接口，目的就是为了方便对 Binder 的使用；</p>
+<p>Android 系统匿名共享内存 Ashmem，其作用之一即通过 Binder 进程间通信机制来实现进程间的内存共享。 </p>
+<p>Client 进程只不过是持有了 Server端的代理；代理对象协助驱动完成了跨进程通信。</p>
+<p>对 Server 来说，Binder 就是 Binder 本地对象，对 Client 来说, Binder 是 Binder 本地对象的代理。在Android开机启动过程中，Android会初始化系统的各种Service，并将这些Service向ServiceManager注册。</p>
+<p>我们所持有的Binder引用(即服务端的类引用)并不是实际真实的远程Binder对象，我们的引用在Binder驱动里还要做一次映射。客户端要调用远程对象函数时，只需把数据写入到Parcel，在调用所持有的Binder引用的transact()函数，transact函数执行过程中会把参数、标识符（标记远程对象及其函数）等数据放入到Client的共享内存，Binder驱动从Client的共享内存中读取数据，根据这些数据找到对应的远程进程的共享内存，把数据拷贝到远程进程的共享内存中，并通知远程进程执行onTransact()函数。远程进程Binder对象执行完成后，将结果写入自己的共享内存中，Binder驱动再将远程进程的共享内存数据拷贝到客户端的共享内存，并唤醒客户端线程。</p>
+<p>整个的调用过程是一个同步过程，在server处理的时候，client会block住。因此client调用过程不应在主线程。</p>
+<p>区别于传统的 IPC 的两次拷贝， Binder 机制使用内存映射。</p>
+<p>Binder IPC 机制中涉及到的内存映射通过 mmap() 来实现，mmap() 是操作系统中一种内存映射的方法。内存映射简单的讲就是将用户空间的一块内存区域映射到内核空间。映射关系建立后，用户对这块内存区域的修改可以直接反应到内核空间；反之内核空间对这段区域的修改也能直接反应到用户空间。<br>只需要一次拷贝（用户内核到服务内核的拷贝）内存映射能减少数据拷贝次数，实现用户空间和内核空间的高效互动。两个空间各自的修改能直接反映在映射的内存区域，从而被对方空间及时感知。</p>
+<h3 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h3><p>Client 连接 Server 时，需要创建一个 ServiceConnection 作为入参，ServiceConnection 的回调方法 onServiceConnected 中会通过 asInterface(IBinder binder) 拿到 IBinder 对象，如果 Client 和 Server 在同一个进出，binder 就是 Binder 本地对象，否则是一个代理对象。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://juejin.im/post/5acccf845188255c3201100f#heading-23" target="_blank" rel="noopener">写给 Android 应用工程师的 Binder 原理剖析</a></p>
+<p><a href="https://blog.csdn.net/augfun/article/details/82343249" target="_blank" rel="noopener">简单理解Binder机制的原理</a></p>
+<p><a href="https://blog.csdn.net/china0851/article/details/87945740" target="_blank" rel="noopener">https://blog.csdn.net/china0851/article/details/87945740</a></p>
+<p><a href="http://gityuan.com/2015/11/14/binder-add-service/" target="_blank" rel="noopener">Binder系列5—注册服务(addService)</a></p>
+<p><a href="https://juejin.im/post/58c90816a22b9d006413f624" target="_blank" rel="noopener">听说你Binder机制学的不错，来解决下这几个问题（一）</a></p>
+<p><a href="https://juejin.im/post/5acccf845188255c3201100f" target="_blank" rel="noopener">写给 Android 应用工程师的 Binder 原理剖析</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/13/Android-焦点分发机制梳理/" rel="next" title="Android 焦点分发机制梳理">
+                <i class="fa fa-chevron-left"></i> Android 焦点分发机制梳理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/28/Java-内存模型/" rel="prev" title="Java 内存模型">
+                Java 内存模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#几个概念"><span class="nav-number">1.</span> <span class="nav-text">几个概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Binder-通信模型：C-S-模型"><span class="nav-number">2.</span> <span class="nav-text">Binder 通信模型：C/S 模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现过程"><span class="nav-number">3.</span> <span class="nav-text">实现过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

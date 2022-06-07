@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="写在前面：作为一个刚半只脚踏入android开发的新手，在使用eclipse开发了两个自我感觉不甚成熟的商城类app之后，遇到了一些问题，总结为如下：  代码复用性。findviewById，onclick事件等，一遍遍重复这类无聊的代码简直浪费生命，这个问题推荐通过依赖注入框架ButterKnife解决，直接一键生成布局中的所有控件，包括onclick点击事件，但是诸如行布局item里的控件，以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="eclipse再见，android studio 新手入门教程（一）基本设置">
+<meta property="og:url" content="https://yazhidev.github.io/2016/03/29/eclipse再见，android-studio-新手入门教程（一）基本设置/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="写在前面：作为一个刚半只脚踏入android开发的新手，在使用eclipse开发了两个自我感觉不甚成熟的商城类app之后，遇到了一些问题，总结为如下：  代码复用性。findviewById，onclick事件等，一遍遍重复这类无聊的代码简直浪费生命，这个问题推荐通过依赖注入框架ButterKnife解决，直接一键生成布局中的所有控件，包括onclick点击事件，但是诸如行布局item里的控件，以">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-77b39246579fa895?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-f0d635ff5cce11d9?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-44e4cf87d9ec95fe?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-00d09cd501826ca1?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-c0bf0bc5ee26f469?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-8a142e559dcfc383?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-667f2450f5abe4ee?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-45f48df4edfb1aed?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-e11dfdd26c1bd64b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-7f3ab33738cb5fe1?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-3f26b69294e81dd2?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-5e98cc8154d93a6a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-91953f80356ac678?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-5c486531ef57616e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-187a4e1fb5e8a445?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-9dc4158b9766c121?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.440Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="eclipse再见，android studio 新手入门教程（一）基本设置">
+<meta name="twitter:description" content="写在前面：作为一个刚半只脚踏入android开发的新手，在使用eclipse开发了两个自我感觉不甚成熟的商城类app之后，遇到了一些问题，总结为如下：  代码复用性。findviewById，onclick事件等，一遍遍重复这类无聊的代码简直浪费生命，这个问题推荐通过依赖注入框架ButterKnife解决，直接一键生成布局中的所有控件，包括onclick点击事件，但是诸如行布局item里的控件，以">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1929170-77b39246579fa895?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2016/03/29/eclipse再见，android-studio-新手入门教程（一）基本设置/">
+
+
+
+
+
+  <title>eclipse再见，android studio 新手入门教程（一）基本设置 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2016/03/29/eclipse再见，android-studio-新手入门教程（一）基本设置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">eclipse再见，android studio 新手入门教程（一）基本设置</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-03-29T16:31:15+08:00">
+                2016-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="写在前面："><a href="#写在前面：" class="headerlink" title="写在前面："></a>写在前面：</h2><p>作为一个刚半只脚踏入android开发的新手，在使用eclipse开发了两个自我感觉不甚成熟的商城类app之后，遇到了一些问题，总结为如下：</p>
+<ol>
+<li><strong>代码复用性</strong>。findviewById，onclick事件等，一遍遍重复这类无聊的代码简直浪费生命，这个问题推荐通过依赖注入框架ButterKnife解决，直接一键生成布局中的所有控件，包括onclick点击事件，但是诸如行布局item里的控件，以及布局中include复用的布局要如何使用框架解决，这个有待后续再看。<br>另一个代码重复率很高的地方便是对HTTP回调的处理，与服务端交互免不了要对返回的json数据进行解析，并根据不同状态下的status做相应的处理，这个问题通过对回调监听器listener的封装，可以减少一部分重复的代码。</li>
+</ol>
+<ul>
+<li><strong>代码复用性</strong>。在使用github使用一些大神的开源库时会发现eclipse越来越被边缘化了。参照我博客百分比布局的文章，许多工具类/库的使用，android studio用户只要在gradle中添加一行代码即可轻松集成，eclipse用户只能眼巴巴自己去复制相关java类和文件，先搞个demo测一下，可用了再集成进项目，费时费力。因此，要解决这个问题，学习android studio就显得很有必要了。我自己在android studio的使用上暂时也是一知半解，但是有一些问题的解决也花费了我不少的精力，所以即使是一些简单的知识，也希望能够帮到同样碰到这些问题的朋友。</li>
+</ul>
+<p>那么正文开始吧。首先是android studio入门的第一步：</p>
+<h2 id="android-studio的安装："><a href="#android-studio的安装：" class="headerlink" title="android studio的安装："></a>android studio的安装：</h2><p><a href="http://androiddevtools.cn/" target="_blank" rel="noopener">国内镜像地址</a><br>安装过程就不用教学了吧。<br>装好之后，有部分人可能会遇到点击程序后就闪一下，打开不了。<br>解决方法：修改配置文件：Android-Studio\android-studio\bin\idea.properties，在文件结尾增加：disable.android.first.run=true</p>
+<p>教程第一篇就先设置一些参数配置吧，工欲善其事必先利其器。</p>
+<h2 id="基本设置"><a href="#基本设置" class="headerlink" title="基本设置"></a>基本设置</h2><p>进入settings的方法有：<br>（1）启动界面：Configure - settings，（2）File - settings， （3）点击顶部工具栏图标</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-77b39246579fa895?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>部分配置设置方法：</p>
+<ol>
+<li>主题的设置，Darcula就是传说中的极客范的黑色主题啦</li>
+</ol>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-f0d635ff5cce11d9?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>字体设置，搜索栏搜索font，直接修改，下方实时预览，建议修改后点击save as 保存一份</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-44e4cf87d9ec95fe?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>显示行号，方便后续根据错误日志定位bug位置</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-00d09cd501826ca1?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>重头戏来喽，快捷键风格设定，不过即使直接设定eclipse仍然会有部分快捷键冲突，这个下面会提到</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-c0bf0bc5ee26f469?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt> </p>
+<ul>
+<li>联想快捷键。有冲突，我选择了忽视冲突强行修改成和eclipse一样的alt+/，毕竟这个太常用了。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-8a142e559dcfc383?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>设置联想不区分大小写。不过在xml界面编辑时，例如要输入 “&lt; Button &gt;” ， 必须先输入“&lt;”才会联想，还没有找到在哪里设置成像eclipse那样，任意符号字母都可联想。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-667f2450f5abe4ee?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>编码</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-45f48df4edfb1aed?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt> </p>
+<ul>
+<li>有些朋友想一打开as就直接进入项目，跳过选择项目的启动界面，取消勾选reopen lase project即可</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-e11dfdd26c1bd64b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt> </p>
+<ul>
+<li>代码区背景色设置</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-7f3ab33738cb5fe1?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>android studio与eclipse不同，eclipse联想出方法后，方法内会默认带有该方法的参数，我们只要对着修改就好了，studio联想出方法后，括号里为空。但是会有悬浮框提示：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-3f26b69294e81dd2?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>这个悬浮窗会极大便利我们对方法的书写，修改相应的参数方法如下：<br> 10.1 ：修改方法写完后悬浮窗出现的时间</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-5e98cc8154d93a6a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>10.2：如果你写完方法后，移到别处后又移回来，忘记了方法里需要的参数，那么此时有两种方法：1，鼠标放在方法名上，便会出现对该方法的介绍。2，使用快捷键显示上图的悬浮窗，快捷键修改方法：（我修改成alt+。，这个快捷键也是冲突的，但是暂时没发现有什么不妥）</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-91953f80356ac678?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>，eclipse中还有一个很常用的快捷键ctrl+1，比如我们在new一个类时，new A（），按下ctrl + 1，自动联想为A a = new A（）；studio中还需要另外设置一下：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-5c486531ef57616e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><img src="http://upload-images.jianshu.io/upload_images/1929170-187a4e1fb5e8a445?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>修改默认注释信息。每次新建java文件时会在文件顶部添加的注释信息。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-9dc4158b9766c121?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h2 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h2><p>这里提供一下android studio中一些<strong>与eclipse不同的快捷键</strong>：<br><strong>向上插入空行</strong>：ctrl + 空格<br><strong>错误提示</strong>：alt + enter<br><strong>生成构造方法，set和get等</strong>：alt + insert<br><strong>局部变量变为全局变量</strong>：ctrl + alt + F<br><strong>提炼方法</strong>：shift+ alt + M<br><strong>资源文件重命名</strong>：alt+shift+R<br><strong>查看方法在哪里被使用</strong>：ctrl+G<br><strong>清楚无效包</strong>：ctrl+alt+o</p>
+<p>其他的后续使用过程中继续补全。想修改相关的快捷键，只要在keymap中的快捷键内任意点一个，修改成原本的键。例如错误提示alt + enter用的不习惯想改键，但是又不知道错误提示键的位置在哪里，这是只要在keymap中任意选中一个修改成alt + enter，提示框内就会提示这个组合键和哪个功能冲突，根据红字的提示找到位置，该位置就是你想修改的功能的位置啦。<br>关于android studio的基本设置就是这样啦。<br>Stay hungry, Stay foolish。下篇博客再见。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/18/eclipse再见，android-studio-新手入门教程（二）项目的导入/" rel="prev" title="eclipse再见，android studio 新手入门教程（二）项目的导入">
+                eclipse再见，android studio 新手入门教程（二）项目的导入 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#写在前面："><span class="nav-number">1.</span> <span class="nav-text">写在前面：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#android-studio的安装："><span class="nav-number">2.</span> <span class="nav-text">android studio的安装：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本设置"><span class="nav-number">3.</span> <span class="nav-text">基本设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快捷键"><span class="nav-number">4.</span> <span class="nav-text">快捷键</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Java 内存模型是围绕着在并发过程中如何处理原子性、可见性和有序性这三个特征来建立的。 经典问题： 20 个线程，每个线程都对同一个 int 做自增操作 100 次，最后的结果 i 一定小余 2000。 Java中的运算操作，例如自增或自减，若没有进行额外的同步操作，在多线程环境下就是线程不安全的。num++解析为num=num+1，明显，这个操作不具备原子性，多线程并发共享这个变量时必然会出现">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 内存模型">
+<meta property="og:url" content="https://yazhidev.github.io/2019/03/28/Java-内存模型/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="Java 内存模型是围绕着在并发过程中如何处理原子性、可见性和有序性这三个特征来建立的。 经典问题： 20 个线程，每个线程都对同一个 int 做自增操作 100 次，最后的结果 i 一定小余 2000。 Java中的运算操作，例如自增或自减，若没有进行额外的同步操作，在多线程环境下就是线程不安全的。num++解析为num=num+1，明显，这个操作不具备原子性，多线程并发共享这个变量时必然会出现">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.438Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 内存模型">
+<meta name="twitter:description" content="Java 内存模型是围绕着在并发过程中如何处理原子性、可见性和有序性这三个特征来建立的。 经典问题： 20 个线程，每个线程都对同一个 int 做自增操作 100 次，最后的结果 i 一定小余 2000。 Java中的运算操作，例如自增或自减，若没有进行额外的同步操作，在多线程环境下就是线程不安全的。num++解析为num=num+1，明显，这个操作不具备原子性，多线程并发共享这个变量时必然会出现">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2019/03/28/Java-内存模型/">
+
+
+
+
+
+  <title>Java 内存模型 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2019/03/28/Java-内存模型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java 内存模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-28T07:46:13+08:00">
+                2019-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Java 内存模型是围绕着在并发过程中如何处理原子性、可见性和有序性这三个特征来建立的。</p>
+<p>经典问题：</p>
+<p>20 个线程，每个线程都对同一个 int 做自增操作 100 次，最后的结果 i 一定小余 2000。</p>
+<p>Java中的运算操作，例如自增或自减，若没有进行额外的同步操作，在多线程环境下就是线程不安全的。num++解析为num=num+1，明显，这个操作不具备原子性，多线程并发共享这个变量时必然会出现问题。</p>
+<p>原因：</p>
+<p>普通变量的值在线程间传递都需要通过主内存来完成。例如，线程 A 修改了一个普通变量的值，然后向主内存进行回写，另外一条线程 B 在线程 A 回写完成了之后再从主内存进行读取操作，新变量值才会对线程 B 可见。</p>
+<h2 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h2><p>是指一个操作是不可中断的。即使是在多个线程一起执行的时候，一个操作一旦开始，就不会被其它线程干扰。 </p>
+<p>Java中的原子操作包括： </p>
+<ul>
+<li>除long和double之外的基本类型的赋值操作（long和double占用的字节数都是8，在32位操作系统上对64位的数据的读写要分两步完成，虽然 volatile 只保证可见性，但 java 内存模型保证声明为 volatile 的long和double变量的get和set操作是原子的。）</li>
+<li>所有引用reference的赋值操作 </li>
+<li>java.concurrent.Atomic.* 包中所有类的一切操作。 </li>
+</ul>
+<h2 id="可见性"><a href="#可见性" class="headerlink" title="可见性"></a>可见性</h2><p>一个线程对一个变量进行更改操作 其他线程获取会获得最新的值</p>
+<p>sleep 方法并没有加锁，为什么能够保证可见性。sleep是阻塞线程并不释放锁，让出cpu调度。让出cpu调度后下次执行会刷新工作内存</p>
+<h2 id="指令重排"><a href="#指令重排" class="headerlink" title="指令重排"></a>指令重排</h2><p>在单线程中不影响最终结果，jvm 会对指令做优化排序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//在线程A中执行:</span><br><span class="line"></span><br><span class="line">context = loadContext(); （1）</span><br><span class="line">contextReady = true; （2）</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//在线程B中执行:</span><br><span class="line"></span><br><span class="line">if(contextReady) &#123;</span><br><span class="line">   context.xxx </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1，2 的顺序可能因为指令重排做了调换。先执行2，再执行1。</p>
+<p>因此在多线程中可能导致线程 B 中， context 还没有初始化，但 contextReady 已经是 true，就报空指针。</p>
+<h2 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h2><p>1.阻止屏障两侧的指令重排序；<br>2.强制把写缓冲区/高速缓存中的脏数据等写回主内存，让缓存中相应的数据失效。</p>
+<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><ul>
+<li><p>内存屏障策略：</p>
+<p>  在每个volatile写操作前插入StoreStore屏障，在写操作后插入StoreLoad屏障；</p>
+<p>  在每个volatile读操作前插入LoadLoad屏障，在读操作后插入LoadStore屏障；</p>
+</li>
+</ul>
+<p>因此 volatile 可以做到：</p>
+<ol>
+<li><p>线程的可见性</p>
+<p> volatile 变量在各个线程的工作内存中不存在一致性问题。因为每次赋值后，都会通过内存屏障更新主存中的值。</p>
+</li>
+<li><p>禁止指令重排</p>
+<p> 因为每次读写前后都会插入内存屏障，而内存屏障前后的指令不可被重排。</p>
+</li>
+</ol>
+<p>但是需要注意的是 volatile 只保证可见性，并不保证原子性。为了实现上述 i++ 的原子性运算，需要用到实现线程安全的两个保障手段：阻塞同步和非阻塞同步都是。</p>
+<ul>
+<li><p>阻塞同步</p>
+<p>  即加锁。但是会带来线程阻塞和唤醒的性能开销</p>
+</li>
+<li><p>非阻塞同步</p>
+<p>  对于阻塞同步而言主要解决了阻塞同步中线程阻塞和唤醒带来的性能问题。在并发环境下，某个线程对共享变量先进行操作，如果没有其他线程争用共享数据那操作就成功；如果存在数据的争用冲突，那就才去补偿措施，比如不断的重试机制，直到成功为止，因为这种乐观的并发策略不需要把线程挂起，也就把这种同步操作称为非阻塞同步（操作和冲突检测具备原子性）。Java 中实现 CAS 乐观锁的方式是使用 AtomicInteger。</p>
+</li>
+</ul>
+<h2 id="CAS（Compare-And-Swap-比较并交换）"><a href="#CAS（Compare-And-Swap-比较并交换）" class="headerlink" title="CAS（Compare-And-Swap 比较并交换）"></a>CAS（Compare-And-Swap 比较并交换）</h2><p>CAS 操作包含三个操作数：内存位置（V）、预期原值（A）和新值(B)。 如果内存位置的值与预期原值相匹配，那么处理器会自动将该位置值更新为新值 。否则，处理器不做任何操作。</p>
+<p>Java 的 CAS 会使用 cpu 上提供的高效机器级别原子指令，这些原子指令以原子方式对内存执行读-改-写操作。但 CAS 也存在一些问题：</p>
+<ol>
+<li><p>ABA 问题</p>
+<p> 如果一个值原来是A，变成了B，又变成了A，那么使用CAS进行检查时会发现它的值没有发生变化，但是实际上却变化了。ABA问题的解决思路就是使用版本号。在变量前面追加上版本号，每次变量更新的时候把版本号加一，那么A－B－A 就会变成1A-2B－3A。</p>
+</li>
+<li><p>循环时间长开销大</p>
+</li>
+</ol>
+<ol start="3">
+<li><p>只能保证一个共享变量的原子操作</p>
+<p> AtomicReference类来保证引用对象之间的原子性，你可以把多个变量放在一个对象里来进行CAS操作。</p>
+</li>
+</ol>
+<h2 id="AtomicInteger"><a href="#AtomicInteger" class="headerlink" title="AtomicInteger"></a>AtomicInteger</h2><p>依赖于 Unsafe 提供的一些底层能力，实现了 CAS 的乐观锁。如果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">// AtomicInteger</span><br><span class="line">private static final sun.misc.Unsafe U = sun.misc.Unsafe.getUnsafe();</span><br><span class="line">private static final long VALUE;</span><br><span class="line"></span><br><span class="line">static &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        VALUE = U.objectFieldOffset</span><br><span class="line">            (AtomicInteger.class.getDeclaredField(&quot;value&quot;)); //用于返回类定义的某个属性在主存中设定的偏移量</span><br><span class="line">    &#125; catch (ReflectiveOperationException e) &#123;</span><br><span class="line">        throw new Error(e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private volatile int value; //使用 volatile 保证可见性</span><br><span class="line"></span><br><span class="line">public AtomicInteger(int initialValue) &#123;</span><br><span class="line">    value = initialValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//原子性的加法运算，依赖 Unsafe 类</span><br><span class="line">public final int addAndGet(int delta) &#123;</span><br><span class="line">    return U.getAndAddInt(this, VALUE, delta) + delta;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Unsafe</span><br><span class="line">public final int getAndAddInt(Object var1, long var2, int var4) &#123;</span><br><span class="line">    int var5;</span><br><span class="line">    do &#123;</span><br><span class="line">        var5 = this.getIntVolatile(var1, var2); //通过对象引用地址和 value 值的偏移量，获取 value 的值</span><br><span class="line">    &#125; while(!this.compareAndSwapInt(var1, var2, var5, var5 + var4));</span><br><span class="line"></span><br><span class="line">    return var5;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// natUnsafe.cc 底层实现</span><br><span class="line"></span><br><span class="line">jboolean</span><br><span class="line">sun::misc::Unsafe::compareAndSwapInt (jobject obj, jlong offset,</span><br><span class="line">				      jint expect, jint update)</span><br><span class="line">&#123;</span><br><span class="line">  jint *addr = (jint *)((char *)obj + offset);</span><br><span class="line">  return compareAndSwap (addr, expect, update);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static inline bool</span><br><span class="line">compareAndSwap (volatile jint *addr, jint old, jint new_val)</span><br><span class="line">&#123;</span><br><span class="line">  jboolean result = false;</span><br><span class="line">  spinlock lock;</span><br><span class="line">  if ((result = (*addr == old))) //如果值不相等就什么也不做，返回 false</span><br><span class="line">    *addr = new_val;</span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/15/浅析-Binder-机制/" rel="next" title="浅析 Binder 机制">
+                <i class="fa fa-chevron-left"></i> 浅析 Binder 机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/02/HandlerThread、IntentService理解/" rel="prev" title="HandlerThread、IntentService 理解">
+                HandlerThread、IntentService 理解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#原子性"><span class="nav-number">1.</span> <span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可见性"><span class="nav-number">2.</span> <span class="nav-text">可见性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指令重排"><span class="nav-number">3.</span> <span class="nav-text">指令重排</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存屏障"><span class="nav-number">4.</span> <span class="nav-text">内存屏障</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile"><span class="nav-number">5.</span> <span class="nav-text">volatile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAS（Compare-And-Swap-比较并交换）"><span class="nav-number">6.</span> <span class="nav-text">CAS（Compare-And-Swap 比较并交换）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AtomicInteger"><span class="nav-number">7.</span> <span class="nav-text">AtomicInteger</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="基本数据类型占用内存大小最近项目中修复了一个关于类型转换精度丢失的问题，以前对于类型转换会丢失精度只知其然，不知其所以然，这次了解了下相关原理，也分享给大家。先来回顾一下 Java 的基本数据类型中整型与浮点型及其所占用的内存大小： 整型：  int：4 字节 32 位 long：8 字节 64 位  浮点型：  float：4 字节 32 位 double：8 字节 64 位  Java 运算时">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 类型转换精度问题">
+<meta property="og:url" content="https://yazhidev.github.io/2020/08/01/Java-类型转换精度问题/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="基本数据类型占用内存大小最近项目中修复了一个关于类型转换精度丢失的问题，以前对于类型转换会丢失精度只知其然，不知其所以然，这次了解了下相关原理，也分享给大家。先来回顾一下 Java 的基本数据类型中整型与浮点型及其所占用的内存大小： 整型：  int：4 字节 32 位 long：8 字节 64 位  浮点型：  float：4 字节 32 位 double：8 字节 64 位  Java 运算时">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200901_204139_20200824075634064_585870421.png">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.438Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 类型转换精度问题">
+<meta name="twitter:description" content="基本数据类型占用内存大小最近项目中修复了一个关于类型转换精度丢失的问题，以前对于类型转换会丢失精度只知其然，不知其所以然，这次了解了下相关原理，也分享给大家。先来回顾一下 Java 的基本数据类型中整型与浮点型及其所占用的内存大小： 整型：  int：4 字节 32 位 long：8 字节 64 位  浮点型：  float：4 字节 32 位 double：8 字节 64 位  Java 运算时">
+<meta name="twitter:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200901_204139_20200824075634064_585870421.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2020/08/01/Java-类型转换精度问题/">
+
+
+
+
+
+  <title>Java 类型转换精度问题 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2020/08/01/Java-类型转换精度问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java 类型转换精度问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-01T20:41:06+08:00">
+                2020-08-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="基本数据类型占用内存大小"><a href="#基本数据类型占用内存大小" class="headerlink" title="基本数据类型占用内存大小"></a>基本数据类型占用内存大小</h2><p>最近项目中修复了一个关于类型转换精度丢失的问题，以前对于类型转换会丢失精度只知其然，不知其所以然，这次了解了下相关原理，也分享给大家。先来回顾一下 Java 的基本数据类型中整型与浮点型及其所占用的内存大小：</p>
+<p><strong>整型：</strong></p>
+<ul>
+<li>int：4 字节 32 位</li>
+<li>long：8 字节 64 位</li>
+</ul>
+<p><strong>浮点型：</strong></p>
+<ul>
+<li>float：4 字节 32 位</li>
+<li>double：8 字节 64 位</li>
+</ul>
+<p>Java 运算时，当两个不同类型的数进行基本运算符操作时，低精度会自动向高精度转换，字节短的会自动向字节长的转换。</p>
+<p>《Java 核心技术》一书中这么归纳到：</p>
+<blockquote>
+<p>如果两个操作数其中有一个是 double 类型，另一个操作就会转换为 double 类型。<br>否则，如果其中一个操作数是 float 类型，另一个将会转换为 float 类型。<br>否则，如果其中一个操作数是 long 类型，另一个会转换为 long 类型。<br>否则，两个操作数都转换为 int 类型。</p>
+</blockquote>
+<p>需要注意 Java 自动转换类型可能会带来精度的丢失，附上一张不会丢失精度的合法类型转换说明图：</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200901_204139_20200824075634064_585870421.png" alt="合法转换"></p>
+<p>图中实现箭头类型转换代表不会丢失精度，虚线箭头类型转换可能会丢失精度。</p>
+<h2 id="基本数据类型表示范围"><a href="#基本数据类型表示范围" class="headerlink" title="基本数据类型表示范围"></a>基本数据类型表示范围</h2><p>精度和数据类型可表示的数值大小范围息息相关，计算机中所有数值归根到底都是使用二进制 0、1 来组成，因此一个数据类型所占用的内存大小越大，就意味着可用的二进制位数越多，当然可表示的范围就越大。回顾一下几个常见的参与运算的基本数据类型的取值范围：</p>
+<p><strong>int</strong></p>
+<p>二进制位数：32<br>最小值：Integer.MIN_VALUE= -2147483648 （-2 的 31 次方）<br>最大值：Integer.MAX_VALUE= 2147483647 （2 的 31 次方 -1）</p>
+<p><strong>long</strong></p>
+<p>二进制位数：64<br>最小值：Long.MIN_VALUE=-9223372036854775808 （-2 的 63 次方）<br>最大值：Long.MAX_VALUE=9223372036854775807 （2 的 63 次方 -1）</p>
+<p><strong>float</strong></p>
+<p>二进制位数：32<br>最小值：Float.MIN_VALUE=1.4E-45 （2 的 -149 次方）<br>最大值：Float.MAX_VALUE=3.4028235E38 （2 的 128 次方 -1）</p>
+<p><strong>double</strong></p>
+<p>二进制位数：64<br>最小值：Double.MIN_VALUE=4.9E-324 （2 的 -1074 次方）<br>最大值：Double.MAX_VALUE=1.7976931348623157E308 （2 的 1024 次方 -1）</p>
+<p>当 long 类型的数大于 <code>Integer.MAX_VALUE</code> 时，long 强制转换 int，就会出现丢失精度。转换过程是将 long 类型数值的二进制数从低位到高位截取 32 位，再将 32 位二进制数转为 int。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">long l3 = 24696061952L; //10111000000000000000000000000000000</span><br><span class="line">int c3 = (int)l3; //-1073741824</span><br><span class="line">System.out.println(Integer.toBinaryString(c3)); //1000000000000000000000000000000</span><br></pre></td></tr></table></figure>
+<p>上面的例子中，long 类型截取 32 位后转为 int，最高位作为符号位，1 代表负数，强转后的 int 值为  <code>-1073741824</code>。<br>类似这种不合理的强制转换丢失的已经不仅仅是精度了。</p>
+<p>不知道有没有人注意到，long 类型的二进制位数是 64，float 类型的二进制位数是 32，但是 float 类型可表示范围却远远大于 long 类型。更不用提一样是 32 位的 int 了，float 到底啥家庭啊？谜底就在内存结构中。</p>
+<h2 id="浮点类型数值的内存结构"><a href="#浮点类型数值的内存结构" class="headerlink" title="浮点类型数值的内存结构"></a>浮点类型数值的内存结构</h2><p>与整形类型的内存结构不同，float 在内存中是这样的：</p>
+<p><code>SEEE EEEE EMMM MMMM MMMM MMMM MMMM MMMM</code></p>
+<ul>
+<li>S：最高位 S 代表符号位</li>
+<li>E：后面 8 位 E 代表指数域，二进制中就是 2 的 n 次方，采用移位存储(127+指数)的二进制方式。</li>
+<li>M：剩下的 23 位 M 代表小数域。规定小数点前的数必须为 1，因此只记录小数点后的数。（从左往右，低位补零）</li>
+</ul>
+<p>以 7.8125 为例，整数十进制转二进制，除 2 取余，逆序排列，求得 7 二进制为 <code>111</code>。小数十进制转二进制，乘 2 取整，顺序排列，求得 0.8125 二进制为：<code>0.1101</code>，组合起来是 <code>111.1101</code>。</p>
+<p>根据规范，小数点前的数只保留 1，因此将 <code>111.1101</code> 小数点左移两位得 <code>1.111101 * 2^2</code>。</p>
+<p>符号位 0，指数位为 2+127=129，即二进制 <code>10000001</code>，小数域为 <code>111101</code>。因此 float 数 7.8125 在内存中存储的格式为：<code>0 10000001 111101</code> 低位补零补齐到 32 位，得：<code>0100 0000 1111 1010 0000 0000 0000 0000</code>。</p>
+<p>可以使用 Java 提供的 API 验证一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int i = Float.floatToIntBits(7.8125F); //得到 7.8125F 底层数据（十进制）</span><br><span class="line">Integer.toBinaryString(i); //得到指定 int 值的二进制数</span><br><span class="line">//输出 1000000111110100000000000000000</span><br><span class="line">//补上最高位符号位 0，结果与上面计算的一样。</span><br></pre></td></tr></table></figure>
+<p>通过对浮点类型数值内存结构的了解，我们知道了 float 虽然可用于存储数值的位数没有 long 型多，但是 float 通过使用指数进行降维打击，可表示范围蹭蹭蹭往上涨。</p>
+<p>double 的内存结构同理，只不过 double 二进制位数更多，总共 64 位分别分配给：符号位 1 位，指数位 11 位，小数位 52 位。</p>
+<p>需要注意的是，虽然 float 因为有指数的概念，可表示范围变大了，但是其用于存储小数的位数却只有 23 位。这就意味着当一个整型类型数值的二进制位大于 24 位时，类型转换到 float 就会带来精度丢失了。</p>
+<h2 id="整型转换浮点型的精度丢失问题"><a href="#整型转换浮点型的精度丢失问题" class="headerlink" title="整型转换浮点型的精度丢失问题"></a>整型转换浮点型的精度丢失问题</h2><p>看到上图中的int 转 float、long 转 float 都是虚线表示，代表运算时自动类型转换可能会出现精度丢失的问题。经过上面对浮点型数据内存结构的学习，我们应该不难理解，float 能表示的数的大小靠指数位，但是表示的数的精度需要靠小数位。而 float 的小数位只有 23 位，而 int 是 32 位。</p>
+<p>举个例子：int 值 16777217，二进制数 <code>1 0000 0000 0000 0000 0000 0001</code>，除去最高位符号位后，需要 25 位表示。</p>
+<p>顺带提一下，计算某个数值除了符号位外需要多少位二进制位可以表示，除了挨个去数二进制数外，还可以直接计算 log2 的值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int i = 16777217;</span><br><span class="line">double num = Math.log(i) / Math.log(2.0);</span><br><span class="line">//num = 24.000000085991324，即需要 25 位二进制位表示</span><br></pre></td></tr></table></figure>
+<p>int 转 float，转换过程是先将 int 的数值由十进制转为二进制，再通过对二进制数左移小数点直到个位为 1，变为：<code>1. 0000 0000 0000 0000 0000 0001 * 2 ^ 24</code>，转换后的数小数点后有 24 位，对 float 来说只能舍弃掉无法表示的位数，只保留 23 位小数位，指数位 24 + 127 = 151，二进制为 <code>10010111</code>，因此转换后的 float 二进制数为 <code>110010111 + 23个0</code>，float 值为 1.6777216E7，已经丢失了精度。</p>
+<p>同理，int 转 double，由于 double 有 52 位小数位，因此足以 hold 住 int 的精度，而 long 需要 64 位表示精度，因此 long 转 double 也可能出现精度丢失。另外需要注意的是，单位秒的时间戳，也需要 31 位来表示，用 int 表示是够的，但是转 float 也一样会丢失精度。</p>
+<p>以上就是对 Java 类型转换精度问题的分析，希望对你有帮助 :P</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/20/认识-YUV/" rel="next" title="认识 YUV">
+                <i class="fa fa-chevron-left"></i> 认识 YUV
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/08/11/Android-OpenGL-ES-开发/" rel="prev" title="Android OpenGL ES 开发">
+                Android OpenGL ES 开发 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本数据类型占用内存大小"><span class="nav-number">1.</span> <span class="nav-text">基本数据类型占用内存大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本数据类型表示范围"><span class="nav-number">2.</span> <span class="nav-text">基本数据类型表示范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浮点类型数值的内存结构"><span class="nav-number">3.</span> <span class="nav-text">浮点类型数值的内存结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#整型转换浮点型的精度丢失问题"><span class="nav-number">4.</span> <span class="nav-text">整型转换浮点型的精度丢失问题</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

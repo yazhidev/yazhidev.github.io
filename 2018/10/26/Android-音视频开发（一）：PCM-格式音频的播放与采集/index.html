@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,音视频,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="什么是 PCM 格式声音从模拟信号转化为数字信号的技术，经过采样、量化、编码三个过程将模拟信号数字化。  采样   顾名思义，对模拟信号采集样本，该过程是从时间上对信号进行数字化，例如每秒采集 44100 次，即采样频率 44.1 khz  量化   既然是将音频数字化，那就需要使用二进制来表示声音的每一个样本。例如每个样本使用 16 位长度来表示，即音频的位深度为 16 位  编码   编码就是">
+<meta name="keywords" content="Android,音视频">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 音视频开发（一）：PCM 格式音频的播放与采集">
+<meta property="og:url" content="https://yazhidev.github.io/2018/10/26/Android-音视频开发（一）：PCM-格式音频的播放与采集/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="什么是 PCM 格式声音从模拟信号转化为数字信号的技术，经过采样、量化、编码三个过程将模拟信号数字化。  采样   顾名思义，对模拟信号采集样本，该过程是从时间上对信号进行数字化，例如每秒采集 44100 次，即采样频率 44.1 khz  量化   既然是将音频数字化，那就需要使用二进制来表示声音的每一个样本。例如每个样本使用 16 位长度来表示，即音频的位深度为 16 位  编码   编码就是">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.436Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 音视频开发（一）：PCM 格式音频的播放与采集">
+<meta name="twitter:description" content="什么是 PCM 格式声音从模拟信号转化为数字信号的技术，经过采样、量化、编码三个过程将模拟信号数字化。  采样   顾名思义，对模拟信号采集样本，该过程是从时间上对信号进行数字化，例如每秒采集 44100 次，即采样频率 44.1 khz  量化   既然是将音频数字化，那就需要使用二进制来表示声音的每一个样本。例如每个样本使用 16 位长度来表示，即音频的位深度为 16 位  编码   编码就是">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2018/10/26/Android-音视频开发（一）：PCM-格式音频的播放与采集/">
+
+
+
+
+
+  <title>Android 音视频开发（一）：PCM 格式音频的播放与采集 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2018/10/26/Android-音视频开发（一）：PCM-格式音频的播放与采集/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 音视频开发（一）：PCM 格式音频的播放与采集</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-26T19:57:07+08:00">
+                2018-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是-PCM-格式"><a href="#什么是-PCM-格式" class="headerlink" title="什么是 PCM 格式"></a>什么是 PCM 格式</h2><p>声音从模拟信号转化为数字信号的技术，经过采样、量化、编码三个过程将模拟信号数字化。</p>
+<ul>
+<li><p>采样</p>
+<p>  顾名思义，对模拟信号采集样本，该过程是从时间上对信号进行数字化，例如每秒采集 44100 次，即采样频率 44.1 khz</p>
+</li>
+<li><p>量化</p>
+<p>  既然是将音频数字化，那就需要使用二进制来表示声音的每一个样本。例如每个样本使用 16 位长度来表示，即音频的位深度为 16 位</p>
+</li>
+<li><p>编码</p>
+<p>  编码就是按照一定的格式记录采样和量化后的数据，比如顺序存储或压缩存储等</p>
+</li>
+</ul>
+<p>编码后经由不同的算法，音频被保存为不同的格式，例如 MP3、AAC 等，而 PCM 就是最为原始的一种格式，PCM 数据是音频的裸数据格式，不经过任何压缩。</p>
+<h2 id="从零到一：使用-AudioTrack-支持-PCM-格式音频的播放"><a href="#从零到一：使用-AudioTrack-支持-PCM-格式音频的播放" class="headerlink" title="从零到一：使用 AudioTrack 支持 PCM 格式音频的播放"></a>从零到一：使用 AudioTrack 支持 PCM 格式音频的播放</h2><p>AudioTrack 只支持播放 PCM 编码格式的音频流，平时使用的 MediaPlayer 支持 MP3、AAC 等多种音频格式，其内部也是将 MP3 格式文件使用 framework 层创建的解码器解码为 PCM 裸数据，再经由 AudioTrack 播放的。封装过的 Mediaplayer 的 API 是简单好用，但许多细节我们却无法掌控，而使用 AudioTrack，除了播放之外，我们还可以对数据源做许多有意思的操作，二者各有优劣之处。</p>
+<p>先通过构造函数来了解 AudioTrack（版本为API26）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public AudioTrack(AudioAttributes attributes, AudioFormat format, int bufferSizeInBytes, int mode, int sessionId) &#123;</span><br><span class="line">    ...                </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>几个参数介绍一下：</p>
+<ul>
+<li><p>AudioAttributes</p>
+<p>  定义音频的类型，包括音乐、通知、闹钟等，调节音量时也会根据不同的类型进行调节</p>
+</li>
+<li><p>AudioFormat</p>
+<p>  定义音频的格式，可配置声道数（单通道、多通道）、编码格式（每个采样数据位深度，8bit、16bit等）、采样率</p>
+</li>
+<li><p>bufferSizeInBytes</p>
+<p>  AudioTrack 内部的音频缓冲区的大小，该缓冲区的值不能低于一帧“音频帧”（Frame）的大小，即：采样率 x 位深 x 采样时间 x 通道数，采样时间一般取 2.5ms~120ms 之间，AudioTrack 类提供了 <code>getMinBufferSize()</code> 方法来计算该值</p>
+</li>
+<li><p>mode</p>
+<p>  AudioTrack 的两种播放模式，MODE_STATIC 和 MODE_STREAM，前者直接将数据加载进内存，后者是按照一定的间隔不断地写入数据</p>
+</li>
+</ul>
+<p>API26 下原有的两个构造函数已经被标为废弃，建议使用 Builder 来构造 AudioTrack 对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private fun createAudioTrack(): AudioTrack &#123;</span><br><span class="line">    val format = AudioFormat.Builder()</span><br><span class="line">            .setChannelMask(AudioFormat.CHANNEL_OUT_STEREO)</span><br><span class="line">            .setSampleRate(44100)</span><br><span class="line">            .setEncoding(AudioFormat.ENCODING_PCM_16BIT)</span><br><span class="line">            .build()</span><br><span class="line"></span><br><span class="line">    return AudioTrack.Builder()</span><br><span class="line">            .setAudioFormat(format)</span><br><span class="line">            .build()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>网上介绍 AudioTrack 时常见的如何构造 <code>bufferSizeInBytes</code>也不用关心了，Builder 类会替我们默认生成。</p>
+<p>构造出对象后，在调用 <code>play()</code> 函数开启播放后，只要开启一个线程不断地从源文件中读取数据并调用 AudioTrack 的 <code>write()</code> 函数向手机端音频输出设备传输数据，即可播放 PCM 音频。</p>
+<h3 id="使用-ffmpeg-将-MP3-转为-PCM"><a href="#使用-ffmpeg-将-MP3-转为-PCM" class="headerlink" title="使用 ffmpeg 将 MP3 转为 PCM"></a>使用 ffmpeg 将 MP3 转为 PCM</h3><p>Mac 下安装 ffmpeg：<code>brew install ffmpeg</code></p>
+<p>使用 ffmpeg 将 mp3 转换为 pcm：<code>ffmpeg -i xxx.mp3 -f s16le -ar 44100 -ac 2 -acodec pcm_s16le xxx.pcm</code></p>
+<ul>
+<li>-i 制定输入文件</li>
+<li>-f 指定输出编码格式为16byte小端格式</li>
+<li>-ar 指定输出采样率</li>
+<li>-ac 指定输出通道数</li>
+<li>acodec 指定解码格式</li>
+<li>xxx.pcm 为输出文件</li>
+</ul>
+<p>这里也提供一下我使用的 PCM 文件：<a href="https://drive.google.com/open?id=1XOAXpwZSa1htRRePjxbt2J6PEY_XJKLg" target="_blank" rel="noopener">hurt-johnny cash.pcm 44.1khz 双通道 16位深</a></p>
+<h2 id="PCM-录制：AudioRecord"><a href="#PCM-录制：AudioRecord" class="headerlink" title="PCM 录制：AudioRecord"></a>PCM 录制：AudioRecord</h2><p>MediaRecorder 录制集成了编码、压缩等功能，AudioRecord 录制的是 PCM 格式的音频文件。</p>
+<p>同样的，先从构造函数来认识 AudioRecord：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public AudioRecord(AudioAttributes attributes, AudioFormat format, int bufferSizeInBytes, int sessionId) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接触过 AudioTrack，对 AudioRecord 一定不会感到陌生，其构造函数参数与 AudioTrack 几乎如出一辙，这里就不多说了。</p>
+<p>AudioRecord 的 API 与 AudioTrack 也是遥相呼应的，在调用函数 <code>startRecording()</code> 开启录制后，只要开启一个后台线程不断地调用 <code>read()</code> 函数从手机端的音频输入设备（麦克风等）读取音频数据，并写入本地文件，即可实现音频的录制。</p>
+<h2 id="扩展支持的音频格式：-WAV"><a href="#扩展支持的音频格式：-WAV" class="headerlink" title="扩展支持的音频格式： WAV"></a>扩展支持的音频格式： WAV</h2><p>最开始提到过音频会被编码成不同的格式，而常见的压缩编码格式 WAV 格式可能是与 PCM 数据最为接近的一种格式。WAV 编码不会进行压缩操作，它只在 PCM 数据格式前加上 44 字节（并不一定严格是 44 字节）来描述音频的基本信息，例如采样率、声道数、数据格式等。来看看 WAV 文件头的格式：</p>
+<h3 id="WAV-文件头格式"><a href="#WAV-文件头格式" class="headerlink" title="WAV 文件头格式"></a>WAV 文件头格式</h3><table>
+<thead>
+<tr>
+<th>长度（字节）</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>“RIFF” 字符串</td>
+</tr>
+<tr>
+<td>4</td>
+<td>从下个地址开始到文件尾的总字节数（音频 data 数据长度 + 44 -8）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>“WAVE”  </td>
+</tr>
+<tr>
+<td>4</td>
+<td>“fmt “（最后有一个空格）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>过渡字节（一般为00000010H），若为00000012H则说明数据头携带附加信息（见“附加信息”）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>格式种类，1 表示为PCM形式的声音数据  </td>
+</tr>
+<tr>
+<td>2</td>
+<td>通道数，单声道为1，双声道为2  </td>
+</tr>
+<tr>
+<td>4</td>
+<td>采样率</td>
+</tr>
+<tr>
+<td>4</td>
+<td>波形音频数据传送速率，其值为通道数×每秒数据位数×每样本的数据位数／8。播放软件利用此值可以估计缓冲区的大小。  </td>
+</tr>
+<tr>
+<td>2</td>
+<td>每个采样需要的字节数，其值为通道数×位深度／8。播放软件需要一次处理多个该值大小的字节数据，以便将其值用于缓冲区的调整。  </td>
+</tr>
+<tr>
+<td>2</td>
+<td>位深度</td>
+</tr>
+<tr>
+<td>4</td>
+<td>“data”</td>
+</tr>
+<tr>
+<td>4</td>
+<td>DATA数据长度</td>
+</tr>
+</tbody>
+</table>
+<p>了解了 WAV 文件头的格式，我们可以尝试自己写一个解析 WAV 文件头的方法，结合上文的 AudioTrack 播放 PCM 的内容来看，只要获取到音频的采样率、位深度与声道数就可以播放该音频。自然也就可以播放内容是 PCM 格式的 WAV 文件。</p>
+<p>在此之前需要一个 WAV 文件用作测试，可以使用 ffmpeg 将之前转换的 PCM 格式音频转码成 WAV 格式。</p>
+<h3 id="使用-ffmpeg-将-PCM-转为-WAV"><a href="#使用-ffmpeg-将-PCM-转为-WAV" class="headerlink" title="使用 ffmpeg 将 PCM 转为 WAV"></a>使用 ffmpeg 将 PCM 转为 WAV</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i xxx.pcm -f s16le -ar 44100 -ac 2 xxx.wav</span><br></pre></td></tr></table></figure>
+<p>也分享一下我使用的 WAV 文件：<a href="https://drive.google.com/open?id=1WrWaLti1ug6feNXlLOs7-jqgif-WO6p0" target="_blank" rel="noopener">hurt-johnny cash.wav     44.1khz 双通道 16位深</a></p>
+<h3 id="解析-WAV-文件头"><a href="#解析-WAV-文件头" class="headerlink" title="解析 WAV 文件头"></a>解析 WAV 文件头</h3><p>根据上面提到的 WAV 文件头格式，定义一个类用于存放文件头数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class WaveHeader &#123;</span><br><span class="line">    private String riff; // &quot;RIFF&quot;</span><br><span class="line">    private int totalLength; //音频 data 数据长度 + 44 -8</span><br><span class="line">    private String wave; // &quot;WAVE&quot;</span><br><span class="line">    private String fmt; // &quot;fmt &quot;</span><br><span class="line">    private int transition; //过渡字节，一般为0x00000010</span><br><span class="line">    private short type; // PCM：1</span><br><span class="line">    private short channelMask; // 单声道：1，双声道：2</span><br><span class="line">    private int sampleRate; //采样率</span><br><span class="line">    private int rate;  // 波形音频数据传送速率，其值为通道数×每秒数据位数×每样本的数据位数／8</span><br><span class="line">    private short sampleLength; // 每个采样需要的字节数，其值为通道数×位深度／8</span><br><span class="line">    private short deepness; //位深度</span><br><span class="line">    private String data; // &quot;data&quot;</span><br><span class="line">    private int dataLength; //data数据长度</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义好文件头后，我们使用 <code>BufferedInputStream</code> 从本地文件输入流中挨个字节读取数据即可。</p>
+<h4 id="byte-字节转字符串"><a href="#byte-字节转字符串" class="headerlink" title="byte 字节转字符串"></a>byte 字节转字符串</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private static String readString(InputStream inputStream, int length) &#123;</span><br><span class="line">    byte[] bytes = new byte[length];</span><br><span class="line">    try &#123;</span><br><span class="line">        inputStream.read(bytes);</span><br><span class="line">        return new String(bytes);</span><br><span class="line">    &#125; catch (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="byte-字节转-short、int"><a href="#byte-字节转-short、int" class="headerlink" title="byte 字节转 short、int"></a>byte 字节转 short、int</h4><p>需要注意的是 WAV 头中的字节数组是经过反转的，例如表示单通道的字节数组为{1, 0}，其中 1 为低位字节，即原始的字节为 [0, 1]，转换为二进制为 <code>0000 0000 0000 0001</code>，即十进制的 1，代表单通道。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">//从输入流中读取 2 个字节并转换为 short</span><br><span class="line">private static short readShort(InputStream inputStream) &#123;</span><br><span class="line">    byte[] bytes = new byte[2];</span><br><span class="line">    try &#123;</span><br><span class="line">        inputStream.read(bytes);</span><br><span class="line">        //&#123;1, 0&#125;</span><br><span class="line">        return (short) ((bytes[0] &amp; 0xff) | ((bytes[1] &amp; 0xff) &lt;&lt; 8));</span><br><span class="line">    &#125; catch (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//从输入流中读取 4 个字节并转换为 int</span><br><span class="line">private static int readInt(InputStream inputStream) &#123;</span><br><span class="line">    byte[] bytes = new byte[4];</span><br><span class="line">    try &#123;</span><br><span class="line">        inputStream.read(bytes);</span><br><span class="line">        return (int) ((bytes[0] &amp; 0xff) | ((bytes[1] &amp; 0xff) &lt;&lt; 8) | ((bytes[2] &amp; 0xff) &lt;&lt; 16) | ((bytes[3] &amp; 0xff) &lt;&lt; 24));</span><br><span class="line">    &#125; catch (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从代码中可以看到，字节转换为整型数据类型（short、int 等）时，需要先与 <code>0xff</code> 做与（<code>&amp;</code>）操作，这是为什么呢？</p>
+<h4 id="类型转换时-byte-amp-0xff-的原因"><a href="#类型转换时-byte-amp-0xff-的原因" class="headerlink" title="类型转换时 byte &amp; 0xff 的原因"></a>类型转换时 byte &amp; 0xff 的原因</h4><p>要究其原因，首先需要搞清楚计算机中的原码、反码和补码，这个在之前的文章<a href="https://www.jianshu.com/p/ae735d849017" target="_blank" rel="noopener">《Bitmap 图像灰度变换原理浅析》</a>中计算 int 数据类型的值范围时也提到过。下面举个栗子来验证一下，类型转换前 <code>&amp; 0xff</code> 到底有什么用：</p>
+<p>假定有一个 byte 数组：[0, 0, -1, 0]，想求得这 4 个字节代表的 int 值得大小，重点看第三个字节，其值为 -1，byte 占一个字节 8 位，易得：</p>
+<ul>
+<li>原码：<code>1000 0001</code></li>
+<li>反码：<code>1111 1110</code></li>
+<li>补码：<code>1111 1111</code></li>
+</ul>
+<p>显而易见，这个 byte 数组代表的 int 值的二进制值为：</p>
+<p><code>0000 0000 0000 0000 1000 0001 0000 0000</code></p>
+<p>只要对 -1 左移 8 位即可。so easy！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">byte a = -1;</span><br><span class="line">int b = a &lt;&lt; 8; //结果是 -256</span><br></pre></td></tr></table></figure>
+<p>值为负数就说明以上转换必然是错的。因为我们想要的结果是 <code>0000 0000 0000 0000 1000 0001 0000 0000</code>，该二进制最高位符号位为 0，结果必然是一个正数。</p>
+<p>我们知道计算机在运算时使用的是补码，则 （byte）-1 &lt;&lt; 8 运算时，计算机会对 -1 的补码 <code>1111 1111</code> 做位移操作，结果为 <code>1111 1111 0000 0000</code>，其原码为 <code>1000 0001 0000 0000</code>，先记作 <strong>16位原码A</strong>，当该值赋值给 int 类型的变量时，int 类型占 4 个字节 32 位，则需要对原因的 16 位值做位扩展，负数在位扩展时会对多出的高位补 1（正数补 0），则扩展后的值为 <code>1111 1111 1111 1111 1111 1111 0000 0000</code>，转为原码为 <code>1000 0000 0000 0000 0000 0001 0000 0000</code>，记作 <strong>32位原码B</strong>，与上面的 16 位原码做比较可以发现，二者最高位都是 1，低位的值也相同，两个二进制的值在十进制上是一致的，这就是负数补码高位补 1 的原因：为了保持十进制的一致性。不难理解这样做的原因，否则 short 类型强制为 int 类型后值就发生变化了，这明显是不可接受的。</p>
+<p>回到我们的需求，我们这里并不需要保持十进制的一致性，所以要先与 0xff 做与运算，因为 0xff 是十六进制 32 位，二进制值为 32 个 1，<code>-1 &amp; 0xff</code> 时，8 位与 32 位运算时，8 位的需要先在高位补 0 补齐到 32 位才会做运算，所以<br><code>-1 &amp; 0xff</code> 的结果为补码：<code>1111 1111</code> 前面带 24 个 0，最高位为正数，再对结果做位移操作，得到的二进制值补码为：<code>0000 0000 0000 0000 1111 1111 0000 0000</code>，因为是正数，原码与补码相同，该二进制值为 65280。可以验证下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">byte a = -1;</span><br><span class="line">int c = (a &amp; 0xff) &lt;&lt; 8; //结果是 65280</span><br></pre></td></tr></table></figure>
+<p>概括一下就是：</p>
+<ul>
+<li><p>类型转换时补码位扩展（例如 2 个字节转 4 个字节，即 short 转 int）的规则：正数高位补 0，负数高位补1，以此保持十进制的一致性</p>
+</li>
+<li><p>运算时，补码高位统一补 0</p>
+</li>
+</ul>
+<p>这里也附上将 byte 转二进制（补码）的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public static String binary(byte bytes, int radix)&#123;</span><br><span class="line">    byte[] bytes1 = new byte[1];</span><br><span class="line">    bytes1[0] = bytes;</span><br><span class="line">    return new BigInteger(1, bytes1).toString(radix);// 这里的1代表正数</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="顺序读取，构造-WavHeader"><a href="#顺序读取，构造-WavHeader" class="headerlink" title="顺序读取，构造 WavHeader"></a>顺序读取，构造 WavHeader</h3><p>接着只要使用 InputStream 从目标音频中顺序读取各个参数的值并构造 WavHeader 即可，因为 Header 成员变量众多，所以考虑用建造者模式来构建 Header：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">WaveHeader.Builder builder = new WaveHeader.Builder()</span><br><span class="line">    .setRiff(readString(dis, 4))</span><br><span class="line">    .setTotalLength(readInt(dis))</span><br><span class="line">    .setWave(readString(dis, 4))</span><br><span class="line">    .setFmt(readString(dis, 4))</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>另外上面提到过，并非所以 WAV 文件头都是标准的 44 个字节，例如我上面提供的 ffmpeg 转码后的 WAV 文件，其文件头的长度就是 78 个字节。对于文件头长度不一致的问题，我的解决方法是从 37 个字节开始，2 个 2 个字节地读取，直到读取到“da”和“ta”，之后再往后读取 4 个字节的 int 值作为 data 数据长度。读取到 header 后，后面播放的就不用说了，复用上面播放 PCM 的代码即可。</p>
+<p>需要说明的是我只是从网上随机下载了几个 wav 格式音频测试了下是可以正常播放的，并没有经过广泛验证和对常见的 WAV 文件头格式的考证，所以可能还存在兼容问题。</p>
+<p>经过这些以上的学习以及众多资料的查阅，对 Android 端音频开发有了一些小小的认识。后面还会学习一下使用 LAME 将 PCM 转码为 MP3，并实现一些真正意义上的音频播放器的基础功能等。再后面会学习一些视频方面的知识，包括 MediaExtractor、MediaMuxer 解析、封装 MP4 文件、OpenGL ES 渲染图像、MediaCodec 对音视频的硬编、硬解等，并使用一些流行的开源项目例如 ffmpeg 实现一些炫酷的视频处理功能，希望可以在 Android 音视频开发这一块能有所深入，学习过程中的一些收获和困惑也会坚持记录下来。</p>
+<p>此路迢迢，与君共勉。</p>
+<p>以上源码见 <a href="https://github.com/yazhi1992/AndroidMedia/blob/master/app/src/main/java/com/yazhidev/androidmedia/record/RecordActivity.kt" target="_blank" rel="noopener">Github</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+            <a href="/tags/音视频/" rel="tag"># 音视频</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/19/《深入理解-Java-虚拟机》读书笔记/" rel="next" title="《深入理解 Java 虚拟机》读书笔记">
+                <i class="fa fa-chevron-left"></i> 《深入理解 Java 虚拟机》读书笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/18/APK-的前世今生：从-Android-源码到-apk-的编译打包流程/" rel="prev" title="APK 的前世今生：从 Android 源码到 apk 的编译打包流程">
+                APK 的前世今生：从 Android 源码到 apk 的编译打包流程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是-PCM-格式"><span class="nav-number">1.</span> <span class="nav-text">什么是 PCM 格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从零到一：使用-AudioTrack-支持-PCM-格式音频的播放"><span class="nav-number">2.</span> <span class="nav-text">从零到一：使用 AudioTrack 支持 PCM 格式音频的播放</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-ffmpeg-将-MP3-转为-PCM"><span class="nav-number">2.1.</span> <span class="nav-text">使用 ffmpeg 将 MP3 转为 PCM</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCM-录制：AudioRecord"><span class="nav-number">3.</span> <span class="nav-text">PCM 录制：AudioRecord</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展支持的音频格式：-WAV"><span class="nav-number">4.</span> <span class="nav-text">扩展支持的音频格式： WAV</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#WAV-文件头格式"><span class="nav-number">4.1.</span> <span class="nav-text">WAV 文件头格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-ffmpeg-将-PCM-转为-WAV"><span class="nav-number">4.2.</span> <span class="nav-text">使用 ffmpeg 将 PCM 转为 WAV</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析-WAV-文件头"><span class="nav-number">4.3.</span> <span class="nav-text">解析 WAV 文件头</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#byte-字节转字符串"><span class="nav-number">4.3.1.</span> <span class="nav-text">byte 字节转字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#byte-字节转-short、int"><span class="nav-number">4.3.2.</span> <span class="nav-text">byte 字节转 short、int</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类型转换时-byte-amp-0xff-的原因"><span class="nav-number">4.3.3.</span> <span class="nav-text">类型转换时 byte &amp; 0xff 的原因</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序读取，构造-WavHeader"><span class="nav-number">4.4.</span> <span class="nav-text">顺序读取，构造 WavHeader</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

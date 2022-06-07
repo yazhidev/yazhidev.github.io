@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="如何阅读 xml 属性与 Relativelayout 不同，ConstrainLayout 的属性需要同时说明需要怎么操作自己与目标控件，例如：layout_constraintLeft_toLeftOf 指自身左边缘与目标控件左边缘对齐 从此 match_parent 是故人ConstraintLayout 里不再使用 match_parent，想要铺满屏幕，只能设置宽度为 0，并添加左右边缘">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ConstraintLayout 学习笔记">
+<meta property="og:url" content="https://yazhidev.github.io/2017/03/24/ConstraintLayout学习备忘/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="如何阅读 xml 属性与 Relativelayout 不同，ConstrainLayout 的属性需要同时说明需要怎么操作自己与目标控件，例如：layout_constraintLeft_toLeftOf 指自身左边缘与目标控件左边缘对齐 从此 match_parent 是故人ConstraintLayout 里不再使用 match_parent，想要铺满屏幕，只能设置宽度为 0，并添加左右边缘">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://on4a1nest.bkt.clouddn.com/bias.png">
+<meta property="og:image" content="https://camo.githubusercontent.com/2a9da60dad7cb27097a587ae032b35f85ad8ede1/68747470733a2f2f646576656c6f7065722e616e64726f69642e636f6d2f7265666572656e63652f616e64726f69642f737570706f72742f636f6e73747261696e742f7265736f75726365732f696d616765732f636861696e732d7374796c65732e706e67">
+<meta property="og:image" content="http://on4a1nest.bkt.clouddn.com/%E5%AE%BD%E9%AB%98%E5%9D%87%E4%B8%BA0.png">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.437Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ConstraintLayout 学习笔记">
+<meta name="twitter:description" content="如何阅读 xml 属性与 Relativelayout 不同，ConstrainLayout 的属性需要同时说明需要怎么操作自己与目标控件，例如：layout_constraintLeft_toLeftOf 指自身左边缘与目标控件左边缘对齐 从此 match_parent 是故人ConstraintLayout 里不再使用 match_parent，想要铺满屏幕，只能设置宽度为 0，并添加左右边缘">
+<meta name="twitter:image" content="http://on4a1nest.bkt.clouddn.com/bias.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2017/03/24/ConstraintLayout学习备忘/">
+
+
+
+
+
+  <title>ConstraintLayout 学习笔记 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2017/03/24/ConstraintLayout学习备忘/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ConstraintLayout 学习笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-24T17:37:00+08:00">
+                2017-03-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="如何阅读-xml-属性"><a href="#如何阅读-xml-属性" class="headerlink" title="如何阅读 xml 属性"></a>如何阅读 xml 属性</h2><p>与 Relativelayout 不同，ConstrainLayout 的属性需要同时说明需要怎么操作自己与目标控件，例如：layout_constraintLeft_toLeftOf 指自身左边缘与目标控件左边缘对齐</p>
+<h2 id="从此-match-parent-是故人"><a href="#从此-match-parent-是故人" class="headerlink" title="从此 match_parent 是故人"></a>从此 match_parent 是故人</h2><p>ConstraintLayout 里不再使用 match_parent，想要铺满屏幕，只能设置宽度为 0，并添加左右边缘与父容器的约束。（<strong> 想要实现 match_parent的效果，切记要设置该方向大小为 0dp </strong>）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">android:layout_width=&quot;0dp&quot;</span><br><span class="line">app:layout_constraintLeft_toLeftOf=&quot;parent&quot;</span><br><span class="line">app:layout_constraintRight_toRightOf=&quot;parent&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="穿了马甲的-LinearLayout"><a href="#穿了马甲的-LinearLayout" class="headerlink" title="穿了马甲的 LinearLayout"></a>穿了马甲的 LinearLayout</h2><p>线性布局的 weight 属性可以轻松实现等分操作。在 ConstraintLayout 里你也可以实现类似的功能：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app:layout_constraintHorizontal_bias=&quot;.3&quot; //数值范围：0~1</span><br></pre></td></tr></table></figure>
+<p>如果控件已约束了左右边缘且定义了 bias 为 0.3，则意味着控件与左边缘的距离占控件左右边缘间距的 30%，如图：</p>
+<p><img src="http://on4a1nest.bkt.clouddn.com/bias.png" alt="bias"></p>
+<p>甚至想要实现 LinearLayout 的 weight=1 等分操作（例如水平方向上等分）也很简单，每个相邻控件互为约束并设置 width=0dp 即可。这样其实就组成了链（chaining）。</p>
+<h2 id="链"><a href="#链" class="headerlink" title="链"></a>链</h2><p>想上面说到的，设置 width=0，且控件之间两两互相约束，即可实现水平方向等分。此时还可以给控件设置 layout_constraintHorizontal_weight 属性，该属性与 LinearLayout 中的 weight 类似。</p>
+<h3 id="链条头部的属性"><a href="#链条头部的属性" class="headerlink" title="链条头部的属性"></a>链条头部的属性</h3><p>水平链的最左边，垂直链的最上边称之为头部，链的头部可以设置链的属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app:layout_constraintHorizontal_chainStyle=&quot;spread&quot; </span><br><span class="line"></span><br><span class="line">app:layout_constraintVertical_chainStyle=&quot;packed&quot;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>spread 默认属性，平均分布</li>
+<li>spread_inside 首尾无间距</li>
+<li>packed 控件间无间距，可以同时搭配 layout_constraintHorizontal_bias 属性控制与父容器的间距</li>
+</ul>
+<p>各属性值的样式如下：</p>
+<p><img src="https://camo.githubusercontent.com/2a9da60dad7cb27097a587ae032b35f85ad8ede1/68747470733a2f2f646576656c6f7065722e616e64726f69642e636f6d2f7265666572656e63652f616e64726f69642f737570706f72742f636f6e73747261696e742f7265736f75726365732f696d616765732f636861696e732d7374796c65732e706e67" alt="各属性样式"></p>
+<h2 id="厉害了，还能设宽高比"><a href="#厉害了，还能设宽高比" class="headerlink" title="厉害了，还能设宽高比"></a>厉害了，还能设宽高比</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app:layout_constraintDimensionRatio=&quot;1:1&quot; //宽：高</span><br></pre></td></tr></table></figure>
+<p>该属性起作用的前提是宽或高至少有一个设为 0dp，设为 0dp 的边即为随比例缩放的边。<br>举个栗子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;TextView</span><br><span class="line">   android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">   android:layout_height=&quot;0dp&quot;</span><br><span class="line">   app:layout_constraintDimensionRatio=&quot;1:1&quot;/&gt;</span><br></pre></td></tr></table></figure>
+<p>该文本框在随着内容文字的增加，宽度会越来越大，一旦设定了宽高比为1，则在宽度增大时高度也会等比增大，一直保持在宽高比1：1。</p>
+<p>宽高比还有另外的妙用，比如一个控件左右边缘已存在与父容器约束，且同时将宽高都设为 0dp，便得到水平方向上铺满屏幕的效果，如图：</p>
+<p><img src="http://on4a1nest.bkt.clouddn.com/%E5%AE%BD%E9%AB%98%E5%9D%87%E4%B8%BA0.png" alt="宽高均设为0"></p>
+<h2 id="指示线-Guideline"><a href="#指示线-Guideline" class="headerlink" title="指示线 Guideline"></a>指示线 Guideline</h2><p>指示线不会被绘制到 UI 中，所以放心大胆地用。Guideline 的一些属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;android.support.constraint.Guideline</span><br><span class="line">  android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">  android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">  android:id=&quot;@+id/guideline&quot;</span><br><span class="line">  app:layout_constraintGuide_percent=&quot;0.5&quot; //设置位置比例</span><br><span class="line">  android:orientation=&quot;vertical&quot;/&gt; //不注明该属性，则默认是水平方向</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  app:layout_constraintGuide_begin=&quot;30dp&quot; //设置与头部边距</span><br><span class="line">  app:layout_constraintGuide_end=&quot;30dp&quot; // 设置与尾部边距</span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
+<li>layout_goneMarginLeft 属性，当有约束关系的控件被置为 gone 状态时，可以通过设置该属性来控制间距</li>
+</ul>
+<h2 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h2><p><a href="http://www.jianshu.com/p/575829baa39d" target="_blank" rel="noopener">[译]Constraint Layout 动画 |动态 Constraint |用 Java 实现的 UI（这到底是什么）[第三部分]</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/26/译-ConstraintLayout-可视化-Design-编辑器（这到底是什么）-第四部分/" rel="next" title="[译] ConstraintLayout 可视化[Design]编辑器（这到底是什么）[第四部分]">
+                <i class="fa fa-chevron-left"></i> [译] ConstraintLayout 可视化[Design]编辑器（这到底是什么）[第四部分]
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/27/落户杭州攻略/" rel="prev" title="落户杭州攻略">
+                落户杭州攻略 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何阅读-xml-属性"><span class="nav-number">1.</span> <span class="nav-text">如何阅读 xml 属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从此-match-parent-是故人"><span class="nav-number">2.</span> <span class="nav-text">从此 match_parent 是故人</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#穿了马甲的-LinearLayout"><span class="nav-number">3.</span> <span class="nav-text">穿了马甲的 LinearLayout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链"><span class="nav-number">4.</span> <span class="nav-text">链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#链条头部的属性"><span class="nav-number">4.1.</span> <span class="nav-text">链条头部的属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#厉害了，还能设宽高比"><span class="nav-number">5.</span> <span class="nav-text">厉害了，还能设宽高比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指示线-Guideline"><span class="nav-number">6.</span> <span class="nav-text">指示线 Guideline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">7.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动画"><span class="nav-number">8.</span> <span class="nav-text">动画</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

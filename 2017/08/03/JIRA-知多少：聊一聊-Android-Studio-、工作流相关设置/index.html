@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Android Studio 相关配置 JIRA 服务器  如果细心的话会发现有一个选项卡：Commit Message。这一段代码是不是有点熟悉呢？你没有猜错，这段代码就是 commit 模板，当你切换 task 后在git commit 时会自动将任务的id 和 简介配置到 commit 信息里。  切换到某个 JIRA 任务点击工具栏上的 Default task ，下方显示的是最近打开的任">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JIRA 知多少：聊一聊 Android Studio 、工作流相关设置">
+<meta property="og:url" content="https://yazhidev.github.io/2017/08/03/JIRA-知多少：聊一聊-Android-Studio-、工作流相关设置/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="Android Studio 相关配置 JIRA 服务器  如果细心的话会发现有一个选项卡：Commit Message。这一段代码是不是有点熟悉呢？你没有猜错，这段代码就是 commit 模板，当你切换 task 后在git commit 时会自动将任务的id 和 简介配置到 commit 信息里。  切换到某个 JIRA 任务点击工具栏上的 Default task ，下方显示的是最近打开的任">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-125c9eb97c88b04b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-ca3fa2aaec9447b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-4be321eb11ec4397.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-412f8c374047e7d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-07d578c5be54bc6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-77bed9a7d33ccb69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-b4ed879735d4ad9e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-1b88843ddc3836ac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-c534e96c9cf5067a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-7506388e3e92cbc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-68ee539868e1441c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-5929f2f192927da1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-6cf5b4491343ec6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-efd22943c9c2e6ac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-218fec046fdfb9c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-b64211bcf19a63df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-1530ad8c89229c4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-125d4d0faeb567db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-5ec5da80728fbf80.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-35e36e393c63348d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-dfec37affe7ba72c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-77b1fea84237e8e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-e2ca1367a1f43183.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-f3853a96e60292ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-af34a5c4735b0fc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-2a9fdcfe703c0936.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-19b30dd5205d3ffc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-c82f9f0c64f387b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-a7d0cef0c91bab59.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-6eaa182555d4b340.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-c48c6ef57d8ae8f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.438Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JIRA 知多少：聊一聊 Android Studio 、工作流相关设置">
+<meta name="twitter:description" content="Android Studio 相关配置 JIRA 服务器  如果细心的话会发现有一个选项卡：Commit Message。这一段代码是不是有点熟悉呢？你没有猜错，这段代码就是 commit 模板，当你切换 task 后在git commit 时会自动将任务的id 和 简介配置到 commit 信息里。  切换到某个 JIRA 任务点击工具栏上的 Default task ，下方显示的是最近打开的任">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1929170-125c9eb97c88b04b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2017/08/03/JIRA-知多少：聊一聊-Android-Studio-、工作流相关设置/">
+
+
+
+
+
+  <title>JIRA 知多少：聊一聊 Android Studio 、工作流相关设置 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2017/08/03/JIRA-知多少：聊一聊-Android-Studio-、工作流相关设置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JIRA 知多少：聊一聊 Android Studio 、工作流相关设置</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T09:12:31+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Android-Studio-相关"><a href="#Android-Studio-相关" class="headerlink" title="Android Studio 相关"></a>Android Studio 相关</h1><h2 id="配置-JIRA-服务器"><a href="#配置-JIRA-服务器" class="headerlink" title="配置 JIRA 服务器"></a>配置 JIRA 服务器</h2><p><img src="http://upload-images.jianshu.io/upload_images/1929170-125c9eb97c88b04b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="配置 JIRA 服务器"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-ca3fa2aaec9447b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="配置服务器地址和用户账号密码"></p>
+<p>如果细心的话会发现有一个选项卡：Commit Message。这一段代码是不是有点熟悉呢？你没有猜错，这段代码就是 commit 模板，当你切换 task 后在git commit 时会自动将任务的id 和 简介配置到 commit 信息里。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-4be321eb11ec4397.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="commit message"></p>
+<h2 id="切换到某个-JIRA-任务"><a href="#切换到某个-JIRA-任务" class="headerlink" title="切换到某个 JIRA 任务"></a>切换到某个 JIRA 任务</h2><p>点击工具栏上的 Default task ，下方显示的是最近打开的任务。点击 open Task 会显示出指派给你的任务，点击可以切换到对应的任务：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-412f8c374047e7d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="切换任务"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-07d578c5be54bc6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="切换任务"></p>
+<p>这里要记得勾选 create changelist。另外建议不要使用默认勾选的 create branch，否则每一次切换任务后本地都会新建对应的分支，到后面分支茫茫多的时候看得蓝廋~</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-77bed9a7d33ccb69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="git commit"></p>
+<p>可以看到，切换到该任务后，使用 AS 自带的 git commit 时，会自动将任务 id 和简介显示出来，结合 JIRA 的 <a href="https://bigbrassband.com/documentation.html#gitctrlvwr_weblinking" target="_blank" rel="noopener">Smart Commits</a>，只要在 commit 信息中添加对应的标识（例如我设置了 finishDev 为从“开发中”状态转换为“测试中”状态的标识，文章下面会介绍如何设置对应的状态转换标识），然后 push 这条 commit 到远程，就可以自动更改<br> JIRA 任务状态，so easy~</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-b4ed879735d4ad9e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="添加标识符提交"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-1b88843ddc3836ac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="jira自动更改状态"></p>
+<h2 id="Smart-Commit-配置"><a href="#Smart-Commit-配置" class="headerlink" title="Smart Commit 配置"></a>Smart Commit 配置</h2><p>看了上面的示例是不是开始觉得 JIRA  有点意思了？要使用 Smart Commit 你需要先在项目里配置一下 git</p>
+<h3 id="项目里添加-git-仓库"><a href="#项目里添加-git-仓库" class="headerlink" title="项目里添加 git 仓库"></a>项目里添加 git 仓库</h3><p><img src="http://upload-images.jianshu.io/upload_images/1929170-c534e96c9cf5067a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-7506388e3e92cbc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>在关联完 git 仓库后，你需要进行一次索引的操作。那么问题来了，难道每次在<br> git 上提交 commit 都得通知 JIRA 更新索引吗？答案既是肯定的也是否定的，要使得 JIRA 可以根据 git commit 修改任务状态，必然要在 git 每次提交 commit 时更新索引，但这个动作当然不是由我们手动来触发，而是使用 webhooks。</p>
+<h3 id="github-gitlab-里配置-webhooks"><a href="#github-gitlab-里配置-webhooks" class="headerlink" title="github/gitlab 里配置 webhooks"></a>github/gitlab 里配置 webhooks</h3><p>右上角小齿轮 - 应用程序 - 选择左下方 webhooks，获取那一串 http 开头的 url</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-68ee539868e1441c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="webhooks"></p>
+<p>再到 github/gitlab 中配置 url，此处 Secret Token 不用填</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-5929f2f192927da1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>webhooks 配置好后，每次 git 接收到 commit 时都会自动通知 JIRA，JIRA 根据 commit 内容识别是否为与任务操作相关的提交，并更新任务状态。</p>
+<h1 id="JIRA-配置相关"><a href="#JIRA-配置相关" class="headerlink" title="JIRA 配置相关"></a>JIRA 配置相关</h1><h2 id="编辑视图"><a href="#编辑视图" class="headerlink" title="编辑视图"></a>编辑视图</h2><p><img src="http://upload-images.jianshu.io/upload_images/1929170-6cf5b4491343ec6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="编辑视图"></p>
+<h2 id="创建工作流"><a href="#创建工作流" class="headerlink" title="创建工作流"></a>创建工作流</h2><p><img src="http://upload-images.jianshu.io/upload_images/1929170-efd22943c9c2e6ac.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="创建工作流"></p>
+<h2 id="创建转换状态"><a href="#创建转换状态" class="headerlink" title="创建转换状态"></a>创建转换状态</h2><p>该状态的命名即为 Smart Commit 时的标识符 例如 ‘‘Bug-5 #finishDev 修复###问题’’</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-218fec046fdfb9c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="创建转换状态"></p>
+<h2 id="编辑转换状态"><a href="#编辑转换状态" class="headerlink" title="编辑转换状态"></a>编辑转换状态</h2><p>编辑转换状态之前记得点击右上角的编辑按钮将工作流置于编辑状态</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-b64211bcf19a63df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="转换状态"></p>
+<p>点击编辑按钮，可以为工作流状态转换配置编辑视图（例如需要填写备注、解决结果等），该视图在右侧 界面 - 添加屏幕 中编辑。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-1530ad8c89229c4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="状态转换视图"></p>
+<p>不得不提的是上图中另外勾红的两处，其实不止两处，转换状态的处理有四大块，这里简要介绍一下我使用到的两块内容：</p>
+<h3 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h3><p>顾名思义，为转换状态前置某些条件判断，只有符合条件才允许做状态的转换，否则在任务里直接不可见该转换状态。</p>
+<p>举个栗子，如果任务 A 下有子任务 b 和子任务 c，正常来说我们肯定不希望在b, c 完成前就可以将 A 完成，故可以对工作流中 close 转换状态做一个限制，如图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-125d4d0faeb567db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="限制转换"></p>
+<p>构造子任务阻止条件</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-5ec5da80728fbf80.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="生成条件"></p>
+<p>构造该条件后，建个 demo 试试看：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-35e36e393c63348d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="子任务未完成"></p>
+<p>可以看到，父任务已经在开发中状态了，但转换状态只有 back（回退这一个操作了），因为其子任务还是启动状态，不符合转换条件。</p>
+<h3 id="后处理功能"><a href="#后处理功能" class="headerlink" title="后处理功能"></a>后处理功能</h3><p>后处理功能的功能非常多，这里简要提几种功能与场景抛装引玉：</p>
+<h4 id="场景一：开发完成测试，经办人自动分配为测试负责人"><a href="#场景一：开发完成测试，经办人自动分配为测试负责人" class="headerlink" title="场景一：开发完成测试，经办人自动分配为测试负责人"></a>场景一：开发完成测试，经办人自动分配为测试负责人</h4><p>  <img src="http://upload-images.jianshu.io/upload_images/1929170-dfec37affe7ba72c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="自动分配值"></p>
+<p>  <img src="http://upload-images.jianshu.io/upload_images/1929170-77b1fea84237e8e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="自动为某个域分配值"></p>
+<p>  这里有个需要注意的地方，这里我选择的是 Raw Value， 经过测试填写名字和邮箱都是无法生效的，要填写用户的 id，例如在用户选择器里可以看到每个用户的 id，填写这个 id 就可以成功分配值了。</p>
+<p>  <img src="http://upload-images.jianshu.io/upload_images/1929170-e2ca1367a1f43183.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="raw value"></p>
+<h4 id="场景二：现在用户A创建了一个任务，项目的负责人B将其分配给了经办人C，C在处理完成后将任务自动分配给了报告人A，A在进行确认时发现不符合要求，执行一个自定义工作流动作“退回”时，希望可以将任务退回给C。"><a href="#场景二：现在用户A创建了一个任务，项目的负责人B将其分配给了经办人C，C在处理完成后将任务自动分配给了报告人A，A在进行确认时发现不符合要求，执行一个自定义工作流动作“退回”时，希望可以将任务退回给C。" class="headerlink" title="场景二：现在用户A创建了一个任务，项目的负责人B将其分配给了经办人C，C在处理完成后将任务自动分配给了报告人A，A在进行确认时发现不符合要求，执行一个自定义工作流动作“退回”时，希望可以将任务退回给C。"></a>场景二：现在用户A创建了一个任务，项目的负责人B将其分配给了经办人C，C在处理完成后将任务自动分配给了报告人A，A在进行确认时发现不符合要求，执行一个自定义工作流动作“退回”时，希望可以将任务退回给C。</h4><p>但是问题是，C在处理完成时将任务分配给了报告人A，此时经办人和报告人都是A了，所以无论在工作流动作的处理结果中选择分配当前用户、分配给报告人、分配给项目负责人都无法实现退回给C的需求。</p>
+<p>这个需求是在搜索资料的过程中看到的，<a href="http://archive.answers.unlimax.com/user/Kenny+Jin+%5BUnlimax%5D" target="_blank" rel="noopener">Kenny Jin</a> 提供了这样的解决方案：copy value from field to field。该操作也是在后处理设置里。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-f3853a96e60292ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="设置经办人"></p>
+<h4 id="场景三：状态转换为-close-时，自动将问题解决结果置为完成（否则即使状态已切换为完成，但解决结果未改变，则任务会一直在打开的问题里展现）"><a href="#场景三：状态转换为-close-时，自动将问题解决结果置为完成（否则即使状态已切换为完成，但解决结果未改变，则任务会一直在打开的问题里展现）" class="headerlink" title="场景三：状态转换为 close 时，自动将问题解决结果置为完成（否则即使状态已切换为完成，但解决结果未改变，则任务会一直在打开的问题里展现）"></a>场景三：状态转换为 close 时，自动将问题解决结果置为完成（否则即使状态已切换为完成，但解决结果未改变，则任务会一直在打开的问题里展现）</h4><p>同样是后处理功能的设置：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-af34a5c4735b0fc9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="更新问题域"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-2a9fdcfe703c0936.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="更新域"></p>
+<h4 id="场景四：记录任务参与者，便于统计工作报表"><a href="#场景四：记录任务参与者，便于统计工作报表" class="headerlink" title="场景四：记录任务参与者，便于统计工作报表"></a>场景四：记录任务参与者，便于统计工作报表</h4><p>JIRA 的经办人一次只能指定一个用户，为了实现这种功能，我的想法是创建一个自定义字段（类型为多用户选择器），在每次开发者参与到任务中时（或者上游切换状态时就将经办人分配下一个开发者），将经办人添加到该字段内，最后在报表中选择以该字段为筛选值即可。</p>
+<p>右上角小齿轮 - 问题 - 左侧</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-19b30dd5205d3ffc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="添加自定义字段"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-c82f9f0c64f387b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="任务参与者类型"></p>
+<h3 id="通知方案：自动邮件通知执行者"><a href="#通知方案：自动邮件通知执行者" class="headerlink" title="通知方案：自动邮件通知执行者"></a>通知方案：自动邮件通知执行者</h3><p>右上角小齿轮-问题-下方选择通知方案，自定义一个通知方案。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-a7d0cef0c91bab59.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="配置通知方案"></p>
+<p>在这之前要先配置一下邮箱，这里提供一下网易企业邮箱的 SMTP 服务器地址：smtp.ym.163.com 默认端口为：25 （如勾选ssl安全链接，端口号为994），详见<a href="http://app.ym.163.com/ym/help/help.html" target="_blank" rel="noopener">客户端的设置方法</a>。</p>
+<p>配置好后，点击右上角小齿轮 - 项目，进入项目主页，将通知方案设置上去</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-6eaa182555d4b340.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="进入项目"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-c48c6ef57d8ae8f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="设置通知方案"></p>
+<h1 id="to-be-continued…"><a href="#to-be-continued…" class="headerlink" title="to be continued…"></a>to be continued…</h1>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/02/译-使用-Espresso-隔离测试视图/" rel="next" title="[译] 使用 Espresso 隔离测试视图">
+                <i class="fa fa-chevron-left"></i> [译] 使用 Espresso 隔离测试视图
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/22/Android-沉浸式状态栏的实现/" rel="prev" title="Android 沉浸式状态栏的实现">
+                Android 沉浸式状态栏的实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Android-Studio-相关"><span class="nav-number">1.</span> <span class="nav-text">Android Studio 相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置-JIRA-服务器"><span class="nav-number">1.1.</span> <span class="nav-text">配置 JIRA 服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#切换到某个-JIRA-任务"><span class="nav-number">1.2.</span> <span class="nav-text">切换到某个 JIRA 任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Smart-Commit-配置"><span class="nav-number">1.3.</span> <span class="nav-text">Smart Commit 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#项目里添加-git-仓库"><span class="nav-number">1.3.1.</span> <span class="nav-text">项目里添加 git 仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#github-gitlab-里配置-webhooks"><span class="nav-number">1.3.2.</span> <span class="nav-text">github/gitlab 里配置 webhooks</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JIRA-配置相关"><span class="nav-number">2.</span> <span class="nav-text">JIRA 配置相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编辑视图"><span class="nav-number">2.1.</span> <span class="nav-text">编辑视图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建工作流"><span class="nav-number">2.2.</span> <span class="nav-text">创建工作流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建转换状态"><span class="nav-number">2.3.</span> <span class="nav-text">创建转换状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编辑转换状态"><span class="nav-number">2.4.</span> <span class="nav-text">编辑转换状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#条件"><span class="nav-number">2.4.1.</span> <span class="nav-text">条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后处理功能"><span class="nav-number">2.4.2.</span> <span class="nav-text">后处理功能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#场景一：开发完成测试，经办人自动分配为测试负责人"><span class="nav-number">2.4.2.1.</span> <span class="nav-text">场景一：开发完成测试，经办人自动分配为测试负责人</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#场景二：现在用户A创建了一个任务，项目的负责人B将其分配给了经办人C，C在处理完成后将任务自动分配给了报告人A，A在进行确认时发现不符合要求，执行一个自定义工作流动作“退回”时，希望可以将任务退回给C。"><span class="nav-number">2.4.2.2.</span> <span class="nav-text">场景二：现在用户A创建了一个任务，项目的负责人B将其分配给了经办人C，C在处理完成后将任务自动分配给了报告人A，A在进行确认时发现不符合要求，执行一个自定义工作流动作“退回”时，希望可以将任务退回给C。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#场景三：状态转换为-close-时，自动将问题解决结果置为完成（否则即使状态已切换为完成，但解决结果未改变，则任务会一直在打开的问题里展现）"><span class="nav-number">2.4.2.3.</span> <span class="nav-text">场景三：状态转换为 close 时，自动将问题解决结果置为完成（否则即使状态已切换为完成，但解决结果未改变，则任务会一直在打开的问题里展现）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#场景四：记录任务参与者，便于统计工作报表"><span class="nav-number">2.4.2.4.</span> <span class="nav-text">场景四：记录任务参与者，便于统计工作报表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通知方案：自动邮件通知执行者"><span class="nav-number">2.4.3.</span> <span class="nav-text">通知方案：自动邮件通知执行者</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#to-be-continued…"><span class="nav-number">3.</span> <span class="nav-text">to be continued…</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,读书笔记,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="第二章 Java 内存区域与内存溢出溢出程序计数器程序计数器是一块较小的内存空间，它可以看作是当前线程所执行的字节码的行号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。每条线程都有独立的程序计数器，各条线程之间计数器互不影响，独立存储。 Java 虚拟机栈Java 虚拟机栈也是线程私有的，它的生命周期与线程相同。虚拟机栈描述的是 Java 方法执行的内存模型">
+<meta name="keywords" content="Java,读书笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《深入理解 Java 虚拟机》读书笔记">
+<meta property="og:url" content="https://yazhidev.github.io/2018/10/19/《深入理解-Java-虚拟机》读书笔记/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="第二章 Java 内存区域与内存溢出溢出程序计数器程序计数器是一块较小的内存空间，它可以看作是当前线程所执行的字节码的行号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。每条线程都有独立的程序计数器，各条线程之间计数器互不影响，独立存储。 Java 虚拟机栈Java 虚拟机栈也是线程私有的，它的生命周期与线程相同。虚拟机栈描述的是 Java 方法执行的内存模型">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.443Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《深入理解 Java 虚拟机》读书笔记">
+<meta name="twitter:description" content="第二章 Java 内存区域与内存溢出溢出程序计数器程序计数器是一块较小的内存空间，它可以看作是当前线程所执行的字节码的行号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。每条线程都有独立的程序计数器，各条线程之间计数器互不影响，独立存储。 Java 虚拟机栈Java 虚拟机栈也是线程私有的，它的生命周期与线程相同。虚拟机栈描述的是 Java 方法执行的内存模型">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2018/10/19/《深入理解-Java-虚拟机》读书笔记/">
+
+
+
+
+
+  <title>《深入理解 Java 虚拟机》读书笔记 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2018/10/19/《深入理解-Java-虚拟机》读书笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《深入理解 Java 虚拟机》读书笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-19T19:06:23+08:00">
+                2018-10-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="第二章-Java-内存区域与内存溢出溢出"><a href="#第二章-Java-内存区域与内存溢出溢出" class="headerlink" title="第二章 Java 内存区域与内存溢出溢出"></a>第二章 Java 内存区域与内存溢出溢出</h2><h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>程序计数器是一块较小的内存空间，它可以看作是当前线程所执行的字节码的行号指示器。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。<br>每条线程都有独立的程序计数器，各条线程之间计数器互不影响，独立存储。</p>
+<h3 id="Java-虚拟机栈"><a href="#Java-虚拟机栈" class="headerlink" title="Java 虚拟机栈"></a>Java 虚拟机栈</h3><p>Java 虚拟机栈也是线程私有的，它的生命周期与线程相同。虚拟机栈描述的是 Java 方法执行的内存模型：每个方法在执行的同时都会创建的一个栈帧用于存储局部变量表、操作数栈、动态链接、方法出口等信息。每一个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中的入栈到出栈的过程。</p>
+<p>局部变量表所需的内存空间在编译期间完成分配，当进入一个方法时，这个方法需要在帧中分配多大的局部变量空间是完全确定的，方法运行期间不会改变局部变量表的大小。</p>
+<p>如果线程请求的栈深度大于虚拟机所允许的深度，将抛出 StackOverflowError 异常。如果扩展时无法申请到足够的内存，就会抛出 OutOfMemoryError 异常。</p>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>与虚拟机栈的区别不过是虚拟机栈为虚拟机执行 Java 方法（也就是字节码）服务，本地方法栈则为虚拟机使用到的 Native 方法服务。</p>
+<h3 id="Java-堆"><a href="#Java-堆" class="headerlink" title="Java 堆"></a>Java 堆</h3><p>Java 堆是被所有线程共享的一块内存区域，此内存区域的唯一目的就是存放对象实例。</p>
+<p>如果堆中没有内存完成实例分配，且堆也无法再扩展时，将会抛出 OutOfMemoryError 异常。</p>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>方法区与 Java 堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。</p>
+<h3 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h3><p>是方法区的一部分，存放编译器生成的各种字面量和符号引用。运行期间也可能将新的常量放入池中。</p>
+<h3 id="直接内存"><a href="#直接内存" class="headerlink" title="直接内存"></a>直接内存</h3><p>在 JDK 1.4 中新加入了 NIO（New Input/Output）类，引入了一种基于通道（Channel）与缓冲区（Buffer）的 I/O 方法，它可以使用 Native 函数库直接分配堆外内存，然后通过一个存储在 Java 堆中的 DirectByteBuffer 对象作为这块内存的引用进行操作，这样能在一些场景中显著提高性能，因为避免了在 Java 堆和 Native 堆中来回复制数据。</p>
+<h3 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h3><p>Java 堆是否规整由所采用的垃圾收集器是否带有压缩整理功能决定。</p>
+<p>除如何划分可用空间之外，还有另外一个需要考虑的问题是对象创建在虚拟机中是非常频繁的行为，即使是仅仅修改一个指针指向的位置。有两种方案：</p>
+<ul>
+<li>多线程同步分配</li>
+<li>每个线程分配缓冲区，当缓冲区完成时才需要同步锁定，分配新的缓冲区</li>
+</ul>
+<p>内存分配完成后，虚拟机需要将分配到的内存空间都初始化为零值（不包括对象头）。</p>
+<p>执行 new 指令之后会接着执行 <code>&lt;init&gt;</code> 方法，把对象按照程序员的意义进行初始化。</p>
+<h3 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h3><p>reference 类型再 Java 虚拟机规范中只规定了一个指向对象的引用，并没有定义这个引用应该通过何种方式去定位、访问堆中的对象的具体位置。目前主流的访问方式有使用句柄和直接指针两种</p>
+<ul>
+<li>使用句柄访问，句柄中包含了对象实例数据与类型数据各自具体的地址信息。</li>
+<li>使用直接指针访问，那么 Java 堆对象中就必须考虑如何放置访问类型数据的相关信息，而 reference 中存储的直接就是对象地址。</li>
+</ul>
+<h2 id="第三章-垃圾收集器与内存分配策略"><a href="#第三章-垃圾收集器与内存分配策略" class="headerlink" title="第三章 垃圾收集器与内存分配策略"></a>第三章 垃圾收集器与内存分配策略</h2><h3 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h3><p>主流的 Java 虚拟机里面没有选用引用计数算法来管理内存，主要原因是它很难解决对象之间循环引用的问题。</p>
+<h3 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h3><p>基本思路是通过一系列的称为“GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索走过的路径称为引用链，当一个对象到 GC Roots 没有任何引用链相连时，则证明此对象是不可用的。</p>
+<h3 id="再谈引用"><a href="#再谈引用" class="headerlink" title="再谈引用"></a>再谈引用</h3><h4 id="强-软-弱-虚"><a href="#强-软-弱-虚" class="headerlink" title="强 软 弱 虚"></a>强 软 弱 虚</h4><ul>
+<li>强引用</li>
+<li>软引用<br>  在系统将要发生内存溢出异常之前，将会把这些对象列进回收范围之中进行第二次回收。</li>
+<li>弱引用<br>  只能生存到下一次垃圾收集发生之前。</li>
+<li>虚引用<br>  也成为幽灵引用，是最弱的一种引用关系。为一个对象设置虚引用关联的唯一目的就是能在这个对象被收集器回收时收到一个系统通知。</li>
+</ul>
+<h3 id="生存还是死亡"><a href="#生存还是死亡" class="headerlink" title="生存还是死亡"></a>生存还是死亡</h3><p>要真正宣告一个对象死亡，至少要经历两次标记过程。如果对象在进行可达性分析后发现没有与 GC Roots 相连接的引用链，那它将会被第一次标记并且进行一次筛选，条件是此对象是否有必要执行 finalize() 方法（对象没有覆盖 finalize() 或者 finalize() 已经被虚拟机调用过，这两种情况视为没有必要执行）。（注：任何一个对象的 finalize() 方法都只会被系统自动调用一次）</p>
+<p>如果这个对象被判定为有必要执行 finalize() 方法，则对象会被放置在一个叫做 F-Quene 的队列之中，在稍后有一个由虚拟机自动建立的、低优先级的 Finalizer 线程去执行它。（执行是指虚拟机会触发这个方法，但并不承诺会等待它运行结束，以防对象在 finalize() 方法中执行缓慢，或发生死循环）</p>
+<h3 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h3><h4 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h4><p>先标记处所有需要回收的对象，在标记完成后统一回收所有被标记的对象。</p>
+<p>它主要有两个不足：一个效率问题，标记和清除两个过程效率都不高。另一个是空间问题，标记清除之后会产生大量不连续的内存碎片，空间碎片太多可能会导致以后在程序运行过程中需要分配较大对象时，无法找到足够的连续内存而不得不提前出发一次垃圾收集动作。</p>
+<h4 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h4><p>为了解决效率问题，复制算法出现了。它将可用内存按容量划分为大小相等的两块（新生代中大多数人对象时朝生夕死的，所以并不需要按照1：1的比例来划分内存空间），每次只使用其中的一块。当这一块的内存用完了，就将还存活着的对象复制到另外一块上面，然后再把已使用过的内存空间一次清理掉。</p>
+<h4 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h4><p>复制收集算法在对象存活率较高时就有进行较多的复杂操作，效率将会变低。根据老年代的特点，就有了标记-整理算法。过程仍然与标记-清除算法一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存货的对象都向一端移动，然后直接清理掉端边界以为的内存。</p>
+<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><h4 id="HotSpot-的算法实现"><a href="#HotSpot-的算法实现" class="headerlink" title="HotSpot 的算法实现"></a>HotSpot 的算法实现</h4><h5 id="安全点"><a href="#安全点" class="headerlink" title="安全点"></a>安全点</h5><p>可达性分析对执行时间的敏感还体现在 GC 停顿上，因为这项分析工作必须在一个能确保一致性的快照中进行（即不可以出现引用分析过程中对象引用关系还在不断变化的情况，Sun 将这件事情称为 “Stop The World”）。目前主流 Java 虚拟机都是准确是 GC，所以当执行系统停顿下来后，并不需要一个不漏地检查完所有执行上下文和全局的引用位置，HotSpot 的实现中，是使用一组称为 OopMap 的数据结构来达到这个目的，在类加载完成的时候，就把对象内什么偏移量上是什么类型的数据计算处理，在 JIT 编译过程中，也会在特定的位置记录下栈和寄存器中哪些位置是引用的。但是没有为每条指令都生成 OopMap，只在特定位置记录这些信息，这些位置称为安全点（SafePoint）。方法调用、循环跳转、异常跳转等，所有具有这些功能的指令才会产生 SafePoint。</p>
+<p>对于 SafePoint，另一个要考虑的问题是如何在 GC 发生时让所有线程都跑到安全点再停顿下来，有两种方案：抢断式中断和主动式中断。</p>
+<p>主动式中断的思想是设置一个标志位，各个线程执行时主动去轮询这个标志，发现中断标志为真时就自己中断挂起。</p>
+<h3 id="内存分配与回收策略"><a href="#内存分配与回收策略" class="headerlink" title="内存分配与回收策略"></a>内存分配与回收策略</h3><h4 id="对象优先在-Eden-分配"><a href="#对象优先在-Eden-分配" class="headerlink" title="对象优先在 Eden 分配"></a>对象优先在 Eden 分配</h4><p>大多数情况下，对象在新生代 Eden 区中分配。当 Eden 区没有足够空间进行分配时，虚拟机将发起一次 GC。</p>
+<p>新生代 GC，指发生在新生代的垃圾收集动作。因为 Java 对象大多都具备朝生夕灭的特性，所以该 GC 非常频繁，一般回收速度也比较快。</p>
+<h4 id="大对象直接进入老年代"><a href="#大对象直接进入老年代" class="headerlink" title="大对象直接进入老年代"></a>大对象直接进入老年代</h4><p>大对象，指需要大量连续内存空间的 Java 对象。可配置大对象直接在老年代分配，这样做的目的是避免在 Eden 区及两个 Survivor 区之间发生大量的内存复制</p>
+<h4 id="长期存活的对象将进入老年代"><a href="#长期存活的对象将进入老年代" class="headerlink" title="长期存活的对象将进入老年代"></a>长期存活的对象将进入老年代</h4><p>虚拟机采用分代收集的思想来管理内存。为了内存回收时必须能识别哪些对象放在新生代，哪些放在老年代，为了做到这点，虚拟机给每个对象定义了一个对象年龄计数器。如果对象在 Eden 出生并经过第一次新生代 GC 后仍然存活，并且能被 Survivor 容纳的话，将被移动到 Survivor 空间中，并且对象年龄设为 1.对象在 Survivor 区中每“熬过”一次新生代 GC，年龄就加 1 岁，当年龄增加到一定程度，将会被晋升到老年代中。</p>
+<h4 id="动态对象年龄判定"><a href="#动态对象年龄判定" class="headerlink" title="动态对象年龄判定"></a>动态对象年龄判定</h4><p>如果在 Survivor 空间中相同年龄所有对象大小的总和大于 Survivor 空间的一半，年龄大于或等于该年龄的对象就可以直接进入老年代。</p>
+<h4 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h4><p>在发生新生代 GC 前，虚拟机会先检查老年代最大可用的连续空间是否大于新生代所有对象总空间，并由结果判断是都进行一次 Full GC。</p>
+<p>一共有多少对象会存活下来在实际完成内存回收之前是无法明确知道的，所有只好取之前每一次回收晋升到老年代对象容量的平均大小值作为经验值。但这种手段仍然是一种动态概率的收到，依然会导致担保失败，那就会在失败后重新发起一次 Full GC。</p>
+<h2 id="第五章-调优案例分析与实战"><a href="#第五章-调优案例分析与实战" class="headerlink" title="第五章 调优案例分析与实战"></a>第五章 调优案例分析与实战</h2><h3 id="高性能硬件上的程序部署策略"><a href="#高性能硬件上的程序部署策略" class="headerlink" title="高性能硬件上的程序部署策略"></a>高性能硬件上的程序部署策略</h3><p>访问文档时要把文档从磁盘提取到内存中，导致内存中出现很多由文档序列化产生的大对象。</p>
+<p>控制 Full GC 频率的关键是看应用中大多数对象能否符合“朝生夕灭”的原则，这样才能保障老年代空间的稳定。</p>
+<p>相同程序在 64 位 JDK 消耗的内存一般比 32 位 JDK 大，这是由于指针膨胀，以及数据类型对齐补白等因素导致的。</p>
+<p>32 位 Windows 平台中每个进程只能使用 2 GB的内存，考虑到堆以外的内存开销，堆一般最多只能开到 1.5 GB。</p>
+<h3 id="集群间同步导致的内存溢出"><a href="#集群间同步导致的内存溢出" class="headerlink" title="集群间同步导致的内存溢出"></a>集群间同步导致的内存溢出</h3><p>更重要的缺陷是这一类被集群共享的数据要使用集群缓存来同步的话，可以允许读操作频繁，但不应当有过于频繁的写操作，那样会带来很大的网络同步的开销</p>
+<h3 id="堆外内存导致的溢出错误"><a href="#堆外内存导致的溢出错误" class="headerlink" title="堆外内存导致的溢出错误"></a>堆外内存导致的溢出错误</h3><p>32 位 Windows 平台的限制是 2GB，其中划了 1.6 GB 给 Java 堆，而 Direct Memory 内存并不算 1.6 GB 的堆之内，因为它最大也只能在剩余的 0.4 GB 空间中分出一部分。Direct Memory 却不能像新生代、老年代那样，发现空间不足了就通知收集器进行垃圾回收，它只能等待老年代满了后 Full<br>GC，然后“顺便地”帮它清理掉内存的废弃对象。</p>
+<h2 id="类文件结构"><a href="#类文件结构" class="headerlink" title="类文件结构"></a>类文件结构</h2><h3 id="无关性的基石"><a href="#无关性的基石" class="headerlink" title="无关性的基石"></a>无关性的基石</h3><p>各种不同平台的虚拟机玉所有平台的统一使用的程序存储格式——字节码是构成平台无关性的基石。</p>
+<h4 id="Class-类文件的结构"><a href="#Class-类文件的结构" class="headerlink" title="Class 类文件的结构"></a>Class 类文件的结构</h4><p>Class 文件格式采用一种类似 C 语言结构体的伪结构来存储数据，其只有两种数据类型：无符号数和表。</p>
+<p>无符号数属于基本的数据类型，以 u1、u2、u4、u8 来分别代表 1 个字节、2 个字节、4 个字节和 8 个字节的无符号数，无符号数可以用来描述数字、索引引用、数量值或者按照 UTF-8 编码构成字符串值。</p>
+<p>由于常量池中的常量的数量是不固定的，所以在常量池的入口需要放置一项 u2 类型的数据代表常量池计数值，这个容量计数是从 1 而不是 0 开始。目的在于满足后面某些指向常量池的索引值的数据在特定情况下需要表达“不引用任何一个常量池项目”的含义，这种情况就可以把索引值置为 0 来表示。</p>
+<p>在 Class 文件中不会保存各个方法、字段的最终内存布局信息。</p>
+<p>常量池中每一项常量都是一个表。</p>
+<p>u2 类型能表达的最大值是 65535。所以 Java 程序中如果定义了超过 64 kb 英文字符的变量或方法名，将会无法编译。</p>
+<h4 id="方法表集合"><a href="#方法表集合" class="headerlink" title="方法表集合"></a>方法表集合</h4><p>方法里的 Java 代码，经过编译器编译成字节码指令后，存放在方法属性表集合中一个名为“Code”的属性里。</p>
+<p>要重载一个方法，除了要与原方法具有相同的简单名称之外，还要求必须拥有一个与原方法不同的特征签名。特征签名是一个方法中各个参数在常量池中的字段符号引用的集合，也就是因为返回值不会包含在特征签名中，因此 Java 语言里无法仅仅依靠返回值得不同来对一个方法进行重载（但是在 Class 文件格式中，特征签名的范围更大点，只要描述符不是完全一致的两个方法也可以共存，也就是说，如果两个方法有相同的名称和特征签名，但返回值不同，也可以合法共存在同一个 Class 文件中）</p>
+<h4 id="属性表集合"><a href="#属性表集合" class="headerlink" title="属性表集合"></a>属性表集合</h4><p>对应的指令为 return，含义是返回此方法，并且返回值为 void，这条指令执行后，当前方法结束。</p>
+<p>在任何实例方法里，都可以通过 this 关键字访问到方法所属的对象，因此在实例方法的局部变量表中至少会有一个指向当前对象实例的局部变量。</p>
+<h5 id="ConstantValue-属性"><a href="#ConstantValue-属性" class="headerlink" title="ConstantValue 属性"></a>ConstantValue 属性</h5><p>对于非 static 类型的变量的赋值是在实例构造器<init> 方法中进行的，而对于类变量，则有两种方式可选:在类构造器<cinit>方法中或使用 ConstantValue 属性。</cinit></init></p>
+<h5 id="Signature-属性"><a href="#Signature-属性" class="headerlink" title="Signature 属性"></a>Signature 属性</h5><p>该属性会记录泛型类型，因为 Java 的泛型采用类型擦除实现的伪泛型。这个属性就是为了弥补运行期做反射时无法获得泛型信息这个缺陷而增设的。</p>
+<h4 id="字节码与数据类型"><a href="#字节码与数据类型" class="headerlink" title="字节码与数据类型"></a>字节码与数据类型</h4><p>由于 Java 虚拟机的操作码长度只有一个字节，所以包含了数据类型的操作码就为指令集的设计带来了很大的压力。</p>
+<h2 id="第七章-虚拟机类加载机制"><a href="#第七章-虚拟机类加载机制" class="headerlink" title="第七章 虚拟机类加载机制"></a>第七章 虚拟机类加载机制</h2><p>虚拟机把描述类的数据从 Class 文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的 Java 类型，这就是虚拟机的类加载机制。</p>
+<p>整个生命周期包括：加载、验证、准备、解析、初始化、使用和卸载。</p>
+<p>对于初始化阶段，虚拟机规范则是严格规定了有且只有 5 种情况必须立即对类进行“初始化”（而加载、验证、准备自然需要在此之前开始）。</p>
+<p>对于静态字段，只有直接定义这个字段的类才会被初始化，通过其子类来引用父类中定义的静态字段，只会触发父类的初始化而不会触发子类的初始化。</p>
+<p>编译阶段通过常量传播优化，会将常量的值存储到类的常量池中。对常量的引用实际都被转化为类对自身常量池带引用。</p>
+<p>接口与类真正有所区别的地方是:当一个类在初始化时，要求其父类全部都已初始化过了，但是一个接口在初始化时，并不要求其父接口全部都完成了初始化，只有在真正使用到父接口的时候才会初始化。</p>
+<h3 id="类加载的过程"><a href="#类加载的过程" class="headerlink" title="类加载的过程"></a>类加载的过程</h3><h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><p>相对于类加载过程的其他阶段，一个非数组类的加载阶段是可控性最强的，开发人员可以通过自定义的类加载器去控制字节流的获取方式（即重写一个类加载器的 loadClass() 方法）。</p>
+<p>对于数组类而言，情况有所不同，数组类本事不通过类加载器创建。</p>
+<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>验证大致会完成下面 4 个阶段的检验动作：文件格式验证、元数据验证、字节码验证、符号引用验证。</p>
+<p>第一阶段的注意目的是保证输入的字节流能正确地解析并存储于方法区之内，格式上符合一个 Java 类型信息的要求。</p>
+<p>第二阶段主要目的是对元数据信息进行语义校验。</p>
+<p>第三阶段主要目的是确认语义是合法的、符合逻辑的。</p>
+<h4 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h4><p>准备阶段是正式为类变量分配内存并设置类变量初始值的阶段，变量所使用的内存都将在方法区中进行分配。需要强调一下，首先，这时候进行内存分配的仅包括类变量（被 static 修饰的变量），而不包括实例变量，实例变量将会在对象实例化时随着对象一起分配在 Java 堆中。</p>
+<p>变量在准备阶段的初始值是 0，把值赋值的 putstatic 指令是程序被编译后，存放与类构造器 <cinit> 方法中，在初始化阶段才会进行。</cinit></p>
+<p>会存的特殊情况如果类字段的字段属性表中存在 ConstantValue 属性，在准备阶段就会赋值。</p>
+<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>符号引用：以一组符号来描述所引用的目标。</p>
+<p>直接引用：直接指向目标的指针、偏移量或是一个能间接定位到目标的句柄。</p>
+<p>对一个符号引用进行多次解析请求是很常见的，虚拟机会对第一次解析的结果进行缓存，从而避免解析动作重复进行。</p>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>类初始化阶段是类加载过程的最后一步，到了初始化阶段，才真正开始执行类中定义的 Java 程序代码。<br>准备阶段，变量已经赋过一次系统要求的初始值，在初始化阶段，则根据程序的主观计划去初始化类变量和其他资源。初始化阶段是执行类构造器 <cinit><br>() 方法的过程。</cinit></p>
+<p><cinit>() 方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块中的语句合并产生的，编译器收集的顺序是由语句在源文件中出现顺序所决定的，静态语句块中只能访问到定义在静态语句块从之前的变量，定义在它之后的变量，在前面的静态语句块可以赋值，但不能访问。</cinit></p>
+<p><cinit>() 方法与类的构造函数不同，它不需要显式地调用父类构造器，虚拟机会保证在子类的 <cinit>() 方法执行之前，父类的 <cnint>() 方法已经执行完毕。</cnint></cinit></cinit></p>
+<p><cinit>() 方法对于类或接口来说并不是必须得的，如果一个类中没有静态语句块，也没有对变量的赋值操作，那么编译器可以不为这个类生成<cinit>()方法。</cinit></cinit></p>
+<p>虚拟机会保证一个类的 <cinit>() 方法在多线程中被正确地使用，只会有一个线程去执行这个类的 <cinit>() 方法。</cinit></cinit></p>
+<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><h4 id="类与加载器"><a href="#类与加载器" class="headerlink" title="类与加载器"></a>类与加载器</h4><p>比较两个类是否相等，只有在这两个类是由同一个类加载器加载的前提下才有意义。即使是来源于同一个 Class 文件，如果加载它们的类加载器不同，那这两个类必定不相等。</p>
+<h4 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h4><p>如果应用程序中没有自定义过自己的类加载器，一般情况下就是使用系统类加载器。</p>
+<p>双亲委派模型要求除了顶层的启动类加载器外，其余的类加载器都应当有自己的父类加载器。</p>
+<p>双亲委派模型得工作过程是：如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此，因此所有的加载请求最终都应该传送到顶层的启动类加载器中，只有当父类加载器反馈自己无法完成这个加载请求时，子类加载器才会尝试自己去加载。</p>
+<p>无论哪个类加载器要加载这个类，最终都是委派给处于模型最顶端的启动类加载器进行加载，因此 Object 类在程序的各个类加载器环境中都是一个类。</p>
+<h2 id="第九章-类加载器及执行子系统的案例与实战"><a href="#第九章-类加载器及执行子系统的案例与实战" class="headerlink" title="第九章 类加载器及执行子系统的案例与实战"></a>第九章 类加载器及执行子系统的案例与实战</h2><h3 id="OSGI：灵魂的类加载器架构"><a href="#OSGI：灵魂的类加载器架构" class="headerlink" title="OSGI：灵魂的类加载器架构"></a>OSGI：灵魂的类加载器架构</h3><p>一个 Bundle 可以声明它所依赖的 Java Package（通过 Import 描述），也可以声明它允许导出发布的 Java Package（通过 Export 描述），且会严格控制访问范围，如果一个类存在于 Bundle 的类库中但是没有被 Export，那么这个 Bundle 的类加载器能找到这个类，但不会提供给其他 Bundle 使用。</p>
+<h3 id="字节码生成技术与动态代理的实现"><a href="#字节码生成技术与动态代理的实现" class="headerlink" title="字节码生成技术与动态代理的实现"></a>字节码生成技术与动态代理的实现</h3><p>优势在于实现了可以在原始类和接口还未知时，就确定了代理类的代理行为。</p>
+<h2 id="第十章-早期（编译期）优化"><a href="#第十章-早期（编译期）优化" class="headerlink" title="第十章 早期（编译期）优化"></a>第十章 早期（编译期）优化</h2><p>字节码生成是 Javac 编译过程的最后一个阶段。</p>
+<h3 id="Java-的语法糖的味道"><a href="#Java-的语法糖的味道" class="headerlink" title="Java 的语法糖的味道"></a>Java 的语法糖的味道</h3><h4 id="泛型与类型擦除"><a href="#泛型与类型擦除" class="headerlink" title="泛型与类型擦除"></a>泛型与类型擦除</h4><p>Java 的泛型只在程序源码中存在，编译后的字节码文件中，已经替换为原来的原生类型（Raw Type），并且相应的地方插入了强制转型代码，因此对于运行期的 Java 语言来说，ArrayList<int> 与 ArrayList<string> 是同一个类。因为参数编译之后都被擦除了，擦除动作导致这两种方法的特征签名变得一模一样。</string></int></p>
+<p>方法重载要求方法具备不同的特征签名，返回值并不包含在方法的特征签名之中，所以返回值不参与重载选择。</p>
+<p>擦除法所谓的擦除，仅仅是对方法的 Code 属性中的字节码进行擦除，实际上元数据中还是保留了泛型信息，这也是我们能通过反射手段取得参数化类型的根本依据。</p>
+<h4 id="自动装箱、拆箱与遍历循环"><a href="#自动装箱、拆箱与遍历循环" class="headerlink" title="自动装箱、拆箱与遍历循环"></a>自动装箱、拆箱与遍历循环</h4><p>变长参数编译后使用数组实现。</p>
+<p>遍历循环则把代码还原成了迭代器的实现，这也是为何遍历循环需要被遍历得类实现 Iterable 接口的原因。</p>
+<p>包装类的“==”运算在不遇到算数运算的情况下不会自动拆箱。</p>
+<h4 id="条件编译"><a href="#条件编译" class="headerlink" title="条件编译"></a>条件编译</h4><p>根据布尔值常量的真假，编译器将会把分支中：是成立的代码块消除掉，这一工作将在编译器解除语法糖阶段完成。</p>
+<h2 id="第十一章-晚期（运行期）优化"><a href="#第十一章-晚期（运行期）优化" class="headerlink" title="第十一章 晚期（运行期）优化"></a>第十一章 晚期（运行期）优化</h2><p>方法内联的重要性要高于其他优化措施，它的主要目的有两个，一是去除方法调用的成本（如建立栈帧等），二是为其他优化建立良好的基础，方法内联膨胀后可以便于在更大范围上采取后续的优化手段，从而获得更好的优化效果。</p>
+<h3 id="公共分子表达式消除"><a href="#公共分子表达式消除" class="headerlink" title="公共分子表达式消除"></a>公共分子表达式消除</h3><p>如果一个表达式 E 已经计算过了，并且从先前的计算的现在 E 中所有变量的值都没有发生变化，那么 E 的这次就成为了公共分子表达式。</p>
+<h3 id="数组边界检查消除"><a href="#数组边界检查消除" class="headerlink" title="数组边界检查消除"></a>数组边界检查消除</h3><p>Java 语言中访问数组元素 foo[i] 的时候系统将会自动进行上下界的范围检查。</p>
+<p>但数组边界检查是不是必须一次不漏地检查呢？常见的情况是数组访问发生在循环之中，如果循环变量的取值范围永远在区间 [0, foo.length] 之内，那么整个循环中就可以把数组的上下界检查消除。</p>
+<h3 id="方法内联"><a href="#方法内联" class="headerlink" title="方法内联"></a>方法内联</h3><p>方法内联的优化行为看起来很简单，不过是把目标方法的代码“复制”到发起调用的方法区之中，避免发生真实的方法调用而已。但实际上远远没有那么简单，因为多态，编译器无法确定运行版本。</p>
+<p>编译器在进行内联时，如果是非虚方法，那么直接进行内联就可以了。如果遇到虚方法，则会查询此方法是否有多个目标版本可以选择，如果查询结果只有一个版本，也可以进行内联。后续的执行过程中，如果一直没有加载到会令这个方法的接受者的继承关系发生变化的类，则这个内联代码就可以一直使用下去。否则就需要抛弃已经编译的代码，退回到解释状态执行，或者重新编译。</p>
+<p>如果查询结果有多个版本的目标方法可供选择，则使用内联缓存来完成方法内联。其大致原理是：在未发生方法调用之前，内联缓存状态为空，当第一次调用发生后，缓存记录下方法接受者的版本信息，并且每次进行方法调用时都比较接受者版本，如果都是一样的，那这个内联还可以一直用下去，如果不一致，才会取消内联，查找虚方法进行方法分派。</p>
+<h3 id="逃逸分析"><a href="#逃逸分析" class="headerlink" title="逃逸分析"></a>逃逸分析</h3><p>如果确定一个对象不会逃逸出方法之外，那让这个对象在栈上分配内存将会是一个不错的注意，对象所占用的内存空间就可以随栈帧出栈而销毁。</p>
+<h2 id="第十二章-Java-内存模型与线程"><a href="#第十二章-Java-内存模型与线程" class="headerlink" title="第十二章 Java 内存模型与线程"></a>第十二章 Java 内存模型与线程</h2><h3 id="硬件的效率与一致性"><a href="#硬件的效率与一致性" class="headerlink" title="硬件的效率与一致性"></a>硬件的效率与一致性</h3><p>由于计算机的存储设备与处理器的运算速度有几个数量级的差距，所以现代计算机系统都不得不加入一层读写速度尽可能接近处理器运算速度的高速缓存来作为内存与处理器之间的缓冲：将运算需要使用到的数据复制到缓存中，让运算能快速运行，当运算结束后再从缓存同步回内存之中，这样处理器就无须等待缓慢的内存读写了。</p>
+<p>但它引入了一个新的问题：缓存一致性。</p>
+<p>内存模型，可以理解为在特定的操作协议下，对特定的内存或高速缓存进行读写访问的过程抽象。</p>
+<h3 id="Java-内存模型"><a href="#Java-内存模型" class="headerlink" title="Java 内存模型"></a>Java 内存模型</h3><h4 id="主内存与工作内存"><a href="#主内存与工作内存" class="headerlink" title="主内存与工作内存"></a>主内存与工作内存</h4><p>Java 内存模型规定了所有的变量都存储在主内存中，每条线程还有自己的工作内存，线程的工作内存中保存了被该线程使用到的变量的主内存副本拷贝，线程对变量的所有操作（读取、赋值等）都必须在工作内存中进行，而不能直接读写主内存中的变量，不同的线程之间也无法直接访问对方工作内存中的变量，线程间的变量值的传递均需要通过主内存来完成。</p>
+<p>程序运行时主要访问读写的是工作内存。</p>
+<h4 id="内存间交互操作"><a href="#内存间交互操作" class="headerlink" title="内存间交互操作"></a>内存间交互操作</h4><p>Java 内存模型定义了一下 8 种操作，虚拟机实现时必须保证每一种操作都是原子的、不可再分的：</p>
+<ul>
+<li>lock（锁定）</li>
+<li>unlock（解锁）</li>
+<li>read（读取）</li>
+<li>load（载入）</li>
+<li>use（使用）</li>
+<li>assign（赋值）</li>
+<li>store（存储）</li>
+<li>write（写入）</li>
+</ul>
+<h4 id="对于-volatile-型变量的特殊规则"><a href="#对于-volatile-型变量的特殊规则" class="headerlink" title="对于 volatile 型变量的特殊规则"></a>对于 volatile 型变量的特殊规则</h4><p>当一个变量定义为 volatile 之后，它将具备两种特性，第一是保证此变量对所有线程的可见性，这里的可见性是指当一条线程修改了这个变量的值，新指对于其他线程来说是可以立即得知的。而普通变量不能做到这一点，普通变量的值在线程间传递都需要通过主内存来完成。例如，线程 A 修改了一个普通变量的值，然后向主内存进行回写，另外一条线程 B 在线程 A 回写完成了之后再从主内存进行读取操作，新变量值才会对线程 B 可见。</p>
+<p>volatile 变量在各个线程的工作内存中不存在一致性问题，但是 Java 里的运算并非原子操作，导致 volatile 变量的运算在并发下一样是不安全的。</p>
+<p>volatile 只能保证可见性，除了以下两种情况下仍然要通过加锁来保证原子性。</p>
+<ul>
+<li>运算结果并不依赖变量的当前值，或者能够确保只有单一的线程修改变量，的值。</li>
+<li>变量不需要和其他得状态变量共同参与不变约束。</li>
+</ul>
+<p>使用 volatile 的第二个语义是禁止指令重排。</p>
+<p>关键变化在于有 volatile 修饰的变量，赋值后多执行了一个“lock addl $0x0”，这个操作相当于一个内存屏障。这种操作相当于对 cache 中的变量做了一次前面介绍 Java 内存模型中所说的 store 和write 操作，通过这样一个空操作，可让 volatile 变量的修改对其他 cpu 立即可见。</p>
+<h4 id="原子性、可见性与有序性"><a href="#原子性、可见性与有序性" class="headerlink" title="原子性、可见性与有序性"></a>原子性、可见性与有序性</h4><p>Java 内存模型是围绕着并发过程中如何处理原子性、可见性和有序性这3个特征来建立的。</p>
+<p>原子性：由 Java 内存模型来直接保证的原型性变化包括 read、load、assign、use、store 和 write，我们大致认为基本数据类型的访问读写是具备原子性的。</p>
+<p>如果应用场景需要更大范围的原子性操作，Java 内存模型还提供了 lock 和 unlock 操作，这两个指令反映到 Java 代码中就是同步块——synchronize 关键字，因此 synchronize 块之间的操作也具备原子性。</p>
+<p>可见性：是指当一个线程修改了共享变量的值，其他线程能够立即得知这个修改。</p>
+<p>有序性：Java 内存模型的有序性可以总结为：如果在本线程内观察，所有操作都是有序的，如果在一个线程中观察另一个线程，所有操作都是无序的。前半句是指线程内表现为串行。后半句是指指令重排现象和工作内存与主内存的同步延迟想象。</p>
+<h2 id="第十三章-线程安全与锁优化"><a href="#第十三章-线程安全与锁优化" class="headerlink" title="第十三章 线程安全与锁优化"></a>第十三章 线程安全与锁优化</h2><h3 id="线程安全的实现方法"><a href="#线程安全的实现方法" class="headerlink" title="线程安全的实现方法"></a>线程安全的实现方法</h3><ul>
+<li>互斥同步</li>
+</ul>
+<p>synchronize 关键字经过编译后，会在同步块的前后分别形成 monitorenter 和 monitorexit 指令，这两个字节码都需要一个 reference 类型的参数来指明要锁定和解锁的对象。</p>
+<p>synchronize 同步块对同一条线程来说是可重入的，不会出现自己把自己锁死的问题。Java 线程是映射到操作系统的原生线程之上的，如果阻塞或唤醒一个线程，都需要从用户态转换到核心态中，需要耗费很多处理器时间。除了 synchronize 之外，还可以使用 reentrantLock 重入锁来实现同步。</p>
+<p>公平锁是指多个线程在等待同一个锁时，必须按照申请锁的时间顺序来依次获得锁，非公平锁则是靠抢占的。</p>
+<h3 id="可重入代码"><a href="#可重入代码" class="headerlink" title="可重入代码"></a>可重入代码</h3><p>如果一个方法，它的返回结果是可以预测的，只要输入了相同的数据，就都能返回相同的结果，那它就满足可重入性的要求，当然也是线程安全的。</p>
+<h3 id="自旋锁与自适应锁"><a href="#自旋锁与自适应锁" class="headerlink" title="自旋锁与自适应锁"></a>自旋锁与自适应锁</h3><p>共享数据的锁定状态只会持续很短的一段时间，为了这段时间去挂起和恢复线程并不值得。为了让线程等待，我们只需让线程执行一个忙循环（自旋），这就是所谓的自旋锁。</p>
+<h3 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h3><p>锁消除是指虚拟机即时编译在运行时，对一些代码上要求同步，但是被检测到不可能存在共享数据竞争的锁进行消除。</p>
+<h3 id="锁粗化"><a href="#锁粗化" class="headerlink" title="锁粗化"></a>锁粗化</h3><p>如果一系列的连续操作都对同一个对象反复加锁和解锁，甚至加锁操作是出现在循环体中的，那即使没有线程竞争，频繁地进行互斥同步操作也会导致不必要的性能损耗。如果虚拟机监测到有这样一段零碎的操作都对同一对象加锁，将会把加锁同步的范围扩展（粗化）到整个操作序列的外部。</p>
+<h3 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h3><p>偏向锁可以提高带有同步但无竞争的程序性能。如果程序中大多数的锁总是被多个不同的线程访问，那偏向模式就是多余的。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/读书笔记/" rel="tag"># 读书笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/12/点名小辣辣，带你入门-JMeter-｡･∀･-ﾉﾞ/" rel="next" title="点名小辣辣，带你入门 JMeter (｡･∀･)ﾉﾞ">
+                <i class="fa fa-chevron-left"></i> 点名小辣辣，带你入门 JMeter (｡･∀･)ﾉﾞ
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/26/Android-音视频开发（一）：PCM-格式音频的播放与采集/" rel="prev" title="Android 音视频开发（一）：PCM 格式音频的播放与采集">
+                Android 音视频开发（一）：PCM 格式音频的播放与采集 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第二章-Java-内存区域与内存溢出溢出"><span class="nav-number">1.</span> <span class="nav-text">第二章 Java 内存区域与内存溢出溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#程序计数器"><span class="nav-number">1.1.</span> <span class="nav-text">程序计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-虚拟机栈"><span class="nav-number">1.2.</span> <span class="nav-text">Java 虚拟机栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本地方法栈"><span class="nav-number">1.3.</span> <span class="nav-text">本地方法栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-堆"><span class="nav-number">1.4.</span> <span class="nav-text">Java 堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法区"><span class="nav-number">1.5.</span> <span class="nav-text">方法区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行时常量池"><span class="nav-number">1.6.</span> <span class="nav-text">运行时常量池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#直接内存"><span class="nav-number">1.7.</span> <span class="nav-text">直接内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象的创建"><span class="nav-number">1.8.</span> <span class="nav-text">对象的创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象的访问定位"><span class="nav-number">1.9.</span> <span class="nav-text">对象的访问定位</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三章-垃圾收集器与内存分配策略"><span class="nav-number">2.</span> <span class="nav-text">第三章 垃圾收集器与内存分配策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#引用计数算法"><span class="nav-number">2.1.</span> <span class="nav-text">引用计数算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可达性分析算法"><span class="nav-number">2.2.</span> <span class="nav-text">可达性分析算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#再谈引用"><span class="nav-number">2.3.</span> <span class="nav-text">再谈引用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#强-软-弱-虚"><span class="nav-number">2.3.1.</span> <span class="nav-text">强 软 弱 虚</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生存还是死亡"><span class="nav-number">2.4.</span> <span class="nav-text">生存还是死亡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#垃圾收集算法"><span class="nav-number">2.5.</span> <span class="nav-text">垃圾收集算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#标记-清除算法"><span class="nav-number">2.5.1.</span> <span class="nav-text">标记-清除算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复制算法"><span class="nav-number">2.5.2.</span> <span class="nav-text">复制算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#标记-整理算法"><span class="nav-number">2.5.3.</span> <span class="nav-text">标记-整理算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分代收集算法"><span class="nav-number">2.6.</span> <span class="nav-text">分代收集算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HotSpot-的算法实现"><span class="nav-number">2.6.1.</span> <span class="nav-text">HotSpot 的算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#安全点"><span class="nav-number">2.6.1.1.</span> <span class="nav-text">安全点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存分配与回收策略"><span class="nav-number">2.7.</span> <span class="nav-text">内存分配与回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#对象优先在-Eden-分配"><span class="nav-number">2.7.1.</span> <span class="nav-text">对象优先在 Eden 分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#大对象直接进入老年代"><span class="nav-number">2.7.2.</span> <span class="nav-text">大对象直接进入老年代</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#长期存活的对象将进入老年代"><span class="nav-number">2.7.3.</span> <span class="nav-text">长期存活的对象将进入老年代</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态对象年龄判定"><span class="nav-number">2.7.4.</span> <span class="nav-text">动态对象年龄判定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空间分配担保"><span class="nav-number">2.7.5.</span> <span class="nav-text">空间分配担保</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五章-调优案例分析与实战"><span class="nav-number">3.</span> <span class="nav-text">第五章 调优案例分析与实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高性能硬件上的程序部署策略"><span class="nav-number">3.1.</span> <span class="nav-text">高性能硬件上的程序部署策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群间同步导致的内存溢出"><span class="nav-number">3.2.</span> <span class="nav-text">集群间同步导致的内存溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆外内存导致的溢出错误"><span class="nav-number">3.3.</span> <span class="nav-text">堆外内存导致的溢出错误</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类文件结构"><span class="nav-number">4.</span> <span class="nav-text">类文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#无关性的基石"><span class="nav-number">4.1.</span> <span class="nav-text">无关性的基石</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Class-类文件的结构"><span class="nav-number">4.1.1.</span> <span class="nav-text">Class 类文件的结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法表集合"><span class="nav-number">4.1.2.</span> <span class="nav-text">方法表集合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#属性表集合"><span class="nav-number">4.1.3.</span> <span class="nav-text">属性表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ConstantValue-属性"><span class="nav-number">4.1.3.1.</span> <span class="nav-text">ConstantValue 属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Signature-属性"><span class="nav-number">4.1.3.2.</span> <span class="nav-text">Signature 属性</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字节码与数据类型"><span class="nav-number">4.1.4.</span> <span class="nav-text">字节码与数据类型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第七章-虚拟机类加载机制"><span class="nav-number">5.</span> <span class="nav-text">第七章 虚拟机类加载机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类加载的过程"><span class="nav-number">5.1.</span> <span class="nav-text">类加载的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#加载"><span class="nav-number">5.1.1.</span> <span class="nav-text">加载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#验证"><span class="nav-number">5.1.2.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#准备"><span class="nav-number">5.1.3.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解析"><span class="nav-number">5.1.4.</span> <span class="nav-text">解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化"><span class="nav-number">5.1.5.</span> <span class="nav-text">初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类加载器"><span class="nav-number">5.2.</span> <span class="nav-text">类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类与加载器"><span class="nav-number">5.2.1.</span> <span class="nav-text">类与加载器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#双亲委派模型"><span class="nav-number">5.2.2.</span> <span class="nav-text">双亲委派模型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第九章-类加载器及执行子系统的案例与实战"><span class="nav-number">6.</span> <span class="nav-text">第九章 类加载器及执行子系统的案例与实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OSGI：灵魂的类加载器架构"><span class="nav-number">6.1.</span> <span class="nav-text">OSGI：灵魂的类加载器架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字节码生成技术与动态代理的实现"><span class="nav-number">6.2.</span> <span class="nav-text">字节码生成技术与动态代理的实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十章-早期（编译期）优化"><span class="nav-number">7.</span> <span class="nav-text">第十章 早期（编译期）优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-的语法糖的味道"><span class="nav-number">7.1.</span> <span class="nav-text">Java 的语法糖的味道</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#泛型与类型擦除"><span class="nav-number">7.1.1.</span> <span class="nav-text">泛型与类型擦除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自动装箱、拆箱与遍历循环"><span class="nav-number">7.1.2.</span> <span class="nav-text">自动装箱、拆箱与遍历循环</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#条件编译"><span class="nav-number">7.1.3.</span> <span class="nav-text">条件编译</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十一章-晚期（运行期）优化"><span class="nav-number">8.</span> <span class="nav-text">第十一章 晚期（运行期）优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#公共分子表达式消除"><span class="nav-number">8.1.</span> <span class="nav-text">公共分子表达式消除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组边界检查消除"><span class="nav-number">8.2.</span> <span class="nav-text">数组边界检查消除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法内联"><span class="nav-number">8.3.</span> <span class="nav-text">方法内联</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#逃逸分析"><span class="nav-number">8.4.</span> <span class="nav-text">逃逸分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十二章-Java-内存模型与线程"><span class="nav-number">9.</span> <span class="nav-text">第十二章 Java 内存模型与线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#硬件的效率与一致性"><span class="nav-number">9.1.</span> <span class="nav-text">硬件的效率与一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-内存模型"><span class="nav-number">9.2.</span> <span class="nav-text">Java 内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#主内存与工作内存"><span class="nav-number">9.2.1.</span> <span class="nav-text">主内存与工作内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存间交互操作"><span class="nav-number">9.2.2.</span> <span class="nav-text">内存间交互操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对于-volatile-型变量的特殊规则"><span class="nav-number">9.2.3.</span> <span class="nav-text">对于 volatile 型变量的特殊规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原子性、可见性与有序性"><span class="nav-number">9.2.4.</span> <span class="nav-text">原子性、可见性与有序性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十三章-线程安全与锁优化"><span class="nav-number">10.</span> <span class="nav-text">第十三章 线程安全与锁优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线程安全的实现方法"><span class="nav-number">10.1.</span> <span class="nav-text">线程安全的实现方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可重入代码"><span class="nav-number">10.2.</span> <span class="nav-text">可重入代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自旋锁与自适应锁"><span class="nav-number">10.3.</span> <span class="nav-text">自旋锁与自适应锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁消除"><span class="nav-number">10.4.</span> <span class="nav-text">锁消除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁粗化"><span class="nav-number">10.5.</span> <span class="nav-text">锁粗化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#偏向锁"><span class="nav-number">10.6.</span> <span class="nav-text">偏向锁</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

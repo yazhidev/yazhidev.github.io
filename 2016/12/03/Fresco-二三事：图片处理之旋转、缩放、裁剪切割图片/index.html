@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="关于Fresco加载图片的处理，例如旋转、裁剪切割图片，在官方文档也都有提到，只是感觉写的不太详细，正好最近项目里有类似需求，所以分享一些使用小tip，后面的朋友就不用再走弯路浪费时间了。（测试图片分辨率1200*800） 原图：  裁剪图片实现旋转图片123456789101112131415/** * 旋转图片 * * @param rotate ，例如：RotationOptions.ROT">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fresco 二三事：图片处理之旋转、缩放、裁剪切割图片">
+<meta property="og:url" content="https://yazhidev.github.io/2016/12/03/Fresco-二三事：图片处理之旋转、缩放、裁剪切割图片/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="关于Fresco加载图片的处理，例如旋转、裁剪切割图片，在官方文档也都有提到，只是感觉写的不太详细，正好最近项目里有类似需求，所以分享一些使用小tip，后面的朋友就不用再走弯路浪费时间了。（测试图片分辨率1200*800） 原图：  裁剪图片实现旋转图片123456789101112131415/** * 旋转图片 * * @param rotate ，例如：RotationOptions.ROT">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203132729773">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203131057172">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203131315064">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203131347425">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203131433817">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203121802457">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203122052805">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203122703698">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203124027846">
+<meta property="og:image" content="http://img.blog.csdn.net/20161203125110941">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.437Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Fresco 二三事：图片处理之旋转、缩放、裁剪切割图片">
+<meta name="twitter:description" content="关于Fresco加载图片的处理，例如旋转、裁剪切割图片，在官方文档也都有提到，只是感觉写的不太详细，正好最近项目里有类似需求，所以分享一些使用小tip，后面的朋友就不用再走弯路浪费时间了。（测试图片分辨率1200*800） 原图：  裁剪图片实现旋转图片123456789101112131415/** * 旋转图片 * * @param rotate ，例如：RotationOptions.ROT">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20161203132729773">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2016/12/03/Fresco-二三事：图片处理之旋转、缩放、裁剪切割图片/">
+
+
+
+
+
+  <title>Fresco 二三事：图片处理之旋转、缩放、裁剪切割图片 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2016/12/03/Fresco-二三事：图片处理之旋转、缩放、裁剪切割图片/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Fresco 二三事：图片处理之旋转、缩放、裁剪切割图片</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-12-03T13:24:20+08:00">
+                2016-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>关于Fresco加载图片的处理，例如旋转、裁剪切割图片，在官方文档也都有提到，只是感觉写的不太详细，正好最近项目里有类似需求，所以分享一些使用小tip，后面的朋友就不用再走弯路浪费时间了。（测试图片分辨率1200*800）</p>
+<p>原图：</p>
+<p><img src="http://img.blog.csdn.net/20161203132729773" alt="原图"></p>
+<h2 id="裁剪图片实现"><a href="#裁剪图片实现" class="headerlink" title="裁剪图片实现"></a>裁剪图片实现</h2><h3 id="旋转图片"><a href="#旋转图片" class="headerlink" title="旋转图片"></a>旋转图片</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 旋转图片</span><br><span class="line"> *</span><br><span class="line"> * @param rotate ，例如：RotationOptions.ROTATE_90</span><br><span class="line"> */</span><br><span class="line">private void rotate(SimpleDraweeView img, int rotate) &#123;</span><br><span class="line">    RotationOptions rotationOptions = RotationOptions.forceRotation(rotate);</span><br><span class="line">    ImageRequest build = ImageRequestBuilder.newBuilderWithSource(getUriForFresco(this, R.mipmap.test_img))</span><br><span class="line">            .setRotationOptions(rotationOptions)</span><br><span class="line">            .build();</span><br><span class="line">    PipelineDraweeController controller = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()</span><br><span class="line">            .setImageRequest(build)</span><br><span class="line">            .build();</span><br><span class="line">    mImageView.setController(controller);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用效果：</p>
+<p><img src="http://img.blog.csdn.net/20161203131057172" alt="旋转图片"></p>
+<h3 id="监听图片下载"><a href="#监听图片下载" class="headerlink" title="监听图片下载"></a>监听图片下载</h3><p>首先构造监听器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//监听图片下载进度，这里只重写了onFinalImageSet，当图片下载完成时获得图片宽高等信息</span><br><span class="line">ControllerListener controllerListener = new BaseControllerListener&lt;ImageInfo&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onFinalImageSet(String id, com.facebook.imagepipeline.image.ImageInfo imageInfo, Animatable animatable) &#123;</span><br><span class="line">                int viewWidth = imageInfo.getWidth();</span><br><span class="line">                int viewHeight = imageInfo.getHeight();</span><br><span class="line">                Toast.makeText(MainActivity.this, viewWidth + &quot;--&quot; + viewHeight, Toast.LENGTH_SHORT).show();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 获得图片宽高</span><br><span class="line"> *</span><br><span class="line"> * @param controllerListener 图片下载监听器</span><br><span class="line"> */</span><br><span class="line">private void getImageInfo(ControllerListener&lt;? super ImageInfo&gt; controllerListener) &#123;</span><br><span class="line">    PipelineDraweeController controller = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()</span><br><span class="line">            .setControllerListener(controllerListener)</span><br><span class="line">            .setUri(getUriForFresco(this, R.mipmap.test_img))</span><br><span class="line">            .build();</span><br><span class="line">    mImageView.setController(controller);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20161203131315064" alt="获得图片宽高"></p>
+<h3 id="如果我想要1：1在手机端展示呢？"><a href="#如果我想要1：1在手机端展示呢？" class="headerlink" title="如果我想要1：1在手机端展示呢？"></a>如果我想要1：1在手机端展示呢？</h3><p>我首先想到的是1：1按照图片的尺寸设置SimpleDraweeView的宽高并设置缩放方式为fitXY，但是果不其然，view超出屏幕的部分是无效的。</p>
+<p><img src="http://img.blog.csdn.net/20161203131347425" alt="超出屏幕"></p>
+<h3 id="裁剪切割图片"><a href="#裁剪切割图片" class="headerlink" title="裁剪切割图片"></a>裁剪切割图片</h3><p>既然view超出屏幕无效，那就曲线救国，让图片超出屏幕部分不显示在view里就好了。<br>裁剪图片首先要写一个processor类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 切割图片processor类</span><br><span class="line"> * 四个成员变量和createBitmap时的参数一致，即起点的X/Y坐标、要裁剪的宽高。因为项目里还涉及到缩放，所以我调整了下参数设成百分比方便换算</span><br><span class="line"> */</span><br><span class="line">public class CutProcess extends BasePostprocessor &#123;</span><br><span class="line">    private float mBeginXPercent;</span><br><span class="line">    private float mBeginYPercent;</span><br><span class="line">    private float mCutWidthPercent;</span><br><span class="line">    private float mCutHeightPercent;</span><br><span class="line"></span><br><span class="line">    public CutProcess(float beginXPercent, float beginYPercent, float cutWidthPercent, float cutHeightPercent) &#123;</span><br><span class="line">        this.mBeginXPercent = beginXPercent;</span><br><span class="line">        this.mBeginYPercent = beginYPercent;</span><br><span class="line">        this.mCutWidthPercent = cutWidthPercent;</span><br><span class="line">        this.mCutHeightPercent = cutHeightPercent;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public CloseableReference&lt;Bitmap&gt; process(</span><br><span class="line">            Bitmap sourceBitmap,</span><br><span class="line">            PlatformBitmapFactory bitmapFactory) &#123;</span><br><span class="line">        int viewWidth = sourceBitmap.getWidth();</span><br><span class="line">        int viewHeight = sourceBitmap.getHeight();</span><br><span class="line">        int beginx = (int) (mBeginXPercent * viewWidth);</span><br><span class="line">        int beginy = (int) (mBeginYPercent * viewHeight);</span><br><span class="line">        int width = (int) (mCutWidthPercent * viewWidth);</span><br><span class="line">        int height = (int) (mCutHeightPercent * viewHeight);</span><br><span class="line">        CloseableReference&lt;Bitmap&gt; bitmapRef = bitmapFactory.createBitmap</span><br><span class="line">                (sourceBitmap, beginx, beginy, width, height);</span><br><span class="line">        return CloseableReference.cloneOrNull(bitmapRef);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后在ImageRequest里setProcessor：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * 裁剪图片</span><br><span class="line">     * @param processor</span><br><span class="line">     */</span><br><span class="line">    private void cutPic(BasePostprocessor processor) &#123;</span><br><span class="line">        ImageRequest build = ImageRequestBuilder.newBuilderWithSource(getUriForFresco(this, R.mipmap.test_img))</span><br><span class="line">                .setPostprocessor(processor)</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        PipelineDraweeController controller = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()</span><br><span class="line">                .setImageRequest(build)</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        mImageView.setController(controller);</span><br><span class="line">	    &#125;</span><br></pre></td></tr></table></figure>
+<p>调用方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mImageView.setLayoutParams(new RelativeLayout.LayoutParams(600, 400));</span><br><span class="line">CutProcess cutProcess = new CutProcess(0, 0, 0.5f, 0.5f);</span><br><span class="line">cutPic(cutProcess);</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20161203131433817" alt="裁剪保留左上四分之一部分"></p>
+<p>图片是1200<em>800的，这里设置view的宽高为600</em>400，可以看到图片成功裁剪只保留原图左上四分之一。通过设置view宽高，配合裁剪图片，即可达到1：1显示的效果。</p>
+<h3 id="旋转-裁剪"><a href="#旋转-裁剪" class="headerlink" title="旋转+裁剪"></a>旋转+裁剪</h3><p>如果是要旋转90度后再裁剪呢？那还不简单，直接在裁剪的基础上，在ImageRequest里调用旋转方法不就好了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 旋转+裁剪图片</span><br><span class="line"> * @param processor</span><br><span class="line"> */</span><br><span class="line"> private void rotateAndcutPic(BasePostprocessor processor, int rotate) &#123;</span><br><span class="line">     RotationOptions rotationOptions = RotationOptions.forceRotation(rotate);</span><br><span class="line"></span><br><span class="line">     ImageRequest build = ImageRequestBuilder.newBuilderWithSource(getUriForFresco(this, R.mipmap.test_img))</span><br><span class="line">             .setPostprocessor(processor)</span><br><span class="line">             .setRotationOptions(rotationOptions)</span><br><span class="line">             .build();</span><br><span class="line"></span><br><span class="line">     PipelineDraweeController controller = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()</span><br><span class="line">             .setImageRequest(build)</span><br><span class="line">             .build();</span><br><span class="line"></span><br><span class="line">     mImageView.setController(controller);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>然后调用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//例如我需要旋转90度且宽度不变，高度方向裁剪掉一半（即保留(0,0)-（1200,400））</span><br><span class="line">mImageView.setLayoutParams(new RelativeLayout.LayoutParams(400, mScreenHeight));</span><br><span class="line">CutProcess cutProcess = new CutProcess(0, 0, 1f, 0.5f);</span><br><span class="line">rotateAndcutPic(cutProcess, RotationOptions.ROTATE_90);</span><br></pre></td></tr></table></figure>
+<p>然而得到的并不是我们想要的</p>
+<p><img src="http://img.blog.csdn.net/20161203121802457" alt="裁剪错误1"></p>
+<p>可以看到得到的是左半边(0,0)-(600,800)的图，即宽度方向被裁剪掉一般，高度方向不变，明明我在cutProcess里是设置宽度方向不变，高度方向裁剪50%，但是因为旋转了90度，结果却正好相反。难道是因为旋转90度后横纵方向也发生改变？那调换一下横纵方向的切割比例试试看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CutProcess cutProcess = new CutProcess(0, 0, 0.5f, 1f);</span><br><span class="line">rotateAndcutPic(cutProcess, RotationOptions.ROTATE_90);</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20161203122052805" alt="裁剪错误2"></p>
+<p>可以看到，调换横纵切割比例后，却得到的是下半边(0,400)-(1200,800)。还是不正确，难道是原点也改变了？再测试一下，如果要裁剪后保留右下四分之一(600,400)-(1200,800)区域，正常无旋转的情况下是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mImageView.setLayoutParams(new RelativeLayout.LayoutParams(600, 400));</span><br><span class="line">CutProcess cutProcess = new CutProcess(0.5f, 0.5f, 0.5f, 0.5f);</span><br><span class="line">rotateAndcutPic(cutProcess, RotationOptions.NO_ROTATION);</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20161203122703698" alt="正确1"></p>
+<p>但如果旋转270度后，同样代码得到的结果却是这样的：</p>
+<p><img src="http://img.blog.csdn.net/20161203124027846" alt="错误3"></p>
+<p>看到这里我们就清楚了，旋转图片后，其实(0,0)点，也就是所谓的原点也随之变换。默认情况下，原点是（0,0），顺时针旋转90度后，原点就变成了(0,800)，以此类推旋转180度原点为(1200,800)，旋转270度原点为(1200,0)（和旋转后的图片的左上角相对应）。虽然是在构建ImageRequest时同时传入旋转和裁剪参数的，但实际上可以看作是先完成了旋转，然后在旋转后的基础上，以屏幕的左上角为原点，左上角往右为x正方向，左上角往下为y正方向。</p>
+<p>小试牛刀一下，旋转270度后，想要裁剪后只保留原图的左上四分之一(0,0)-(600,600)，那推测就应该是(0, 0.5f, 0.5f, 0.5f)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mImageView.setLayoutParams(new RelativeLayout.LayoutParams(400, 600));</span><br><span class="line">CutProcess cutProcess = new CutProcess(0, 0.5f, 0.5f, 0.5f);</span><br><span class="line">rotateAndcutPic(cutProcess, RotationOptions.ROTATE_270);</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20161203125110941" alt="成功2"></p>
+<p>Bingo！推测正确。</p>
+<p>旋转+裁剪就是这个原点的变换要注意下。另外看代码里的几个方法，裁剪、旋转、获得宽高等，有没有觉得老是要重复写PipelineDraweeController、ImageRequest的代码好麻烦啊。其实裁剪、旋转等方法无非也就是添加一个参数，类似这种可变参数的复杂类的构造可以使用Builder模式封装一下。封装代码就不贴在这里了。<a href="http://download.csdn.net/detail/yazhi1992/9700679" target="_blank" rel="noopener">demo下载地址</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//Builder模式封装后</span><br><span class="line">new FrescoBuilder(mImageView, getUriForFresco(this, R.mipmap.test_img))</span><br><span class="line">      .cutPic(0f, 0.5f, 0.5f, 0.5f) //裁剪</span><br><span class="line">      .setRotate(RotationOptions.ROTATE_270) //旋转</span><br><span class="line">      .setControllerListener(controllerListener) //设置监听</span><br><span class="line">      .build();</span><br></pre></td></tr></table></figure>
+<h2 id="使用Matrix实现"><a href="#使用Matrix实现" class="headerlink" title="使用Matrix实现"></a>使用Matrix实现</h2><p>继承 SimpleDraweeView 自定义控件，使用Matrix实现旋转缩放：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br></pre></td><td class="code"><pre><span class="line">public class MyFresco extends SimpleDraweeView &#123;</span><br><span class="line"></span><br><span class="line">    private Matrix mMatrix;</span><br><span class="line">    private float mScaleX = 1f;</span><br><span class="line">    private float mScaleY = 1f;</span><br><span class="line">    private int mViewWidth = -1;</span><br><span class="line">    private int mViewHeight = -1;</span><br><span class="line">    private RectF mDisplayRect = new RectF();</span><br><span class="line">    private int mDegree = -1;</span><br><span class="line"></span><br><span class="line">    public MyFresco(Context context, GenericDraweeHierarchy hierarchy) &#123;</span><br><span class="line">        super(context, hierarchy);</span><br><span class="line">        init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public MyFresco(Context context) &#123;</span><br><span class="line">        super(context);</span><br><span class="line">        init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public MyFresco(Context context, AttributeSet attrs) &#123;</span><br><span class="line">        super(context, attrs);</span><br><span class="line">        init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setViewInfo(int width, int Height) &#123;</span><br><span class="line">        mViewWidth = width;</span><br><span class="line">        mViewHeight = Height;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void init() &#123;</span><br><span class="line">        mMatrix = new Matrix();</span><br><span class="line">        mMatrix.postScale(mScaleX, mScaleY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 缩放</span><br><span class="line">     * @param scaleX 缩放倍数</span><br><span class="line">     */</span><br><span class="line">    public void setScale(float scaleX, float scaleY) &#123;</span><br><span class="line">        mScaleX = scaleX;</span><br><span class="line">        mScaleY = scaleY;</span><br><span class="line">        mMatrix.postScale(scaleX, scaleY);</span><br><span class="line">        invalidate();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 旋转</span><br><span class="line">     * @param degree 角度</span><br><span class="line">     */</span><br><span class="line">    public void rotate(int degree) &#123;</span><br><span class="line">        if (mDegree == -1) &#123;</span><br><span class="line">            mDegree = degree;</span><br><span class="line">            if (mDegree != 0) &#123;</span><br><span class="line">                mMatrix.postRotate(degree);</span><br><span class="line">                invalidate();</span><br><span class="line">                if (mDegree == 90) &#123;</span><br><span class="line">                    //旋转后图片超出边界，所以要再做平移</span><br><span class="line">                    mMatrix.postTranslate(getRectWidth(), 0);</span><br><span class="line">                &#125; else if (mDegree == 180) &#123;</span><br><span class="line">                    mMatrix.postTranslate(getRectWidth(), getRectHieght());</span><br><span class="line">                &#125; else if (mDegree == 270) &#123;</span><br><span class="line">                    mMatrix.postTranslate(0, getRectHieght());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            mDegree += degree;</span><br><span class="line">            mMatrix.postRotate(degree); //getRectWidth是旋转后的width</span><br><span class="line">            invalidate();</span><br><span class="line">            mMatrix.postTranslate(getRectWidth(), 0);</span><br><span class="line">        &#125;</span><br><span class="line">        invalidate();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 还原设置</span><br><span class="line">     */</span><br><span class="line">    public void reset() &#123;</span><br><span class="line">        mScaleX = 1f;</span><br><span class="line">        mScaleY = 1f;</span><br><span class="line">        mMatrix = new Matrix();</span><br><span class="line">        mMatrix.setScale(mScaleX, mScaleY);</span><br><span class="line">        mViewWidth = -1;</span><br><span class="line">        mViewHeight = -1;</span><br><span class="line">        mDegree = -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获得旋转后超出边界的高度</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public float getRectHieght() &#123;</span><br><span class="line">        RectF displayRect = getDisplayRect(mMatrix);</span><br><span class="line">        if (displayRect != null) &#123;</span><br><span class="line">            return displayRect.height();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            return -1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获得旋转后超出边界的宽度</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public float getRectWidth() &#123;</span><br><span class="line">        RectF displayRect = getDisplayRect(mMatrix);</span><br><span class="line">        if (displayRect != null) &#123;</span><br><span class="line">            return displayRect.width();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            return -1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private RectF getDisplayRect(Matrix matrix) &#123;</span><br><span class="line">        if (mViewWidth == -1 || mViewHeight == -1) &#123;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        mDisplayRect.set(0.0F, 0.0F, mViewWidth, mViewHeight);</span><br><span class="line">        getHierarchy().getActualImageBounds(mDisplayRect);</span><br><span class="line">        //将matrix映射到rectf</span><br><span class="line">        matrix.mapRect(mDisplayRect);</span><br><span class="line">        return mDisplayRect;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onDraw(Canvas canvas) &#123;</span><br><span class="line">        int save = canvas.save();</span><br><span class="line">        canvas.concat(mMatrix);</span><br><span class="line">        super.onDraw(canvas);</span><br><span class="line">        canvas.restoreToCount(save);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>就是酱~</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/29/React-Native-Android-环境搭建/" rel="next" title=" React Native Android 环境搭建">
+                <i class="fa fa-chevron-left"></i>  React Native Android 环境搭建
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/10/App-Shortcuts-快捷方式-Android7-1-的-3D-Touch/" rel="prev" title="App Shortcuts 快捷方式 Android7.1 的'3D Touch'">
+                App Shortcuts 快捷方式 Android7.1 的'3D Touch' <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#裁剪图片实现"><span class="nav-number">1.</span> <span class="nav-text">裁剪图片实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#旋转图片"><span class="nav-number">1.1.</span> <span class="nav-text">旋转图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#监听图片下载"><span class="nav-number">1.2.</span> <span class="nav-text">监听图片下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如果我想要1：1在手机端展示呢？"><span class="nav-number">1.3.</span> <span class="nav-text">如果我想要1：1在手机端展示呢？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#裁剪切割图片"><span class="nav-number">1.4.</span> <span class="nav-text">裁剪切割图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#旋转-裁剪"><span class="nav-number">1.5.</span> <span class="nav-text">旋转+裁剪</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Matrix实现"><span class="nav-number">2.</span> <span class="nav-text">使用Matrix实现</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

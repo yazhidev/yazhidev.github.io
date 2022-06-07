@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Jenkins,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="打 debug 包流程：  git pull 分支最新代码 Android Studio：Build - Generate Signed APK  从 IDE 里可以看到，实际上该操作是执行了 assembleDebug，在打包完成后再将编译目录下的 apk 包安装到调试的手机上并运行。   拷贝了工作目录下 app/build/outputs/apk 文件夹下的 apk 安装包交付测试  显而易">
+<meta name="keywords" content="Jenkins">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jenkins 持续集成实现 Android 自动化打包">
+<meta property="og:url" content="https://yazhidev.github.io/2017/10/29/Jenkins-持续集成实现-Android-自动化打包/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="打 debug 包流程：  git pull 分支最新代码 Android Studio：Build - Generate Signed APK  从 IDE 里可以看到，实际上该操作是执行了 assembleDebug，在打包完成后再将编译目录下的 apk 包安装到调试的手机上并运行。   拷贝了工作目录下 app/build/outputs/apk 文件夹下的 apk 安装包交付测试  显而易">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-5aea9e3ee8eb21fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-f2ca36680c100f8f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-cbe5f27b2137bfce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-495f96f4744afe54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-1176e19e1e6474af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-d9754d585a267af6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-9528e5ed5cc8b1c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-3dbe56e75e169f7e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-c31c028a2ec8701a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1929170-ac35011c4fd51ddd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.439Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jenkins 持续集成实现 Android 自动化打包">
+<meta name="twitter:description" content="打 debug 包流程：  git pull 分支最新代码 Android Studio：Build - Generate Signed APK  从 IDE 里可以看到，实际上该操作是执行了 assembleDebug，在打包完成后再将编译目录下的 apk 包安装到调试的手机上并运行。   拷贝了工作目录下 app/build/outputs/apk 文件夹下的 apk 安装包交付测试  显而易">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1929170-5aea9e3ee8eb21fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2017/10/29/Jenkins-持续集成实现-Android-自动化打包/">
+
+
+
+
+
+  <title>Jenkins 持续集成实现 Android 自动化打包 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2017/10/29/Jenkins-持续集成实现-Android-自动化打包/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Jenkins 持续集成实现 Android 自动化打包</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-29T11:31:28+08:00">
+                2017-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>打 debug 包流程：</p>
+<ol>
+<li>git pull 分支最新代码</li>
+<li>Android Studio：Build - Generate Signed APK</li>
+</ol>
+<p>从 IDE 里可以看到，实际上该操作是执行了 assembleDebug，在打包完成后再将编译目录下的 apk 包安装到调试的手机上并运行。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-5aea9e3ee8eb21fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Gradle 执行任务"></p>
+<ol start="3">
+<li>拷贝了工作目录下 app/build/outputs/apk 文件夹下的 apk 安装包交付测试</li>
+</ol>
+<p>显而易见这些是很枯燥、重复且浪费时间的工作，而一切重复的工作皆可自动化。我们选择使用 <a href="https://jenkins.io/doc/" target="_blank" rel="noopener">Jenkins</a> 这一已经很成熟的持续集成方案来实现自动化打包。</p>
+<h2 id="初识-Jenkins"><a href="#初识-Jenkins" class="headerlink" title="初识 Jenkins"></a>初识 Jenkins</h2><blockquote>
+<p>What is Jenkins?<br>Jenkins is a self-contained, open source automation server which can be used to automate all sorts of tasks related to building, testing, and deploying software.</p>
+</blockquote>
+<p>Jenkins 说白了其实就是后台服务加上 web 管理配置页面。Jenkins 里，每个任务称为 Job，所以简单的说，持续集成的实质就是通过 web 页面构建一个或多个任务，然后通过后台服务持续、自动地执行这些任务。</p>
+<h2 id="安装教程"><a href="#安装教程" class="headerlink" title="安装教程"></a>安装教程</h2><p>因为 Jenkins 是基于 Java 开发的（但不仅限于构建基于 Java 开发的软件），所以运行 Jenkins 需要配置 Java 环境。</p>
+<ol>
+<li>下载 Jenkins 安装包。<a href="https://jenkins.io/download/" target="_blank" rel="noopener">Jenkins 下载地址</a>。虽然官方也提供了各个平台的安装包（例如 Mac 端 的 pkg 文件，但个人认为直接下载 war 包自行使用命令安装更为方便）</li>
+</ol>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-f2ca36680c100f8f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="war包"></p>
+<ol start="2">
+<li>在安装包所在目录运行命令：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//默认运行在8080端口</span><br><span class="line">java -jar jenkins.war </span><br><span class="line">//如果报错误为端口号已被占用，先查看端口号（例如8081端口）被什么程序占用</span><br><span class="line">lsof -i tcp:8081</span><br><span class="line">//记住服务的 PID 号（例如8123），强制 kill 相应服务</span><br><span class="line">sudo kill 8123</span><br><span class="line">//或直接指定未被占用端口运行</span><br><span class="line">java -jar jenkins.war --httpPort=2333</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>Jenkins 就启动成功了。</p>
+<ol start="3">
+<li>浏览器中进入 Jenkins web 配置页面：<a href="http://localhost:8081。" target="_blank" rel="noopener">http://localhost:8081。</a></li>
+</ol>
+<p>第一次启动时在控制台会输出一串密钥用于首次登陆验证。当然，如果懒得翻控制台打印出的命令，也可以直接到本地的 Jenkins 安装目录去找（Mac 上一般为 用户目录下的/.jenkins/secrets/initialAdminPassword）。该密钥同时也是 Jenkins 初始账号 admin 的密码。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-cbe5f27b2137bfce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="输出密钥"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-495f96f4744afe54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="初次进入输入密钥"></p>
+<p>输入密钥之后会出现如下让用户选择安装插件的选项。如果是第一次接触的同学可能会有点懵。所以这里建议点击右上角关闭，直接进入 Jenkins。后续再根据需求安装插件。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-1176e19e1e6474af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="选择功能"></p>
+<h2 id="构建-Job"><a href="#构建-Job" class="headerlink" title="构建 Job"></a>构建 Job</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>成功进入 Jenkins 后，我们就可以开始构建任务啦。但是在此之前，还需要为 Jenkins 配置相应的环境，以及安装需要用到的插件。</p>
+<h4 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h4><p>左侧选择系统管理 - 插件管理 - 可选插件，搜索并安装插件。</p>
+<h6 id="必装插件："><a href="#必装插件：" class="headerlink" title="必装插件："></a>必装插件：</h6><ul>
+<li>Gradle Plugin</li>
+<li>GitLab Plugin</li>
+</ul>
+<h6 id="建议安装的插件："><a href="#建议安装的插件：" class="headerlink" title="建议安装的插件："></a>建议安装的插件：</h6><ul>
+<li>build-name-setter （用于自定义每次构建的名字）</li>
+<li>Build Timestamp Plugin （比较好用的时间戳插件）</li>
+</ul>
+<p>tips：如果插件管理里显示可更新、可选插件都为空，前往插件管理 - 高级 - 滑动到最下方的升级站点，将地址替换为<code>http://mirror.xmission.com/jenkins/updates/update-center.json</code>。</p>
+<h4 id="配置环境"><a href="#配置环境" class="headerlink" title="配置环境"></a>配置环境</h4><p>还需要配置一下环境变量，在系统设置 - 全局变量里添加一个 Android Sdk 的目录。</p>
+<ul>
+<li>ANDROID_HOME = android sdk 所在目录</li>
+</ul>
+<h4 id="配置-GitLab-服务器"><a href="#配置-GitLab-服务器" class="headerlink" title="配置 GitLab 服务器"></a>配置 GitLab 服务器</h4><p>在配置服务器之前，需要先配置一下证书。</p>
+<p>左侧菜单  Credentials - System - Add domain 添加一个证书，Domain Name<br> 输入名字后点击 OK，再点击 adding some credentials 添加有访问代码权限的账户的 token，Kind 栏选择 GitLab API Token，Api token 一栏填入账户的 token，token 的获取方式为 GitLab - User Settings - Private Token。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-d9754d585a267af6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="GitLab token"></p>
+<p>接着配置一下服务器。左侧 系统管理 - 系统设置，安装 GitLab 插件之后会看到新增了一栏 GitLab，在这里配置一下源码服务器。</p>
+<p>Host Url 填写服务器地址：<a href="http://xxx.xx.xx.xxx:9000/。" target="_blank" rel="noopener">http://xxx.xx.xx.xxx:9000/。</a></p>
+<p>Credentials 选择刚才添加的证书。然后点击右下方的 Test Connection，不出意外的话就可以连接成功了。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-9528e5ed5cc8b1c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Test Connection"></p>
+<h4 id="添加-SSH"><a href="#添加-SSH" class="headerlink" title="添加 SSH"></a>添加 SSH</h4><p>配置好服务器后，还需要配置用于访问服务器的私钥 。SSH 协议规定远程主机在用户发起请求后，会发送一串随机字符串回来，用户使用本地存储的私钥对字符串进行加密后又发送回来，远程主机再使用用户事先配置的公钥比对加密后的字符串，以此来鉴定本次访问是否可信。因此，用于获取源码的服务器上必须配置用于远程登录服务器的 SSH 私钥。</p>
+<p>左侧菜单  Credentials - System - Add domain 添加一个证书，Domain Name<br> 输入名字后点击 OK，再点击 adding some credentials 添加有访问代码权限的账户的私钥，Kind 栏选择 SSH username with private key，Private Key 栏有多种方式可选，这里选择直接输入私钥，选择 Enter directly，直接复制私钥内容到输入框中（私钥位置：用户目录/.ssh/ 下的 id_rsa 文件，直接复制文件的所有内容），<strong>其他都不用填</strong>，点击保存。</p>
+<h3 id="构建第一个任务"><a href="#构建第一个任务" class="headerlink" title="构建第一个任务"></a>构建第一个任务</h3><p>点击左侧菜单栏 - 新建，新建一个任务</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-3dbe56e75e169f7e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="新建任务"></p>
+<p>这里看到了两个选项。多配置项目，顾名思义，更适用于有上下游任务、多个项目联动的任务，该项目相比自由风格的软件项目新增了些可选配置，例如上游项目正在构建时阻止该项目构建、使用自定义工作空间等。</p>
+<p>我们先选择自由风格的软件项目来试试手。输入项目名后可以看到整个配置页面了。最上方 GitLab connection 一栏选择刚配置的 GitLab。源码管理一栏选择 Git，配置一下项目地址。</p>
+<p>Repository URL 填写项目地址：<a href="mailto:git@git.xxxx.com" target="_blank" rel="noopener">git@git.xxxx.com</a>:xxx/xxxx.。</p>
+<p>Credentials 一栏选择之前添加的 SSH。</p>
+<p>Branches to build 一栏填写从哪个分支获取，例如从主分支：*/master</p>
+<p>配置好之后，滑到最下方应有并保存。之后点击左侧菜单 - 立刻构建试一下吧。如果看到任务被成功构建那就说明已经成功从服务器拉取源码啦。</p>
+<h3 id="编译项目"><a href="#编译项目" class="headerlink" title="编译项目"></a>编译项目</h3><p>进入 Job，左侧菜单 - 配置，在构建一栏增加构建步骤，选择 Invoke Gradle Script - 选择 Invoke Gradle，并在下方的 Tasks 中配置要执行的命令。比如打测试包命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">clean</span><br><span class="line">assembleDebug //如果项目中配置了 productFlavors，打包命令需要相应地更换为你需要打包的版本</span><br></pre></td></tr></table></figure>
+<p>配置完成后，一样的进入到项目的 app/build/outputs/apk 目录下就可以看到打好的 debug 包。项目位置位于：用户目录/.jenkins/workspace/xxx 。</p>
+<p>当然，你也可以自己执行项目的工作目录。在 Job 的编辑页，滑动到最上方， General 选项卡最顶端点击 高级 按钮，可以看到选项：使用自定义的工作空间，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">目录：workspace/work/testProject</span><br><span class="line">显示名称：testProject</span><br></pre></td></tr></table></figure>
+<h3 id="实现自动化"><a href="#实现自动化" class="headerlink" title="实现自动化"></a>实现自动化</h3><p>常见的自动化执行配置方法：进入 Job，左侧菜单 - 配置 - 构建触发器：</p>
+<h4 id="定时执行"><a href="#定时执行" class="headerlink" title="定时执行"></a>定时执行</h4><p>有两个比较相似的行为：</p>
+<ul>
+<li>Build periodically ：周期性地执行构建</li>
+<li>Poll SCM ：检查源码变更，如果有变更则拉取源码并执行构建</li>
+</ul>
+<p>二者都需要在下方的日程表中填写定时规则。</p>
+<h5 id="日程表编写规则"><a href="#日程表编写规则" class="headerlink" title="日程表编写规则"></a>日程表编写规则</h5><p>简要介绍一下定时编写规则：</p>
+<ul>
+<li><p>规则由5个参数组成，每个参数之间以空格间隔（单个参数里不可以包含空格），例如：<em> </em> <em> </em> <em> 。</em> 号代表忽略该参数。</p>
+</li>
+<li><p>五个参数从左起分别代表：分（范围0 ~ 59）、时（范围0 ~ 23）、天（范围1 ~ 31）、月（范围1 ~ 12）、星期（范围0 ~ 7，0/7均代表周日）</p>
+</li>
+<li><p>同个参数可以指定多个数，以英文逗号分隔（注意不要带空格），例如：2,3,5 ；可以指定连续数：2-5（等同于 2,3,4,5）</p>
+</li>
+</ul>
+<p>举几个例子直观地看一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">H 10 * * *  //每天10点整点。等同于 0 10 * * * ，如果分的参数输入0，会建议你使用 H 替代。</span><br><span class="line"></span><br><span class="line">20 8,10,18 * 11,12 1-4 //11、12两个月的周一到周四的每天8点20、10点20、18点20。</span><br></pre></td></tr></table></figure>
+<h4 id="GitLab-Hook"><a href="#GitLab-Hook" class="headerlink" title="GitLab Hook"></a>GitLab Hook</h4><p>构建触发器选择：Build when a change is pushed to GitLab. GitLab CI Service URL: <a href="http://localhost:8081/xxx/xxx" target="_blank" rel="noopener">http://localhost:8081/xxx/xxx</a></p>
+<p>这个需要在 GitLab 的源码项目里配置一下上面提到的地址，这样源码在接收到 push 事件时会通知 Jenkins 执行构建。因为没有将 Jenkins 发布到外网，所以可以看到上面提供的 hook 的地址也只是个本地的 localhost 的地址，填写这个地址外网是无法通知到的。这里暂时没有测试该特性。</p>
+<h4 id="基于上游项目的构建"><a href="#基于上游项目的构建" class="headerlink" title="基于上游项目的构建"></a>基于上游项目的构建</h4><p>构建触发器选择：Build after other projects are built。并填写上游项目的 Job 名称。还可以基于上游项目的构建情况，是否成功、失败来构建自身。</p>
+<p>基本上这些操作已经可以使整个自动化打包流程运行起来了。</p>
+<h2 id="关闭服务"><a href="#关闭服务" class="headerlink" title="关闭服务"></a>关闭服务</h2><p>采用 Jenkins CLI的方式来关闭Jenkins。</p>
+<p>左侧菜单 - 系统设置 - Jenkins CLI。下载 <a href="http://localhost:2333/jnlpJars/jenkins-cli.jar" target="_blank" rel="noopener">jenkins-cli.jar</a> 之后，通过使用命令控制 Jenkins，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar jenkins-cli.jar -s http://localhost:8081/ shutdown //关闭 Jenkins 服务</span><br></pre></td></tr></table></figure>
+<p>如果执行该命令时报没有权限的错误，则需要为 admin 账号配置一下权限。</p>
+<p>另外网络上很多提到直接在链接后加上相应的操作，例如 exit、restart、reload等，例如访问 <a href="http://localhost:8081/exit" target="_blank" rel="noopener">http://localhost:8081/exit</a> 代表退出 Jenkins，但估计很多人会遇到一下问题：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-c31c028a2ec8701a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ERROR 403"></p>
+<p>此类跳转失败的错误原因是 Jenkins 在 http 请求头部中放置了一个名为.crumb的token，在使用了反向代理，并且在设置中勾选了“防止跨站点请求伪造”之后此<br> token 会被转发服务器认为是不合法头部而去掉，导致跳转失败。解决方法就是左侧菜单 - 系统管理 - Configure Global Security 中<strong>取消</strong>勾选 防止跨站点请求伪造</p>
+<h2 id="权限配置问题"><a href="#权限配置问题" class="headerlink" title="权限配置问题"></a>权限配置问题</h2><p>如果因为设置错误而收回了配置权限，导致 admin 账号连主页都无法进入，解决的方法就是直接到 Jenkins 安装目录里修改配置文件。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1929170-ac35011c4fd51ddd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="权限错误"></p>
+<p>进入安装目录（用户目录/.jenkins）/config.xml，修改 useSecurity 栏目，修改为任何用户可以做任何事：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;useSecurity&gt;true&lt;/useSecurity&gt;</span><br><span class="line">  &lt;authorizationStrategy class=&quot;hudson.security.AuthorizationStrategy$Unsecured&quot;/&gt;</span><br><span class="line">  &lt;securityRealm class=&quot;hudson.security.HudsonPrivateSecurityRealm&quot;&gt;</span><br><span class="line">    &lt;disableSignup&gt;true&lt;/disableSignup&gt;</span><br><span class="line">    &lt;enableCaptcha&gt;false&lt;/enableCaptcha&gt;</span><br><span class="line">  &lt;/securityRealm&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="展望"><a href="#展望" class="headerlink" title="展望"></a>展望</h2><p>以上的自动化打包流程实际上还有可以改进的地方，例如每次测试人员都需要从 Jenkins 服务器上拷贝 apk 安装包，这一流程也应该自动化实现，比如使用脚本自动将 apk 安装包上传至公司 FTP 服务器，或者上传至第三方软件分发服务商，例如蒲公英、Fir 等，还可以将下载地址转换为二维码显示在相应的 Job 页，测试人员直接扫码安装即可。</p>
+<p>以及 Jenkins 的其他功能的扩展，例如构建发生错误时自动将日志发送至相关开发人员的邮箱，使开发人员可以更快更及时地响应问题。</p>
+<p>以及如果项目有编写单元测试，可以使用 Jenkins 周期性地自动运行单元测试，及早发现新引入的问题。</p>
+<p>Jenkins 是一个工具，同时也代表着一种思想，它告诉了我们：</p>
+<p>懒是第一生产力 ：P。</p>
+<p>以上。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Jenkins/" rel="tag"># Jenkins</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/22/Android-沉浸式状态栏的实现/" rel="next" title="Android 沉浸式状态栏的实现">
+                <i class="fa fa-chevron-left"></i> Android 沉浸式状态栏的实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/21/Android-自定义构建类型-BuildType/" rel="prev" title="Android 自定义构建类型 BuildType ">
+                Android 自定义构建类型 BuildType  <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#初识-Jenkins"><span class="nav-number">1.</span> <span class="nav-text">初识 Jenkins</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装教程"><span class="nav-number">2.</span> <span class="nav-text">安装教程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构建-Job"><span class="nav-number">3.</span> <span class="nav-text">构建 Job</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备工作"><span class="nav-number">3.1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装插件"><span class="nav-number">3.1.1.</span> <span class="nav-text">安装插件</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#必装插件："><span class="nav-number">3.1.1.0.1.</span> <span class="nav-text">必装插件：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#建议安装的插件："><span class="nav-number">3.1.1.0.2.</span> <span class="nav-text">建议安装的插件：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置环境"><span class="nav-number">3.1.2.</span> <span class="nav-text">配置环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置-GitLab-服务器"><span class="nav-number">3.1.3.</span> <span class="nav-text">配置 GitLab 服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加-SSH"><span class="nav-number">3.1.4.</span> <span class="nav-text">添加 SSH</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建第一个任务"><span class="nav-number">3.2.</span> <span class="nav-text">构建第一个任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译项目"><span class="nav-number">3.3.</span> <span class="nav-text">编译项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现自动化"><span class="nav-number">3.4.</span> <span class="nav-text">实现自动化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定时执行"><span class="nav-number">3.4.1.</span> <span class="nav-text">定时执行</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#日程表编写规则"><span class="nav-number">3.4.1.1.</span> <span class="nav-text">日程表编写规则</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GitLab-Hook"><span class="nav-number">3.4.2.</span> <span class="nav-text">GitLab Hook</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于上游项目的构建"><span class="nav-number">3.4.3.</span> <span class="nav-text">基于上游项目的构建</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#关闭服务"><span class="nav-number">4.</span> <span class="nav-text">关闭服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权限配置问题"><span class="nav-number">5.</span> <span class="nav-text">权限配置问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#展望"><span class="nav-number">6.</span> <span class="nav-text">展望</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

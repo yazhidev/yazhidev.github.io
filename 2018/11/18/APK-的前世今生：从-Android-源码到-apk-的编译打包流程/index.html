@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="最近想要研究热修复的原理，并自己实现一套简单的热修复框架（音视频的坑刚挖好就又挖另一个坑了2333），已经在看书入门 c++，方便后续查看业内一些知名热修复框架的源码，另外在涉及编译期/运行时修改代码之前，先了解一下 apk 是如何从项目源码被打包生成的，可能对后续的从思路上或实际操作都会所裨益。 文中涉及到的工具所在目录：Android/sdk/build-tools。下面开始分解并逐步实现对源">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APK 的前世今生：从 Android 源码到 apk 的编译打包流程">
+<meta property="og:url" content="https://yazhidev.github.io/2018/11/18/APK-的前世今生：从-Android-源码到-apk-的编译打包流程/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="最近想要研究热修复的原理，并自己实现一套简单的热修复框架（音视频的坑刚挖好就又挖另一个坑了2333），已经在看书入门 c++，方便后续查看业内一些知名热修复框架的源码，另外在涉及编译期/运行时修改代码之前，先了解一下 apk 是如何从项目源码被打包生成的，可能对后续的从思路上或实际操作都会所裨益。 文中涉及到的工具所在目录：Android/sdk/build-tools。下面开始分解并逐步实现对源">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1929170-23a3332793c1e3a1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1929170-22e822fa268140b6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.434Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="APK 的前世今生：从 Android 源码到 apk 的编译打包流程">
+<meta name="twitter:description" content="最近想要研究热修复的原理，并自己实现一套简单的热修复框架（音视频的坑刚挖好就又挖另一个坑了2333），已经在看书入门 c++，方便后续查看业内一些知名热修复框架的源码，另外在涉及编译期/运行时修改代码之前，先了解一下 apk 是如何从项目源码被打包生成的，可能对后续的从思路上或实际操作都会所裨益。 文中涉及到的工具所在目录：Android/sdk/build-tools。下面开始分解并逐步实现对源">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1929170-23a3332793c1e3a1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2018/11/18/APK-的前世今生：从-Android-源码到-apk-的编译打包流程/">
+
+
+
+
+
+  <title>APK 的前世今生：从 Android 源码到 apk 的编译打包流程 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2018/11/18/APK-的前世今生：从-Android-源码到-apk-的编译打包流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">APK 的前世今生：从 Android 源码到 apk 的编译打包流程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-18T13:03:28+08:00">
+                2018-11-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近想要研究热修复的原理，并自己实现一套简单的热修复框架（音视频的坑刚挖好就又挖另一个坑了2333），已经在看书入门 c++，方便后续查看业内一些知名热修复框架的源码，另外在涉及编译期/运行时修改代码之前，先了解一下 apk 是如何从项目源码被打包生成的，可能对后续的从思路上或实际操作都会所裨益。</p>
+<p>文中涉及到的工具所在目录：<code>Android/sdk/build-tools</code>。下面开始分解并逐步实现对源码的打包。</p>
+<h2 id="编译流程"><a href="#编译流程" class="headerlink" title="编译流程"></a>编译流程</h2><h3 id="1-生成仅包含资源文件的-apk-包和-R-java-文件"><a href="#1-生成仅包含资源文件的-apk-包和-R-java-文件" class="headerlink" title="1. 生成仅包含资源文件的 apk 包和 R.java 文件"></a>1. 生成仅包含资源文件的 apk 包和 R.java 文件</h3><p>根据资源文件和 AndroidManifest.xml 由工具 AAPT 生成 R.java 文件。Android Gradle Plugin 3.0.0 以后默认使用 AAPT2，详见 <a href="https://developer.android.com/studio/command-line/aapt2" target="_blank" rel="noopener">AAPT2 官方文档</a>。来看一下 AAPT2 的使用：</p>
+<h4 id="预编译"><a href="#预编译" class="headerlink" title="预编译"></a>预编译</h4><p>编译所有 Android 支持的资源文件。可以通过编译语句将单个资源文件编译成 <code>.flat</code> 后缀的过渡二进制文件</p>
+<p>AAPT 可以编译单个文件，例如编译 strings.xml，会生成 values_strings.arsc.flat 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aapt2 compile app/src/main/res/values/strings.xml -o test/</span><br></pre></td></tr></table></figure>
+<p>但一个项目不可能只有一个资源文件，通常都是编译 整个 res 资源目录，会生成 zip 压缩包，包含了所有资源文件编译后的 flat 格式文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aapt2 compile --dir app/src/main/res/ -o package/res.zip</span><br></pre></td></tr></table></figure>
+<p>参数含义：</p>
+<ul>
+<li>–dir：指定输入目录</li>
+<li>-o： 指定输出目录（如果输入源是文件夹，则需要指定编译后的（zip）文件名）</li>
+</ul>
+<h4 id="链接（link）"><a href="#链接（link）" class="headerlink" title="链接（link）"></a>链接（link）</h4><p>将预编译生成的过渡二进制文件合并并打包成单独的 APK 包，R 文件和 ProGuard 规则文件也是在这个时期生成的，生成的 APK 包不包含 DEX 字节码并且是未签名的（后续可使用 D8 编译工具将 Java 字节码编译成 DEX 字节码，使用 apksigner 对 APK 签名）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">aapt2 link package/res.zip \</span><br><span class="line">-I ~/Library/Android/sdk/platforms/android-27/android.jar \</span><br><span class="line">--java package/ \</span><br><span class="line">--manifest app/src/main/AndroidManifest.xml \</span><br><span class="line">-o package/res.apk</span><br></pre></td></tr></table></figure>
+<p>参数含义：</p>
+<ul>
+<li>-I：必要参数，指定 android.jar 目录，因为 xml 中可能使用到了例如 android:id 等自带的 android 命名空间</li>
+<li>o：指定输出 apk 路径</li>
+<li>–java：指定生成的 R 文件的路径</li>
+<li>–manifest：必要参数，Manifest 文件中包含了 app 的包名和 application id</li>
+</ul>
+<p>执行上述命令后报错：style/Theme.AppCompat.Light.DarkActionBar  not found. </p>
+<p>以及 layout_constraintBottom_toBottomOf （新建的工程默认依赖了 constraint-layout库）等各种 not found。</p>
+<p>报这些错是因为 link 时没有引入第三方库，在 Google 文档里没有找到相关的命令，所以先移除这些依赖，跑通整个流程后再回头看怎么解决。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// AppTheme 暂时先移除对 Theme.Appcompat 的依赖</span><br><span class="line"> &lt;style name=&quot;AppTheme&quot; parent=&quot;android:Theme.Holo.Light.DarkActionBar&quot;&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+<p>再执行一遍命令，可以看到指定的输出目录已经生成了 apk 包和 R 文件：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929170-23a3332793c1e3a1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="仅包含资源文件的apk与R文件"></p>
+<h3 id="2-处理aidl，生成对应的java文件"><a href="#2-处理aidl，生成对应的java文件" class="headerlink" title="2. 处理aidl，生成对应的java文件"></a>2. 处理aidl，生成对应的java文件</h3><p>因为 demo 没有涉及到 aidl，暂且跳过。</p>
+<h3 id="3-编译-java-文件为-class-文件"><a href="#3-编译-java-文件为-class-文件" class="headerlink" title="3. 编译 .java 文件为 .class 文件"></a>3. 编译 .java 文件为 .class 文件</h3><p>编译项目 src 目录下所有 .java 文件还有之前生成的 R.java 、aidl 生成的 java 文件为相应的的 class 文件 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">javac -encoding utf-8 \</span><br><span class="line">-target 1.8 \</span><br><span class="line">-bootclasspath ~/Library/Android/sdk/platforms/android-27/android.jar \</span><br><span class="line">app/src/main/java/com/yazhidev/demo/*.java package/com/yazhidev/demo/R.java \</span><br><span class="line">-d package/</span><br></pre></td></tr></table></figure>
+<p>参数含义：</p>
+<ul>
+<li>-encoding: 指定编码方式为 uts-8</li>
+<li>-target：指定 Java 版本号</li>
+<li>-bootclasspath：引入 Android.jar 包内的类</li>
+<li>-d：指定编译生成的字节码文件存放的路径</li>
+</ul>
+<h3 id="4-class-文件编译为-dex-文件"><a href="#4-class-文件编译为-dex-文件" class="headerlink" title="4. class 文件编译为 dex 文件"></a>4. class 文件编译为 dex 文件</h3><p>dex 文件是 Android 虚拟机所能识别、解析并运行的文件。Java 源文件被编译为 class 文件后，需要通过 dex 编译器将多个 class 文件整合为一个 dex 文件，从 Android Studio 3.1 开始，已经使用 D8 替代原先的 DX 作为默认的 dex 编译器。D8 的使用很简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">d8 package/com/yazhidev/demo/*.class \</span><br><span class="line">--classpath ~/Library/Android/sdk/platforms/android-27/android.jar \</span><br><span class="line">--output ./</span><br></pre></td></tr></table></figure>
+<p>参数含义：</p>
+<ul>
+<li>–classpath：指定编译需要引用到的类</li>
+<li>–output：指定编译后生成的 .dex 文件的存放路径</li>
+</ul>
+<h3 id="5-将-dex-文件添加进-apk-包"><a href="#5-将-dex-文件添加进-apk-包" class="headerlink" title="5. 将 dex 文件添加进 apk 包"></a>5. 将 dex 文件添加进 apk 包</h3><p>原本这步是通过 apkbuilder 脚本来做的，现在改成用 aapt 命令来做。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aapt add package/res.apk classes.dex</span><br></pre></td></tr></table></figure>
+<p>需要注意的是 dex 文件前不能加路径，否则会将路径带入 apk 包中。</p>
+<h3 id="6-优化对齐-apk-文件"><a href="#6-优化对齐-apk-文件" class="headerlink" title="6. 优化对齐 apk 文件"></a>6. 优化对齐 apk 文件</h3><p><a href="https://developer.android.com/studio/command-line/apksigner" target="_blank" rel="noopener">apksigner 文档</a>中提到，如果使用 apksigner 对 apk 签名，则需要在签名之前使用 zipalign 优化对齐。</p>
+<p>zipalign 的使用很简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">zipalign 4 package/res.apk package/app-unsigned-aligned.apk</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">4 代表 32 位对齐，zipalign 可以确保所有未压缩的数据的开头均相对于文件开头部分执行特定的字节对齐，这样可减少应用消耗的 RAM 量。</span><br><span class="line"></span><br><span class="line">### 7. 签名</span><br><span class="line"></span><br><span class="line">签名需要私钥，可以通过 Android Studio 生成，也可通过 JDK bin 目录下的 keytool 工具生成。keytool 以及 apksigner 的使用可参考：[从命令行构建和签署您的应用](https://developer.android.com/studio/publish/app-signing)</span><br><span class="line"></span><br><span class="line">我自己这么就直接使用现有的 key 签名，签名的命令很简单：</span><br></pre></td></tr></table></figure>
+<p>//apk 签名<br>apksigner sign –ks key.jks –out package/app-release.apk package/app-unsigned-aligned.apk<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">参数含义：</span><br><span class="line">- --ks：指定私钥文件</span><br><span class="line">- --out：指定签名后的 apk 输出路径</span><br></pre></td></tr></table></figure></p>
+<p>//检查 apk 的签名<br>apksigner verify app.apk<br><code>`</code></p>
+<p>至此，就完成了 Android 源码打包成 apk 的整个流程，当然以上只是最简单的情况，对于第三方库、多 module 等情景下的打包流程都没有涉及。将 apk 安装到手机上，可以正常打开:</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929170-22e822fa268140b6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="丑出天际的首页"></p>
+<p>一打开首页我的内心的拒绝的，这首页可以说是丑出天际。但起码从 0 到 1 了（化身阿 Q 疯狂自我安慰），一番操作算是对 apk 的打包流程有了个笼统的认识，后面要了解一下 app 启动流程，为热修复的学习打基础。（也许后面会回来填坑？）</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/26/Android-音视频开发（一）：PCM-格式音频的播放与采集/" rel="next" title="Android 音视频开发（一）：PCM 格式音频的播放与采集">
+                <i class="fa fa-chevron-left"></i> Android 音视频开发（一）：PCM 格式音频的播放与采集
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/16/《C-程序设计》读书笔记/" rel="prev" title="《C++ 程序设计》读书笔记">
+                《C++ 程序设计》读书笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#编译流程"><span class="nav-number">1.</span> <span class="nav-text">编译流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-生成仅包含资源文件的-apk-包和-R-java-文件"><span class="nav-number">1.1.</span> <span class="nav-text">1. 生成仅包含资源文件的 apk 包和 R.java 文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#预编译"><span class="nav-number">1.1.1.</span> <span class="nav-text">预编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链接（link）"><span class="nav-number">1.1.2.</span> <span class="nav-text">链接（link）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-处理aidl，生成对应的java文件"><span class="nav-number">1.2.</span> <span class="nav-text">2. 处理aidl，生成对应的java文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-编译-java-文件为-class-文件"><span class="nav-number">1.3.</span> <span class="nav-text">3. 编译 .java 文件为 .class 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-class-文件编译为-dex-文件"><span class="nav-number">1.4.</span> <span class="nav-text">4. class 文件编译为 dex 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-将-dex-文件添加进-apk-包"><span class="nav-number">1.5.</span> <span class="nav-text">5. 将 dex 文件添加进 apk 包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-优化对齐-apk-文件"><span class="nav-number">1.6.</span> <span class="nav-text">6. 优化对齐 apk 文件</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,读书笔记,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="创建和销毁对象静态工厂模式 构造器里未传参的成员不会被初始化。int类型是0，布尔类型是false，String类型是null，List&amp;lt;&amp;gt;也是null。  重叠构造器 进阶1：javabean模式，使用set方法来初始化成员，缺点是构造过程中javabean可能处于不一致状态（可以理解成该模式下成员的设置的分步进行的，可能某处使用到该类的某个成员时其还未被初始化），并且该模式阻止了把">
+<meta name="keywords" content="Java,读书笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Effective Java》读书笔记">
+<meta property="og:url" content="https://yazhidev.github.io/2017/01/28/《Effective-Java》读书笔记/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="创建和销毁对象静态工厂模式 构造器里未传参的成员不会被初始化。int类型是0，布尔类型是false，String类型是null，List&amp;lt;&amp;gt;也是null。  重叠构造器 进阶1：javabean模式，使用set方法来初始化成员，缺点是构造过程中javabean可能处于不一致状态（可以理解成该模式下成员的设置的分步进行的，可能某处使用到该类的某个成员时其还未被初始化），并且该模式阻止了把">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-06-07T22:58:54.442Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Effective Java》读书笔记">
+<meta name="twitter:description" content="创建和销毁对象静态工厂模式 构造器里未传参的成员不会被初始化。int类型是0，布尔类型是false，String类型是null，List&amp;lt;&amp;gt;也是null。  重叠构造器 进阶1：javabean模式，使用set方法来初始化成员，缺点是构造过程中javabean可能处于不一致状态（可以理解成该模式下成员的设置的分步进行的，可能某处使用到该类的某个成员时其还未被初始化），并且该模式阻止了把">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2017/01/28/《Effective-Java》读书笔记/">
+
+
+
+
+
+  <title>《Effective Java》读书笔记 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2017/01/28/《Effective-Java》读书笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="扬州慢">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《Effective Java》读书笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-28T16:15:18+08:00">
+                2017-01-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="创建和销毁对象"><a href="#创建和销毁对象" class="headerlink" title="创建和销毁对象"></a>创建和销毁对象</h2><h3 id="静态工厂模式"><a href="#静态工厂模式" class="headerlink" title="静态工厂模式"></a>静态工厂模式</h3><ul>
+<li>构造器里未传参的成员不会被初始化。int类型是0，布尔类型是false，String类型是null，List&lt;&gt;也是null。</li>
+</ul>
+<h3 id="重叠构造器"><a href="#重叠构造器" class="headerlink" title="重叠构造器"></a>重叠构造器</h3><ul>
+<li>进阶1：javabean模式，使用set方法来初始化成员，缺点是构造过程中javabean可能处于不一致状态（可以理解成该模式下成员的设置的分步进行的，可能某处使用到该类的某个成员时其还未被初始化），并且该模式阻止了把类变成不可能的可能，需要考虑线程安全。</li>
+<li>进阶2： Builder模式：类里定义一个静态类builder（其实就是javabean），对builder初始化完成后使用build（）返回该类，Buidler模式的状态不一致是builder，而不是类本身，并且类自身的成员也可设置成final。</li>
+</ul>
+<h3 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h3><ul>
+<li>长度非零的数组总是可变的，即使是final类型：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public static final int[] VALUES=&#123;...&#125; //错误</span><br><span class="line">//正确1：增加一个公有的不可变列表</span><br><span class="line">private static final int[] VALUES=...</span><br><span class="line">public static final List&lt; intergeR &gt; VALUES=</span><br><span class="line">&#123;Collections.unmodifiableList(Arrays.adList(PRIVATE_VALUES));</span><br><span class="line">//正确2：返回私有数组的拷贝</span><br><span class="line">private static final int[] VALUES=...</span><br><span class="line">public static final int[] values() &#123;</span><br><span class="line">    return VALUES.clone();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果是公有类，直接暴露数据会有很大的隐患，因为当你将来想改变其内部表示法时已经不可能了，因为共有类的客户端代码已经遍布各处了。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class Point&#123; //错误</span><br><span class="line">    public int x;</span><br><span class="line">    public int y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Point&#123; //正确</span><br><span class="line">    private int x;</span><br><span class="line">    private int y;</span><br><span class="line">    </span><br><span class="line">    public int getX() &#123; return x;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="类和接口"><a href="#类和接口" class="headerlink" title="类和接口"></a>类和接口</h2><h3 id="使可变性最小化"><a href="#使可变性最小化" class="headerlink" title="使可变性最小化"></a>使可变性最小化</h3><ul>
+<li>线程安全最容易的做法：只提供访问方法，不提供设值方法，对对象的加减乘除都重新返回一个新的对象。对象不会变化，也就不要求同步。</li>
+<li>可以把开销昂贵的计算结果缓存起来，例如String的hashcode方法，第一次计算后会将结果保存在成员hashCode里。</li>
+</ul>
+<h3 id="复合优先继承"><a href="#复合优先继承" class="headerlink" title="复合优先继承"></a>复合优先继承</h3><ul>
+<li>子类脆弱：例如一个类继承HashSet，如果子类里重写了addAll和add方法来计数，就会导致错误，因为HashSet的addAll是基于add方法实现的。不能保证父类不随着版本而变化，因此extends 子类继承父类是非常脆弱的。</li>
+<li>只有当子类真正是超类的子类型，即A和B，两者确实存在B is A的关系时，类B才应该扩展A，如果答案是否定的，通常情况下B应该包含A的一个私有实例，并且暴露一个较小的，简单的API：A本质上不是B的一部分，只是它的实现细节而已。</li>
+</ul>
+<h3 id="装饰者模式（Decorator模式）"><a href="#装饰者模式（Decorator模式）" class="headerlink" title="装饰者模式（Decorator模式）"></a>装饰者模式（Decorator模式）</h3><p>结合上面说到的，HashSet是implement Set类的，在HashSet里重写了Set接口定义的add,addAll等方法。因此新的子类继承Hashset重写add、addAll就不可避免会将HashSet里的实现继承下来。</p>
+<p>使用装饰者模式：ForwardingSet<e> implements Set<e>，该类有成员private final Set<e> s s，构造器里就是传入一个Set<e> ，该类不具体实现Set的任何方法,例如：</e></e></e></e></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;</span><br><span class="line">	return s.add(e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>InstrumentedSet<e> extends ForwardingSet<e>，构造器super父类即可，在这个类里添加一些功能，例如：</e></e></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public boolean add(E e)&#123;</span><br><span class="line">    count++;</span><br><span class="line">    return super.add(e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种模式下，InstrumentedSet 只是一个包装类，只是对其成员Set<set>进行修饰，为它增加计数特性。包装类并不实现具体功能，构造器里传入的就是实现具体功能的Set,可以是HaseSet或者自己实现的Set。</set></p>
+<p>另可参考阅读：<br><a href="http://www.cnblogs.com/yemeishu/archive/2012/12/30/2839489.html" target="_blank" rel="noopener">Android源码学习之装饰模式应用</a></p>
+<h3 id="继承后构造方法的调用"><a href="#继承后构造方法的调用" class="headerlink" title="继承后构造方法的调用"></a>继承后构造方法的调用</h3><ol>
+<li>如果子类没有定义构造方法，则调用父类的无参数的构造方法。</li>
+<li>如果子类定义了构造方法，不论是无参数还是带参数,在创建子类的对象的时候,首先执行父类无参数的构造方法,然后执行自己的构造方法。</li>
+<li>如果子类调用父类带参数的构造方法，可以通过super(参数)调用所需要的父类的构造方法,切该语句做为子类构造方法中的第一条语句。</li>
+<li>如果某个构造方法调用类中的其他的构造方法，则可以用this(参数),切该语句放在构造方法的第一条。<br>说白了:原则就是，先调用父亲的。(没有就默认调，有了就按有的调，反正只要有一个就可以了)</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public class Son extends Father &#123;</span><br><span class="line">	public Son() &#123;</span><br><span class="line">	//        super(); //没加默认调用父类无参构造方法</span><br><span class="line">	    super(&quot;from son&quot;);</span><br><span class="line">	    Log.e(&quot;zyz&quot;, &quot;son-constructor&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    public Son(String str) &#123;</span><br><span class="line">//        super(); //没加默认调用父类无参构造方法</span><br><span class="line">        Log.e(&quot;zyz&quot;, str + &quot; son-constructor-with-params&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void print() &#123;</span><br><span class="line">        Log.e(&quot;zyz&quot;, &quot;son-print&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Son extends Father &#123;</span><br><span class="line">    public Son() &#123;</span><br><span class="line">//        super(); //没加默认调用父类无参构造方法</span><br><span class="line">        super(&quot;from son&quot;);</span><br><span class="line">        Log.e(&quot;zyz&quot;, &quot;son-constructor&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Son(String str) &#123;</span><br><span class="line">//        super(); //没加默认调用父类无参构造方法</span><br><span class="line">        Log.e(&quot;zyz&quot;, str + &quot; son-constructor-with-params&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void print() &#123;</span><br><span class="line">        Log.e(&quot;zyz&quot;, &quot;son-print&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="接口优于抽象类"><a href="#接口优于抽象类" class="headerlink" title="接口优于抽象类"></a>接口优于抽象类</h3><p>抽象类可以写实例方法，通过派生继承，实现代码复用(子类可直接调用父类方法)，但由于重用方法增加了耦合度，接口的方法一定需要重写，最大程度实现了解耦。</p>
+<h3 id="类层次优于标签类"><a href="#类层次优于标签类" class="headerlink" title="类层次优于标签类"></a>类层次优于标签类</h3><p>标签类：<br>例如使用枚举或常量定义了圆和矩形，成员里有半径、长、宽。在公共方法 计算面积里，使用switch来判断是那种形状，再分别计算。类似的把多个实现乱七八糟地挤在单个类中，破坏可读性，又增加了内存占用，因为实例承担着属于其他类型的域。</p>
+<p>应该使用类层次来优化：<br>定义一个抽象类，包含抽象方法：将共有的方法（计算面积），如果有公有的成员还可以将其放在抽象类中。之后不同的类圆和矩形继承公共抽象类，另外添加自己的参数，并重写自己的计算面积的方法。</p>
+<h3 id="优先考虑静态成员"><a href="#优先考虑静态成员" class="headerlink" title="优先考虑静态成员"></a>优先考虑静态成员</h3><p>如果成员类不要求访问外围实例，就要定义成静态内部类。非静态内部类始终要保持外围对象的引用，不仅消耗内存，还将导致外围实例无法被垃圾回收。<br>例如Map实现的内部都有Entry对象，每个Entry都与Map关联，但是entry的方法（getKey/getValue）等并不需要访问Map，因此私有的静态成员类是最佳的选择。</p>
+<ul>
+<li>如果一个嵌套类需要在单个方法之外可见，或者它太长了不适合放在方法内部，就使用成员类。</li>
+<li>如果成员类的每个实例都需要一个指向外围实例的应用，就使用非静态成员类。否则就使用静态成员类。</li>
+<li>如果嵌套类属于一个方法的内部，且你只需要在一个地方创建实例，并且已经有了一个预置的类型可以说明这个类的特征，就使用匿名类。否则就使用局部类。</li>
+</ul>
+<h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><h3 id="列表优先于数组"><a href="#列表优先于数组" class="headerlink" title="列表优先于数组"></a>列表优先于数组</h3><p>二者的不同点：</p>
+<h4 id="数组是协变的（covariant）"><a href="#数组是协变的（covariant）" class="headerlink" title="数组是协变的（covariant）"></a>数组是协变的（covariant）</h4><p>如果B是A的子类，那么B[]就是A[]的子类型。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//编译时不报错，运行时报错ArrayStoreException</span><br><span class="line">Object[] test = new Long[1];</span><br><span class="line">test[0] = &quot;test&quot;;</span><br></pre></td></tr></table></figure>
+<p>而两个不同的类型A、B，List<a>既不是List<b>的子类也不是超类。</b></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Object&gt; test2 = new ArrayList&lt;Long&gt;(); //编译时报错</span><br><span class="line">test2.add(&quot;123&quot;);</span><br></pre></td></tr></table></figure>
+<h4 id="数组是具体化的（reified）"><a href="#数组是具体化的（reified）" class="headerlink" title="数组是具体化的（reified）"></a>数组是具体化的（reified）</h4><p>数组在运行时才知道并检查他们的元素类型约束。泛型则是通过擦除（erasure）来实现的。泛型只在编译时强化类型信息，在运行时擦除元素类型信息。擦除就是使泛型可以与没有使用泛型的代码随意互用。</p>
+<h3 id="利用有限制通配符提升API的灵活性"><a href="#利用有限制通配符提升API的灵活性" class="headerlink" title="利用有限制通配符提升API的灵活性"></a>利用有限制通配符提升API的灵活性</h3><p>PECE producer-extends，consumer-siper<br>如果参数化类型表示生产者T，就使用&lt;? extends T&gt;，如果表示消费者T，就使用&lt;? super T&gt;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//src产生E实例供使用，是生产者</span><br><span class="line">public void pushAll(Iterable&lt;? extands E&gt; src) &#123;</span><br><span class="line">    for (E e : src) push(e);</span><br><span class="line">&#125;</span><br><span class="line">//dst消费E实例，是消费者</span><br><span class="line">public void popAll(Collection&lt;E&gt; dst) &#123;</span><br><span class="line">    while(!isEmpty()) &#123;</span><br><span class="line">        dst.add(pop());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不要用通配符类型作为返回参数</p>
+<h2 id="枚举和注解"><a href="#枚举和注解" class="headerlink" title="枚举和注解"></a>枚举和注解</h2><h3 id="用enum代替int常量"><a href="#用enum代替int常量" class="headerlink" title="用enum代替int常量"></a>用enum代替int常量</h3><p><strong>（android不推荐使用enum）</strong></p>
+<ul>
+<li>枚举本质上是int值</li>
+<li>枚举允许添加任意的方法和域</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public enum Test &#123;</span><br><span class="line">    APPLE(&quot;test1&quot;, 2),</span><br><span class="line">    pen(&quot;test2&quot;, 1);</span><br><span class="line"></span><br><span class="line">    private final String name;</span><br><span class="line"></span><br><span class="line">    private final int num;</span><br><span class="line"></span><br><span class="line">    Test(String name, int num) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.num = num;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void print() &#123;</span><br><span class="line">        Log.e(&quot;zyz&quot;, APPLE.name + APPLE.num);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//遍历枚举</span><br><span class="line">Test[] values = Test.values();</span><br></pre></td></tr></table></figure>
+<h3 id="用实例域代替序数"><a href="#用实例域代替序数" class="headerlink" title="用实例域代替序数"></a>用实例域代替序数</h3><ul>
+<li>所有枚举都有一个ordinal方法，返回每个枚举常量在类型中的数字位置。避免使用ordinal方法，除非是编写EnumSet和EnumMap这种基于枚举的通用数据结构。使用实例域（类似成员变量）来保存与枚举相关的值。</li>
+</ul>
+<h3 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h3><ul>
+<li>注解类型声明</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Retention(RetentionPolicy.RUNTIME) //运行时保留</span><br><span class="line">@Target(ElementType.METHOD) //只在方法声明中才是合适的</span><br><span class="line">public @interface MyTest &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="坚持使用Override注解"><a href="#坚持使用Override注解" class="headerlink" title="坚持使用Override注解"></a>坚持使用Override注解</h3><p>覆盖equals时的参数是Object类型的，否则则变成了重载。但如果使用@Override注解后写错了编译器就会报错。</p>
+<h3 id="用标记接口定义类型"><a href="#用标记接口定义类型" class="headerlink" title="用标记接口定义类型"></a>用标记接口定义类型</h3><ul>
+<li>标记接口是没有包含方法声明的接口，只是指名了某个类实现了具有某种属性的接口（例如Serializable接口）</li>
+<li>标记接口胜过标记注解的两点：<ol>
+<li>接口定义的类型是由被标记类的实例实现的，注解则没有定义这样的类型。这个类型允许你在编译时捕捉到错误，而不像注解需要在运行时才能捕捉到</li>
+<li>接口可以被更加精确地锁定。假设一个标记只适用于特殊接口的实现，如果定义成标记接口就可以用它将唯一的接口扩展成它适用的接口。</li>
+</ol>
+</li>
+<li>注解胜过接口的两点：<ol>
+<li>注解可以不断演变。而接口通常不可能在实现后再给它添加方法。</li>
+<li>注解是注解机制的一部分。注解可以作为支持注解作为编程元素之一的框架中具有一致性。</li>
+</ol>
+</li>
+<li>接口和注解使用场景：<ol>
+<li>如果标记是应用到任何程序元素而不是类或接口，就必须使用注解，因为只有类和接口可以用来实现或扩展接口。</li>
+<li>如果标记只给类和接口，若要编写多个只接受有这种标记的方法则优先使用接口，这样可以在编译时进行类型检查。</li>
+<li>如果要永远限制这个标记只用于特殊接口的元素，最好将标记定义成该接口的一个子接口。</li>
+<li>如果2，3都是否定的，则应该使用注解。</li>
+</ol>
+</li>
+</ul>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="检查参数的有效性"><a href="#检查参数的有效性" class="headerlink" title="检查参数的有效性"></a>检查参数的有效性</h3><ul>
+<li>assert 对于有些参数，方法本身没有用到，却被保存起来供以后使用，可以使用断言检验这类参数的有效性。如果断言失败，则会抛AssertionError。</li>
+</ul>
+<h3 id="必要时进行保护性拷贝"><a href="#必要时进行保护性拷贝" class="headerlink" title="必要时进行保护性拷贝"></a>必要时进行保护性拷贝</h3><ul>
+<li>如果类的成员是可变的，为了保护内部信息变化，对于构造器的每个可变can’shu参数进行保护性拷贝是必要的，使用被封对象作为实例的组件，而不使用原始的对象。但注意，保护性拷贝是在检查参数的有效性之前进行的，并且有效性检查是针对拷贝之后的对象而不是原始对象。</li>
+<li><a href="http://jasonhan-sh-hotmail-com.iteye.com/blog/1171979" target="_blank" rel="noopener">慎用clone</a>。如果对于非final的成员，不能保证clone方法一定返回同样的类的对象，它有可能返回专门出于恶意目的而设计的不可信子类的实例，例如这样的子类可以在每个实例被创建时把指向该实例的引用记录到一个私有的静态列表中，并且允许攻击者访问这个列表，这将使得攻击者可以自由地控制所有的实例。为了阻止这种攻击，对于参数类型可以被不可信任方子类话的参数，请不要使用clone方法进行保护性拷贝。</li>
+<li><p>另外需要修改访问方法，返回可变内部域的保护性拷贝：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public Data end() &#123;</span><br><span class="line">    return new Data(end.getTime());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>只要可能，都应该使用不可变的对象作为对象内部的组件，这样就不必再为保护型拷贝操心。</p>
+</li>
+</ul>
+<h3 id="慎用重载"><a href="#慎用重载" class="headerlink" title="慎用重载"></a>慎用重载</h3><ul>
+<li><p>类型还是父类，虽然调用父类方法指向子类引用。</p>
+</li>
+<li><p>安全而保守的策略是：永远不要导出两个具有相同参数数目的重载方法。如果方法使用可变参数，保守的策略是根本不要重载它。</p>
+</li>
+</ul>
+<h3 id="慎用可变参数"><a href="#慎用可变参数" class="headerlink" title="慎用可变参数"></a>慎用可变参数</h3><ul>
+<li><p>如果客户端调用这个方法时并没有传递参数进去，它就会在运行时而不是编译时失败。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//带两个参数，避免没有传参导致的问题</span><br><span class="line">static init min(int firstArg, int... remainingArgs) &#123;</span><br><span class="line">    int min = firstArg;</span><br><span class="line">    for(int arg : remainingArgs) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在重视性能的情况下，使用可变参数要特别小型，可变参数方法的每次调用都会导致进行一次数组分配和初始化。可以使用多个重载方法，每个重载方法带有0至3个普通参数，当参数数目超过3个时，就使用可变参数方法。</p>
+</li>
+</ul>
+<h3 id="返回零长度的数组或集合，而不是null"><a href="#返回零长度的数组或集合，而不是null" class="headerlink" title="返回零长度的数组或集合，而不是null"></a>返回零长度的数组或集合，而不是null</h3><h2 id="通用程序设计"><a href="#通用程序设计" class="headerlink" title="通用程序设计"></a>通用程序设计</h2><h3 id="for-each循环优于传统的for循环"><a href="#for-each循环优于传统的for循环" class="headerlink" title="for each循环优于传统的for循环"></a>for each循环优于传统的for循环</h3><ul>
+<li>如果你在编写的类型是一组元素，实现Iterable可以允许用户利用for-each循环遍历你的类型。</li>
+<li>三种常见的无法使用for-each的情况：<ol>
+<li>过滤——需要遍历集合并删除选定元素</li>
+<li>转换——需要遍历集合并取代它的部分或全部元素值</li>
+<li>平行迭代——需要并行地遍历多个集合，就需要显式地控制迭代器或者索引变量以便所有迭代器或索引变量都可以得到同步前移</li>
+</ol>
+</li>
+</ul>
+<h3 id="了解和使用类库"><a href="#了解和使用类库" class="headerlink" title="了解和使用类库"></a>了解和使用类库</h3><ul>
+<li><p>伪随机数生成器</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//错误</span><br><span class="line">Math.abs(new Random().nextInt());</span><br><span class="line">//正确</span><br><span class="line">Random.nextInt(int)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>了解和使用标准类库提供的便利工具，而不用浪费时间为那些与工作不太相关的问题提供特别的解决方案。标准类库太庞大了，以至于不可能去学习所有文档，但是每个程序员都应该熟悉java.lang，java.util，某种程度上还有java.io种的内容。有两种工具值得特别一提。</p>
+<ul>
+<li>Collections Framework 用来表示和操作集合</li>
+<li><p>java.util.concurrentbao’zhong包中增加了一组并发使用工具</p>
+<p>总而言之，不要重新发明轮子，如果你要做的事情看起来是十分常见的，有可能类库中已经有某个类完成了这样的工作。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="如果需要精确的答案，请避免使用float和double"><a href="#如果需要精确的答案，请避免使用float和double" class="headerlink" title="如果需要精确的答案，请避免使用float和double"></a>如果需要精确的答案，请避免使用float和double</h3><p>float和double类型尤其不适合用于货币计算，因为要让一个float或double精确地表示0.1（或者10的ren’he’qi’ta任何其他负数次方值）是不可能的。</p>
+<h4 id="改进"><a href="#改进" class="headerlink" title="改进"></a>改进</h4><p>使用BigDecimal代替double：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BigDecimal bigDecimal = new BigDecimal(0.1);</span><br></pre></td></tr></table></figure>
+<p>BigDecimal允许你完全控制舍入，每当一个操作设计舍入的时候，它允许你从8种舍入模式中选择其一。但是缺点是与基本运算类型比，不仅不方便，而且很慢。如果性能非常关键，并且又不介意自己记录是金子小数点，而且涉及的数值又不太大，就可以使用int或long（例如0.1改变单位计作10）。如果数值范围没超过9位十进制数字，就可以使用int。如果不超过18位数值，就可以使用long。如果数值超过18位数字，就必须使用BigDecimal。</p>
+<h3 id="基本类型优于装箱基本类型"><a href="#基本类型优于装箱基本类型" class="headerlink" title="基本类型优于装箱基本类型"></a>基本类型优于装箱基本类型</h3><p>当程序装箱了基本类型值时，会导致高开销和不必要的对象创建。</p>
+<h3 id="当心字符串连接的性能"><a href="#当心字符串连接的性能" class="headerlink" title="当心字符串连接的性能"></a>当心字符串连接的性能</h3><p>连接操作符不适合运用在大规模的场景中，为连接n个字符串而重复地使用字符串连接操作符，需要n的平方级的时间。这是由于字符串不可变，当两个字符串被连接在一起时，它们的内容都要被拷贝。</p>
+<p>使用StringBuilder：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">StringBuilder test = new StringBuilder(&quot;test&quot;);</span><br><span class="line">test.append(&quot;test2&quot;)</span><br></pre></td></tr></table></figure></p>
+<h3 id="通过接口引用对象"><a href="#通过接口引用对象" class="headerlink" title="通过接口引用对象"></a>通过接口引用对象</h3><p>如果有合适的接口类型存在，那么对于参数、返回值、变量和域来说，就都应该使用接口类型进行声明。只有当你利用构造器创建某个对象的时候，才真正需要引用这个对象的类。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = new ArrayList&lt;&gt;();</span><br></pre></td></tr></table></figure>
+<p>这样会使程序更灵活，当你决定更换实现时，只需要改变构造器中类的名称：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = new Vector&lt;&gt;();</span><br></pre></td></tr></table></figure>
+<p>所有的代码都可以继续工作，代码并不知道原来的实现类型，所以对于这种变化并不在意。</p>
+<h3 id="接口优先于反射机制"><a href="#接口优先于反射机制" class="headerlink" title="接口优先于反射机制"></a>接口优先于反射机制</h3><p>反射机制允许一个类使用另一个类，即使当前者被编译的时候后者还根本不存在，然而这种能力也是要付出代价的：</p>
+<ul>
+<li>丧失了编译时类型检查的好处（包括异常检查）</li>
+<li>执行反射访问所需要的代码非常笨拙和冗长</li>
+<li>性能损失</li>
+</ul>
+<h2 id="异常"><a href="#异常" class="headerlink" title="异常"></a>异常</h2><h3 id="只针对异常的情况才使用异常"><a href="#只针对异常的情况才使用异常" class="headerlink" title="只针对异常的情况才使用异常"></a>只针对异常的情况才使用异常</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//Dont&apos;t do this</span><br><span class="line">try &#123;</span><br><span class="line">    int i = 0;</span><br><span class="line">    while (true) &#123;</span><br><span class="line">        range[i++].climb();</span><br><span class="line">    &#125;</span><br><span class="line">&#125; catch (ArrayIndexOutOfBoundsException e) &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不要优先使用基于异常的模式：</p>
+<ul>
+<li>异常机制的设计初衷是用于不正常的情形，所以很少会有JVM实现试图对它们进行优化。</li>
+<li>代码块放在try-catch块中反而阻止了现代JVM实现本来可能要执行的某些特定优化。</li>
+<li>对数组进行比那里的标准模式并不会导致冗余的检查，有些现代的JVM实现会将它们优化掉。</li>
+<li>基于异常的循环模式不仅模糊了代码的意图，还降低了性能，而且它还不能保证正常工作，如果出现不想关的bug，这个模式会悄悄地失效。</li>
+</ul>
+<h3 id="努力使失败保持原子性"><a href="#努力使失败保持原子性" class="headerlink" title="努力使失败保持原子性"></a>努力使失败保持原子性</h3><p>一般而言，失败的方法调用应该使对象保持在被调用之前的状态。具有这种属性的方法被称为具有失败原子性（failure atomic)。有几种途径可以实现这种效果：</p>
+<ol>
+<li>在执行操作前检查参数的有效性，这可以使在对象状态被修改前先抛出适当的异常。</li>
+<li>调整计算处理过程的顺序，使得任何可能会失败的计算部分都在对象状态被修之前发生。</li>
+<li>编写一段恢复代码，由它来拦截操作过程发生的失败，以及使对象回滚到操作开始之前的状态，这种办法主要用于永久性的数据结构。</li>
+<li>在对象的一份临时拷贝上执行操作，操作完成之后再用临时拷贝中的结果代替对象的内容。</li>
+</ol>
+<h3 id="不要忽略异常"><a href="#不要忽略异常" class="headerlink" title="不要忽略异常"></a>不要忽略异常</h3><p>忽略一个异常非常容易，只需将方法调用通过try语句包围起来，并包含一个空的catch块。空的catch块会使异常达不到应有的目的，至少，catch块也应该包含一条说明，解释为什么可以忽略这个异常。</p>
+<h2 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h2><p>正确地使用同步可以保证没有任何方法会看到对象处于不一致的状态中。它还可以保证刚进入同步方法或者同步代码块的每个线程，都看到由同一个锁保护的之前所有的修改效果。换句话说，读取一个非long或double类型的变量，可以保证返回的值是某个线程保存在该变量中的，即使多个线程在没有同步的情况下并发地修改这个变量也是如此。</p>
+<p><strong>不要使用</strong> Thread.stop方法。要阻止一个线程妨碍另一个线程，建议做法是让第一个线程轮训一个boolean域，这个域一开始为false，但是可以通过第二个线程设置为true，以表示第一个线程将终止自己。由于boolean域的读写操作都是原子的，程序员在访问这个域的时候不再使用同步。</p>
+<p>实际上，如果读和写操作没有都被同步，同步就不会起作用。</p>
+<p>如果变量修饰符是volatile，则读取变量时不需要锁，虽然volatile修饰符不执行互斥访问，但它可以保证任何一个线程在读取该域的时候都将看到最近刚刚被写入的值。</p>
+<p>使用volatile的时候务必要小心。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//错误</span><br><span class="line">private static volatile  int number = 0;</span><br><span class="line">//需要使用synchronization</span><br><span class="line">public static int getNumber() &#123;</span><br><span class="line">    return number++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>虽然number是原子的，但是增量操作符不是原子的，它首先读取值，然后写回一个新值。如果第二个线程在第一个线程读取旧值和返回新值期间读取这个域就会出错。</p>
+<h3 id="避免过度同步"><a href="#避免过度同步" class="headerlink" title="避免过度同步"></a>避免过度同步</h3><p>在一个被同步的区域内部，不要调用设计成要被覆盖的方法，或者是由客户端以函数对象的形式提供的方法。这样的方法是外来的，这个类不知道方法会做什么事情，也无法控制它，从同步区域中调用它很可能会导致异常、死锁或者数据损坏。</p>
+<p>通常，你应该在同步区域内做尽可能少的工作。如果你必须要执行某个很耗时的动作，应该设法把这个动作移到同步区域的外面。</p>
+<h3 id="executor-和-task-优先于线程"><a href="#executor-和-task-优先于线程" class="headerlink" title="executor 和 task 优先于线程"></a>executor 和 task 优先于线程</h3><p>Java1.5增加了java.util.concurrent，这个包中包含了一个Executor Framework：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService executorService = Executors.newSingleThreadExecutor();</span><br><span class="line">//执行提交一个runnable方法</span><br><span class="line">executorService.execute(runnable);</span><br><span class="line">//告诉executor如何优雅地终止</span><br><span class="line">executor.shutdonw();</span><br></pre></td></tr></table></figure></p>
+<p>你可以利用executor service完成更多的事情。例如，可以等待一个任务集合中的任何任务或所有任务完成（invokeAny或invokeAll），你可以等待executor service优雅地完成终止（awaitTermination），可以在任务完成时逐个地获取这些任务的结果（ExecutorCompletionService）等。</p>
+<h3 id="并发工具优于wait和notify"><a href="#并发工具优于wait和notify" class="headerlink" title="并发工具优于wait和notify"></a>并发工具优于wait和notify</h3><p>自从java1.5发型版本开始，java就提供了更高级的并发工具，他们可以完成以前必须在wait和notify上手写代码来完成的各项工作。其分成三类：</p>
+<ul>
+<li>Executor Framework</li>
+<li>并发集合（Concurrent Collectionin）</li>
+<li>同步器（Synchronizer）<br>并发集合为标准的集合接口（如List、Queue、Mpa）提供了高性能的并发实现。为了提供高并发性，这些实现在内部自己管理同步，因此，并发集合中不可能排除并发活动，将它锁定没有什么作用，只会是程序的速度变慢。</li>
+</ul>
+<p>同步器（Synchronizer）是一些使线程能够等待另一个线程的对象，允许他们协调动作。最常用的同步器是CountDownLatch和Semaphore。</p>
+<p>倒计数锁存器（CountDown Latch）是一次性的障碍，允许一个或者多个线程等待一个或者多个其他线程来做某些事情。CountDownLatch是唯一构造器带有一个int类型的参数，这个int参数是指允许所有在等待的线程被处理之前，必须在锁存器上调用countDown方法的次数。</p>
+<p>例如：一个方法带有一个执行该动作的executor，一个并发级别（表示要并发执行该动作的次数），以及表示该动作的runnable。所有的工作线程自身都准备好，要在time线程启动时钟之前运行该动作（为了实现准确的定时）。当最后一个工作线程准备好运行该动作时，timer线程就“发起头炮”，同事允许工作线程执行该动作，一旦最后一个工作线程执行完该动作，timer线程就立即停止计时。直接在wait和notify上实现这个逻辑至少来说会很混乱，而在CountDownLatch之上实现则相当简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public long getTime(Executor executor, int councurrency, final Runnable action) throws InterruptedException &#123;</span><br><span class="line">    final CountDownLatch ready = new CountDownLatch(councurrency);</span><br><span class="line">    final CountDownLatch start = new CountDownLatch(1);</span><br><span class="line">    final CountDownLatch done = new CountDownLatch(councurrency);</span><br><span class="line">    for (int i = 0; i &lt; councurrency; i++) &#123;</span><br><span class="line">        executor.execute(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                ready.countDown();</span><br><span class="line">                try &#123;</span><br><span class="line">                    start.await();</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    Thread.currentThread().interrupt();</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    done.countDown();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    ready.await();</span><br><span class="line">    long startNano = System.nanoTime();</span><br><span class="line">    start.countDown();</span><br><span class="line">    done.await();</span><br><span class="line">    return System.nanoTime() - startNano;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>用ready来告诉timer线程他们已经准备好了。然后工作线程会在start上等待。当最后一个工作线程调用ready.countDown时，timer线程记录下起始时间，并调用start.countDown，允许所有的工作线程继续进行。然后timer线程在done上等待，直到最后一个工作线程运行完该动作，并调用donw.countDown。一旦调用这个，timer线程就会苏醒过来，并记录下结束时间。</p>
+<p>wait方法的标准模式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">synchronized(obj) &#123;</span><br><span class="line">    while() &#123;</span><br><span class="line">        obj.wait(); //release lock, and reacquires on wakeup</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>始终应该使用wait循环模式来调用wait方法；永远不要在循环之外调用wait方法。循环会在等待之前和之后测试条件。</p>
+<h3 id="线程安全性的文档化"><a href="#线程安全性的文档化" class="headerlink" title="线程安全性的文档化"></a>线程安全性的文档化</h3><p>线程安全性的几种级别。（这份列表并没有涵盖所有的可能，而只是些常见的情形：</p>
+<ul>
+<li>不可变的（immutable）：这个类的实例是不变的。所以不需要外部的同步，例如String、Long、BigInteger。</li>
+<li>无条件的线程安全（unconditionnally thread-safe)：这个类的实例是可变的，但是这个类有着足够的内部同步，所以它的实例可以被并发使用，无需任何外部同步。 例如：Random和ConcurrentHashMa</li>
+<li>有条件的线程安全(conditionally thread-safe)：除了有些方法为进行安全的并发而使用需要外部同步</li>
+<li>非线程安全（not thread-safe）：这个类的实例是可变的。为了并发地使用它们，客户必须利用自己选择的外部同步包围每个方法调用（或者调用序列）。这样的例子包括通用的集合实现，例如ArrayList和HashMap。</li>
+<li>线程对立的（thread-hostile）：这个类不能安全地被多个线程并发使用，即使所有的方法调用都被外部同步包围。线程对立的根源通常在于，没有同步地修改静态数据。Java平台类库中，线程对立的类或者方法非常少。System.runFinalizersOnExit方法是线程对立的，但已经被废除了。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//私有锁对象</span><br><span class="line">private final Object lock = new Object();</span><br><span class="line"></span><br><span class="line">public void foo() &#123;</span><br><span class="line">    synchronized(lock) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>私有锁对象模式只能用在无条件的线程安全类上。有条件的线程安全类不能使用这种模式，因为它们必须在文档中说明：在执行某些方法调用序列时，它们的客户端程序必须获得哪把锁。</p>
+<p>私有锁对象模式特别适用于那些专门为继承而设计的类。如果这种类使用它的实例作为锁对象，之类可能很容易在无意中妨碍基类的操作，反之亦然，出于不同的目的而使用相同的锁，子类和基类很可能会“互相绊住对方的脚”。</p>
+<p>有条件的线程安全类必须在文档中指明哪些方法调用序列需要外部同步，以及在执行这些序列的时候需要获得哪把锁。如果你编写的是无条件的线程安全类，就应该考虑使用私有锁对象来代替同步的方法以防止客户端程序和子类的不同步干扰。</p>
+<h3 id="慎用延迟初始化"><a href="#慎用延迟初始化" class="headerlink" title="慎用延迟初始化"></a>慎用延迟初始化</h3><p>如果处于性能的考虑需要对静态域使用延迟初始化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">private static class FieldHolder &#123;</span><br><span class="line">    static final FieldType field = computeFieldValue();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static FieldHolder getField() &#123;</span><br></pre></td></tr></table></figure>
+<p>如果处于性能的考虑需要对实例域使用延迟初始化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">private volatile FieldType field;</span><br><span class="line">    </span><br><span class="line">FieldTpye getField() &#123;</span><br><span class="line">    FieldType result = field;</span><br><span class="line">    if(result == null) &#123; //First check(no locking)</span><br><span class="line">        synchronized (this) &#123;</span><br><span class="line">            result = field;</span><br><span class="line">            if(result == null) //Second check(with locking)</span><br><span class="line">                field = result = computeFieldValue();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果需要延迟初始化一个可以接受重复初始化的实例域：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private volatile FieldType field;</span><br><span class="line">    </span><br><span class="line">private FieldType getField() &#123;</span><br><span class="line">    FieldType result = field;</span><br><span class="line">    if(result == null) &#123;</span><br><span class="line">        field = result = computeFiedlValue();</span><br><span class="line">    &#125;</span><br><span class="line">    return  result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="不要依赖于线程调度器"><a href="#不要依赖于线程调度器" class="headerlink" title="不要依赖于线程调度器"></a>不要依赖于线程调度器</h3><p>线程不应该一直处于忙-等状态，即反复地检查一个共享对象，以等待某些事情的发生。</p>
+<p>不要让应用程序的正确性依赖于线程调度器，否则结果得到的应用程序将既不健壮，也不具有可移植性。不要依赖Thread.yield或者线程优先级。线程优先级可以用来提高一个已经能够正常工作的程序的服务质量，但永远不应该用来“修正”一个原本能不能工作的程序。</p>
+<h2 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h2><h3 id="谨慎地实现Serializable接口"><a href="#谨慎地实现Serializable接口" class="headerlink" title="谨慎地实现Serializable接口"></a>谨慎地实现Serializable接口</h3><p><strong>实现Serializable接口而付出的巨大代价是，一旦一个类被发布，就大大降低了“改变这个类的实现”的灵活性。</strong><br>如果一个类实现了Serializable接口，它的字节流编码（序列化形式）就变成了它的导出的API的一部分，一旦这个类被广泛使用，往往必须永远支持这种序列化形式。</p>
+<p>第二个代价是，它增加了出现bug和安全漏洞的可能性。你可能会忘记确保：反序列化过程必须也要保证所有“由真正的构造器建立起来的约束关系”，并且不允许攻击者访问正在构造过程中的对象的内部信息。</p>
+<p>第三个代价是，随着类发行新的版本，相关的测试负担也增加了。可序列化的类被修订后，你必须既要确保“序列化-反序列化”过程成功，也要确保结果产生的对象真正是原始对象的复制品。</p>
+<p>内部类不应该实现Serializable。</p>
+<p>如果一个类为了继承而设计，要更加小心。对于这样的类而言，在“允许子类实现Serializable接口”或者“禁止子类实现serialzable”两者间的一个折衷方案是：提供一个可访问的无参构造器，这种方案允许（但不要求）子类实现Serializable接口。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/读书笔记/" rel="tag"># 读书笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/10/App-Shortcuts-快捷方式-Android7-1-的-3D-Touch/" rel="next" title="App Shortcuts 快捷方式 Android7.1 的'3D Touch'">
+                <i class="fa fa-chevron-left"></i> App Shortcuts 快捷方式 Android7.1 的'3D Touch'
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/26/译-ConstraintLayout-可视化-Design-编辑器（这到底是什么）-第四部分/" rel="prev" title="[译] ConstraintLayout 可视化[Design]编辑器（这到底是什么）[第四部分]">
+                [译] ConstraintLayout 可视化[Design]编辑器（这到底是什么）[第四部分] <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars1.githubusercontent.com/u/13739375?s=460&v=4" alt="扬州慢">
+            
+              <p class="site-author-name" itemprop="name">扬州慢</p>
+              <p class="site-description motion-element" itemprop="description">敬畏技术</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建和销毁对象"><span class="nav-number">1.</span> <span class="nav-text">创建和销毁对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态工厂模式"><span class="nav-number">1.1.</span> <span class="nav-text">静态工厂模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重叠构造器"><span class="nav-number">1.2.</span> <span class="nav-text">重叠构造器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修饰符"><span class="nav-number">1.3.</span> <span class="nav-text">修饰符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类和接口"><span class="nav-number">2.</span> <span class="nav-text">类和接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使可变性最小化"><span class="nav-number">2.1.</span> <span class="nav-text">使可变性最小化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复合优先继承"><span class="nav-number">2.2.</span> <span class="nav-text">复合优先继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#装饰者模式（Decorator模式）"><span class="nav-number">2.3.</span> <span class="nav-text">装饰者模式（Decorator模式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#继承后构造方法的调用"><span class="nav-number">2.4.</span> <span class="nav-text">继承后构造方法的调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接口优于抽象类"><span class="nav-number">2.5.</span> <span class="nav-text">接口优于抽象类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类层次优于标签类"><span class="nav-number">2.6.</span> <span class="nav-text">类层次优于标签类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优先考虑静态成员"><span class="nav-number">2.7.</span> <span class="nav-text">优先考虑静态成员</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛型"><span class="nav-number">3.</span> <span class="nav-text">泛型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#列表优先于数组"><span class="nav-number">3.1.</span> <span class="nav-text">列表优先于数组</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数组是协变的（covariant）"><span class="nav-number">3.1.1.</span> <span class="nav-text">数组是协变的（covariant）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数组是具体化的（reified）"><span class="nav-number">3.1.2.</span> <span class="nav-text">数组是具体化的（reified）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用有限制通配符提升API的灵活性"><span class="nav-number">3.2.</span> <span class="nav-text">利用有限制通配符提升API的灵活性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#枚举和注解"><span class="nav-number">4.</span> <span class="nav-text">枚举和注解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用enum代替int常量"><span class="nav-number">4.1.</span> <span class="nav-text">用enum代替int常量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用实例域代替序数"><span class="nav-number">4.2.</span> <span class="nav-text">用实例域代替序数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解"><span class="nav-number">4.3.</span> <span class="nav-text">注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#坚持使用Override注解"><span class="nav-number">4.4.</span> <span class="nav-text">坚持使用Override注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用标记接口定义类型"><span class="nav-number">4.5.</span> <span class="nav-text">用标记接口定义类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法"><span class="nav-number">5.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#检查参数的有效性"><span class="nav-number">5.1.</span> <span class="nav-text">检查参数的有效性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#必要时进行保护性拷贝"><span class="nav-number">5.2.</span> <span class="nav-text">必要时进行保护性拷贝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#慎用重载"><span class="nav-number">5.3.</span> <span class="nav-text">慎用重载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#慎用可变参数"><span class="nav-number">5.4.</span> <span class="nav-text">慎用可变参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#返回零长度的数组或集合，而不是null"><span class="nav-number">5.5.</span> <span class="nav-text">返回零长度的数组或集合，而不是null</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用程序设计"><span class="nav-number">6.</span> <span class="nav-text">通用程序设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#for-each循环优于传统的for循环"><span class="nav-number">6.1.</span> <span class="nav-text">for each循环优于传统的for循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#了解和使用类库"><span class="nav-number">6.2.</span> <span class="nav-text">了解和使用类库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如果需要精确的答案，请避免使用float和double"><span class="nav-number">6.3.</span> <span class="nav-text">如果需要精确的答案，请避免使用float和double</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#改进"><span class="nav-number">6.3.1.</span> <span class="nav-text">改进</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本类型优于装箱基本类型"><span class="nav-number">6.4.</span> <span class="nav-text">基本类型优于装箱基本类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#当心字符串连接的性能"><span class="nav-number">6.5.</span> <span class="nav-text">当心字符串连接的性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过接口引用对象"><span class="nav-number">6.6.</span> <span class="nav-text">通过接口引用对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接口优先于反射机制"><span class="nav-number">6.7.</span> <span class="nav-text">接口优先于反射机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异常"><span class="nav-number">7.</span> <span class="nav-text">异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#只针对异常的情况才使用异常"><span class="nav-number">7.1.</span> <span class="nav-text">只针对异常的情况才使用异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#努力使失败保持原子性"><span class="nav-number">7.2.</span> <span class="nav-text">努力使失败保持原子性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不要忽略异常"><span class="nav-number">7.3.</span> <span class="nav-text">不要忽略异常</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发"><span class="nav-number">8.</span> <span class="nav-text">并发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#避免过度同步"><span class="nav-number">8.1.</span> <span class="nav-text">避免过度同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#executor-和-task-优先于线程"><span class="nav-number">8.2.</span> <span class="nav-text">executor 和 task 优先于线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发工具优于wait和notify"><span class="nav-number">8.3.</span> <span class="nav-text">并发工具优于wait和notify</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程安全性的文档化"><span class="nav-number">8.4.</span> <span class="nav-text">线程安全性的文档化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#慎用延迟初始化"><span class="nav-number">8.5.</span> <span class="nav-text">慎用延迟初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不要依赖于线程调度器"><span class="nav-number">8.6.</span> <span class="nav-text">不要依赖于线程调度器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列化"><span class="nav-number">9.</span> <span class="nav-text">序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#谨慎地实现Serializable接口"><span class="nav-number">9.1.</span> <span class="nav-text">谨慎地实现Serializable接口</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">扬州慢</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
