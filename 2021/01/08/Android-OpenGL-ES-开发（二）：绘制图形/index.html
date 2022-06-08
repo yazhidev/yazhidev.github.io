@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+<meta name="referrer" content="no-referrer">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="OpenGL 绘制图形步骤上一篇介绍了 OpenGL 的相关概念，今天来实际操作，使用 OpenGL 绘制出图形，对其过程有一个初步的了解。 OpenGL 绘制图形主要概括成以下几个步骤：  创建程序 初始化着色器 将着色器加入程序 链接并使用程序 绘制图形  上述每个步骤还可能会被分解成更细的步骤，对应着多个 api，下面我们来逐个看下。 创建程序使用 glCreateProgram 创建一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android OpenGL ES 开发（二）：绘制图形">
+<meta property="og:url" content="https://yazhidev.github.io/2021/01/08/Android-OpenGL-ES-开发（二）：绘制图形/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="OpenGL 绘制图形步骤上一篇介绍了 OpenGL 的相关概念，今天来实际操作，使用 OpenGL 绘制出图形，对其过程有一个初步的了解。 OpenGL 绘制图形主要概括成以下几个步骤：  创建程序 初始化着色器 将着色器加入程序 链接并使用程序 绘制图形  上述每个步骤还可能会被分解成更细的步骤，对应着多个 api，下面我们来逐个看下。 创建程序使用 glCreateProgram 创建一个">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20201229_122040_20201229095812604_2113046260.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20201229_122040_20201229110953461_611151883.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20201229_123627_20201229123612959_1845995943.png">
+<meta property="og:updated_time" content="2022-06-07T23:58:49.638Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android OpenGL ES 开发（二）：绘制图形">
+<meta name="twitter:description" content="OpenGL 绘制图形步骤上一篇介绍了 OpenGL 的相关概念，今天来实际操作，使用 OpenGL 绘制出图形，对其过程有一个初步的了解。 OpenGL 绘制图形主要概括成以下几个步骤：  创建程序 初始化着色器 将着色器加入程序 链接并使用程序 绘制图形  上述每个步骤还可能会被分解成更细的步骤，对应着多个 api，下面我们来逐个看下。 创建程序使用 glCreateProgram 创建一个">
+<meta name="twitter:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20201229_122040_20201229095812604_2113046260.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2021/01/08/Android-OpenGL-ES-开发（二）：绘制图形/">
+
+
+
+
+
+  <title>Android OpenGL ES 开发（二）：绘制图形 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2021/01/08/Android-OpenGL-ES-开发（二）：绘制图形/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Taki">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/link.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android OpenGL ES 开发（二）：绘制图形</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-08T07:57:51+08:00">
+                2021-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="OpenGL-绘制图形步骤"><a href="#OpenGL-绘制图形步骤" class="headerlink" title="OpenGL 绘制图形步骤"></a>OpenGL 绘制图形步骤</h1><p>上一篇介绍了 OpenGL 的相关概念，今天来实际操作，使用 OpenGL 绘制出图形，对其过程有一个初步的了解。</p>
+<p>OpenGL 绘制图形主要概括成以下几个步骤：</p>
+<ol>
+<li>创建程序</li>
+<li>初始化着色器</li>
+<li>将着色器加入程序</li>
+<li>链接并使用程序</li>
+<li>绘制图形</li>
+</ol>
+<p>上述每个步骤还可能会被分解成更细的步骤，对应着多个 api，下面我们来逐个看下。</p>
+<h2 id="创建程序"><a href="#创建程序" class="headerlink" title="创建程序"></a>创建程序</h2><p>使用 <a href="https://www.khronos.org/registry/OpenGL-Refpages/es2.0/" target="_blank" rel="noopener">glCreateProgram</a> 创建一个 program 对象并返回一个引用 ID，该对象可以附加着色器对象。注意要在OpenGL渲染线程中创建，否则无法渲染。</p>
+<h2 id="初始化着色器"><a href="#初始化着色器" class="headerlink" title="初始化着色器"></a>初始化着色器</h2><p>着色器的初始化可以细分为三个步骤：</p>
+<ol>
+<li>创建顶点、片元着色器对象</li>
+<li>关联着色器代码与着色器对象</li>
+<li>编译着色器代码</li>
+</ol>
+<p><a href="https://www.cnblogs.com/yazhidev/p/13737177.html" target="_blank" rel="noopener">上一篇文章</a>我们提到了顶点着色器和片元着色器都是可编程管道，因此着色器的初始化少不了对着色器代码的关联与编译，上面三个步骤对应的 api 为：</p>
+<ol>
+<li>glCreateShader(int type)<ul>
+<li>type：<code>GLES20.GL_VERTEX_SHADER</code> 代表顶点着色器、<code>GLES20.GL_FRAGMENT_SHADER</code> 代表片元着色器</li>
+</ul>
+</li>
+<li>glShaderSource(int shader, String code)<ul>
+<li>shader：着色器对象 ID</li>
+<li>code：着色器代码</li>
+</ul>
+</li>
+<li>glCompileShader(code)<ul>
+<li>code：着色器对象 ID</li>
+</ul>
+</li>
+</ol>
+<p>着色器代码使用 GLSL 语言编写，那代码要怎么保存并使用呢？我看到过三种方式，列出供大家参考：</p>
+<ol>
+<li>字符串变量保存</li>
+</ol>
+<p>这种应该是最直观的写法了，直接在对应的类中使用硬编码存储着色器代码，形如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">private final String vertexShaderCode =</span><br><span class="line">    &quot;attribute vec4 vPosition;&quot; +</span><br><span class="line">    &quot;void main() &#123;&quot; +</span><br><span class="line">    &quot;  gl_Position = vPosition;&quot; +</span><br><span class="line">    &quot;&#125;&quot;;</span><br></pre></td></tr></table></figure>
+<p>这种方式不是很建议，可读性不好。</p>
+<ol start="2">
+<li>存放于 assets 目录</li>
+</ol>
+<p>assets 文件夹下的文件不会被编译成二进制文件，因此适于存放着色器代码，还可以配合 AndroidStudio 插件 <strong>GLSL Support</strong> 实现语法高亮：</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20201229_122040_20201229095812604_2113046260.png" alt="assets"></p>
+<p>然后再封装读取 assets 文件的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">private fun loadCodeFromAssets(context: Context, fileName: String): String &#123;</span><br><span class="line">    var result = &quot;&quot;</span><br><span class="line">    try &#123;</span><br><span class="line">        val input = context.assets.open(name)</span><br><span class="line">        val reader = BufferedReader(InputStreamReader(input))</span><br><span class="line">        val str = StringBuilder()</span><br><span class="line">        var line: String?</span><br><span class="line">        while ((reader.readLine().also &#123; line = it &#125;) != null) &#123;</span><br><span class="line">            str.append(line)</span><br><span class="line">            str.append(&quot;\n&quot;) //注意结尾要添加换行符</span><br><span class="line">        &#125;</span><br><span class="line">        input.close()</span><br><span class="line">        reader.close()</span><br><span class="line">        result = str.toString()</span><br><span class="line">    &#125; catch (e: IOException) &#123;</span><br><span class="line">        e.stackTrace</span><br><span class="line">    &#125;</span><br><span class="line">    return result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是要在结尾添加换行符，否则最后输出的只是一行字符串，不符合 GLSL 语法，自然也就无法正常使用。</p>
+<ol start="3">
+<li>存放于 raw 目录</li>
+</ol>
+<p>存放于 raw 目录和 assets 目录其实异曲同工，但有个好处是 raw 文件会映射到 R 文件，代码中可以通过 R.raw 的方法使用对应的着色器代码，但 raw 目录下不能有目录结构，这点需要做个取舍。</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20201229_122040_20201229110953461_611151883.png" alt="raw 目录"></p>
+<p>同样的，封装读取 raw 文件的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">private fun loadCodeFromRaw(context: Context, fileId: Int): String &#123;</span><br><span class="line">    var result = &quot;&quot;</span><br><span class="line">    try &#123;</span><br><span class="line">        val input = context.resources.openRawResource(fileId)</span><br><span class="line">        val reader = BufferedReader(InputStreamReader(input))</span><br><span class="line">        val str = StringBuilder()</span><br><span class="line">        var line: String?</span><br><span class="line">        while ((reader.readLine().also &#123; line = it &#125;) != null) &#123;</span><br><span class="line">            str.append(line)</span><br><span class="line">            str.append(&quot;\n&quot;)</span><br><span class="line">        &#125;</span><br><span class="line">        input.close()</span><br><span class="line">        reader.close()</span><br><span class="line">        result = str.toString()</span><br><span class="line">    &#125; catch (e: IOException) &#123;</span><br><span class="line">        e.stackTrace</span><br><span class="line">    &#125;</span><br><span class="line">    return result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>着色器程序可能编译失败，可以使用 <code>glGetShaderiv</code> 方法获取着色器编译状况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var compileStatus = IntArray(1)</span><br><span class="line">//获取着色器的编译情况</span><br><span class="line">GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compileStatus, 0);</span><br><span class="line">if (compileStatus[0] == 0) &#123;//若编译失败则显示错误日志并</span><br><span class="line">    GLES20.glDeleteShader(shader);//删除此shader</span><br><span class="line">    shader = 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="将着色器加入程序"><a href="#将着色器加入程序" class="headerlink" title="将着色器加入程序"></a>将着色器加入程序</h2><p>初始化着色器后拿到着色器对象 ID，再使用 <a href="https://www.khronos.org/registry/OpenGL-Refpages/es2.0/" target="_blank" rel="noopener">glAttachShader</a> 将着色器对象附加到 program 对象上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glAttachShader(mProgram, shader) //将顶点着色器加入到程序</span><br><span class="line">GLES20.glAttachShader(mProgram, fragmentShader) //将片元着色器加入到程序中</span><br></pre></td></tr></table></figure>
+<h2 id="链接并使用程序"><a href="#链接并使用程序" class="headerlink" title="链接并使用程序"></a>链接并使用程序</h2><p>使用 <a href="https://www.khronos.org/registry/OpenGL-Refpages/es2.0/" target="_blank" rel="noopener">glLinkProgram</a> 为附加在 program 对象上的着色器对象创建可执行文件。链接可能失败，可以通过 <code>glGetProgramiv</code> 查询 program 对象状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glGetProgramiv(mProgram, GLES20.GL_LINK_STATUS, linkStatus, 0)</span><br><span class="line">// 如果连接失败，删除这程序</span><br><span class="line">if (linkStatus[0] == 0) &#123;</span><br><span class="line">    GLES20.glDeleteProgram(mProgram)</span><br><span class="line">    mProgram = 0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>链接成功后，通过 <code>glUseProgram</code> 使用程序，将 program 对象的可执行文件作为当前渲染状态的一部分。</p>
+<h2 id="绘制图形"><a href="#绘制图形" class="headerlink" title="绘制图形"></a>绘制图形</h2><p>终于到最核心的绘制图形了，前面我们初始化了 OpenGL 程序以及着色器，现在需要准备绘制相关的数据，绘制出一个图形最基础的两个数据就是顶点坐标和图形颜色。</p>
+<h3 id="定义顶点数据"><a href="#定义顶点数据" class="headerlink" title="定义顶点数据"></a>定义顶点数据</h3><p>尝试画一个三角定，定义三个顶点，每个顶点包含三个坐标 x，y，z。手机屏幕中心坐标系（0，0，0），左上角坐标（-1, 1, 0）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private val points = floatArrayOf(</span><br><span class="line">    0.0f, 0.0f, 0.0f, //屏幕中心</span><br><span class="line">    -1.0f, -1.0f, 0.0f, //左下角</span><br><span class="line">    1.0f, -1.0f, 0.0f //右下角</span><br><span class="line">)</span><br><span class="line">private val sizePerPoint = 3 //每个顶点三个坐标</span><br><span class="line">private val byteSize = sizePerPoint * 4 //每个顶点之前字节偏移量，float 四个字节</span><br><span class="line">private val pointNum = points.size / sizePerPoint //顶点数量</span><br><span class="line">private var vertexBuffer: FloatBuffer? = null //顶点数据浮点缓冲区</span><br></pre></td></tr></table></figure>
+<p>OpenGL 修改顶点属性时接受的数据类型为缓冲区类型 Buffer，因此还需要将数组类型转为 Buffer：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fun createFloatBuffer(array: FloatArray): FloatBuffer &#123;</span><br><span class="line">    val bb = ByteBuffer.allocateDirect(array.size * 4);//float 四个字节</span><br><span class="line">    bb.order(ByteOrder.nativeOrder()) //使用本机硬件设备的字节顺序</span><br><span class="line">    val buffer = bb.asFloatBuffer() //创建浮点缓冲区</span><br><span class="line">    buffer.put(array) //添加数据</span><br><span class="line">    buffer.position(0);//从第一个坐标开始读取</span><br><span class="line">    return buffer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="为顶点属性赋值"><a href="#为顶点属性赋值" class="headerlink" title="为顶点属性赋值"></a>为顶点属性赋值</h3><p>顶点着色器代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">attribute vec4 vPosition;</span><br><span class="line"></span><br><span class="line">void main() &#123;</span><br><span class="line">    gl_Position = vPosition;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>顶点着色器的每个输入变量叫顶点属性，着色器中定义了 vPosition 用于存放顶点数据，先使用 <code>GLES20.glGetAttribLocation</code> 获取 vPosition 句柄，再使用 <code>GLES20.glVertexAttribPointer</code> 为 vPosition 添加我们定义好的顶点数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public static void glVertexAttribPointer(</span><br><span class="line">        int indx,</span><br><span class="line">        int size,</span><br><span class="line">        int type,</span><br><span class="line">        boolean normalized,</span><br><span class="line">        int stride,</span><br><span class="line">        java.nio.Buffer ptr</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<p>该方法接收六个参数，分别代表：</p>
+<ul>
+<li>indx：要修改的顶点属性的句柄</li>
+<li>size：每个顶点的坐标数，如果只有 x、y 两个坐标值就传 2</li>
+<li>type：坐标数据类型</li>
+<li>normalized：指定在访问定点数据值时是应将其标准化（true）还是直接转换为定点值（false）</li>
+<li>stride：每个顶点之间的字节偏移量</li>
+<li>ptr：顶点坐标 Buffer</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">val vPositionHandle = GLES20.glGetAttribLocation(mProgram, &quot;vPosition&quot;) //获取 vPosition 句柄</span><br><span class="line">GLES20.glVertexAttribPointer(vPositionHandle, sizePerPoint, GLES20.GL_FLOAT, false, byteSize, vertexBuffer) //为 vPosition 添加顶点数据</span><br></pre></td></tr></table></figure>
+<p>如果 glGetAttribLocation 返回值为 -1 代表获取失败，可能 program 对象或着色器对象里没有对应的属性。</p>
+<p>还需要注意的是，为顶点属性赋值时，<code>glVertexAttribPointer</code> 建立了 CPU 和 GPU 之前的逻辑连接，实现了 CPU 数据上传到 GPU。但 GPU 数据是否可见，也就是顶点着色器能否读到数据，则由是否启用了对应的属性决定。默认情况下顶点属性都是关闭的，可以通过 <code>glEnableVertexAttribArray</code> 启用属性，允许着色器读取 GPU 数据。</p>
+<h3 id="定义片元颜色"><a href="#定义片元颜色" class="headerlink" title="定义片元颜色"></a>定义片元颜色</h3><p>OpenGL 定义色值使用 float 数组，可以使用<a href="https://tool.lu/color/" target="_blank" rel="noopener">色值转换在线工具</a>将十六进制色值转换为 float 值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private val colors = floatArrayOf(</span><br><span class="line">    0.93f, 0.34f, 0.16f, 1.00f</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h4 id="为颜色属性赋值"><a href="#为颜色属性赋值" class="headerlink" title="为颜色属性赋值"></a>为颜色属性赋值</h4><p>片元着色器代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">precision mediump float;</span><br><span class="line">uniform vec4 zColor;</span><br><span class="line">void main() &#123;</span><br><span class="line">    gl_FragColor = zColor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>颜色属性定义为 uniform 变量，为颜色属性赋值一样需要先获取属性句柄，再向属性添加数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mColorHandle = GLES20.glGetUniformLocation(mProgram, &quot;zColor&quot;); //获取 zColor 句柄</span><br><span class="line">GLES20.glUniform4fv(zColorHandle, 1, color, 0); //为 zColor 添加数据</span><br></pre></td></tr></table></figure>
+<h3 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GLES20.glEnableVertexAttribArray(vPositionHandle) //启用顶点句柄</span><br><span class="line">GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, pointNum) //渲染图元</span><br><span class="line">GLES20.glDisableVertexAttribArray(vPositionHandle) //禁用顶点句柄</span><br></pre></td></tr></table></figure>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20201229_123627_20201229123612959_1845995943.png" alt="绘制三角形"></p>
+<p>当当当当，三角形出现了。上次只是绘制了背景色，今天又向前迈一步绘制出图形。但是显而易见这并不是一个等边三角形，和我们定义的坐标有所出入，这是因为 OpenGL 屏幕坐标系是一个正方形并且分布均匀的坐标系，因此将图形绘制到非正方形屏幕上时图形会被压缩或者拉伸。下一篇文章我们会使用投影变换来解决这个问题。</p>
+<p>Comming soon :P</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/10/11/Android-OpenGL-ES-开发（一）：相关概念/" rel="next" title="Android OpenGL ES 开发（一）：相关概念">
+                <i class="fa fa-chevron-left"></i> Android OpenGL ES 开发（一）：相关概念
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/03/12/Git-仓库拆分/" rel="prev" title="Git 仓库拆分">
+                Git 仓库拆分 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/link.png" alt="Taki">
+            
+              <p class="site-author-name" itemprop="name">Taki</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OpenGL-绘制图形步骤"><span class="nav-number">1.</span> <span class="nav-text">OpenGL 绘制图形步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建程序"><span class="nav-number">1.1.</span> <span class="nav-text">创建程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化着色器"><span class="nav-number">1.2.</span> <span class="nav-text">初始化着色器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将着色器加入程序"><span class="nav-number">1.3.</span> <span class="nav-text">将着色器加入程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链接并使用程序"><span class="nav-number">1.4.</span> <span class="nav-text">链接并使用程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绘制图形"><span class="nav-number">1.5.</span> <span class="nav-text">绘制图形</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义顶点数据"><span class="nav-number">1.5.1.</span> <span class="nav-text">定义顶点数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为顶点属性赋值"><span class="nav-number">1.5.2.</span> <span class="nav-text">为顶点属性赋值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义片元颜色"><span class="nav-number">1.5.3.</span> <span class="nav-text">定义片元颜色</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为颜色属性赋值"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">为颜色属性赋值</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#绘制"><span class="nav-number">1.5.4.</span> <span class="nav-text">绘制</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Taki</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+<meta name="referrer" content="no-referrer">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="方案对比subtree使用命令 git subtree split -P dirPath -b branchName 将目标文件夹的代码都保存到指定分支。试了下，该方案虽然保留了 commit，但是所有分支全都没了 filter-branchgit filter-branch --prune-empty --subdirectory-filter dir1 -- --all --prune-emp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git 仓库拆分">
+<meta property="og:url" content="https://yazhidev.github.io/2021/03/12/Git-仓库拆分/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="方案对比subtree使用命令 git subtree split -P dirPath -b branchName 将目标文件夹的代码都保存到指定分支。试了下，该方案虽然保留了 commit，但是所有分支全都没了 filter-branchgit filter-branch --prune-empty --subdirectory-filter dir1 -- --all --prune-emp">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225731_20200924204405069_1004966953.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225731_20200924201712993_1027804611.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924201741616_2101124256.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924204424979_520695416.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924203145451_532996405.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924203229773_916287198.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924203511461_433704149.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924204214140_706134325.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924205128548_331995187.png">
+<meta property="og:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924211032564_680593003.png">
+<meta property="og:updated_time" content="2022-06-07T23:59:54.524Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git 仓库拆分">
+<meta name="twitter:description" content="方案对比subtree使用命令 git subtree split -P dirPath -b branchName 将目标文件夹的代码都保存到指定分支。试了下，该方案虽然保留了 commit，但是所有分支全都没了 filter-branchgit filter-branch --prune-empty --subdirectory-filter dir1 -- --all --prune-emp">
+<meta name="twitter:image" content="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225731_20200924204405069_1004966953.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2021/03/12/Git-仓库拆分/">
+
+
+
+
+
+  <title>Git 仓库拆分 | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2021/03/12/Git-仓库拆分/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Taki">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/link.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git 仓库拆分</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-12T07:59:05+08:00">
+                2021-03-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="方案对比"><a href="#方案对比" class="headerlink" title="方案对比"></a>方案对比</h2><h3 id="subtree"><a href="#subtree" class="headerlink" title="subtree"></a>subtree</h3><p>使用命令 <code>git subtree split -P dirPath -b branchName</code> 将目标文件夹的代码都保存到指定分支。试了下，该方案虽然保留了 commit，但是所有分支全都没了</p>
+<h3 id="filter-branch"><a href="#filter-branch" class="headerlink" title="filter-branch"></a>filter-branch</h3><p><code>git filter-branch --prune-empty --subdirectory-filter dir1 -- --all</code></p>
+<p><code>--prune-empty</code>：表示如果修改后的提交为空则扔掉不要<br><code>--subdirectory-filter</code>：指定子目录路径<br><code>-- --all</code>：针对所有的分支</p>
+<p>当上述命令执行完毕后，就可以看到本地的新仓库已经是原仓库子目录中的内容了，且保留了关于该子目录所有的提交历史。看了下仓库大小和操作前没有变化，因为 .git 目录里还保留着无用的 object。还需要清理一下无用文件。下面来实操一下 <code>filter-branch</code> 怎么拆分仓库。</p>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><h3 id="模拟-git-仓库"><a href="#模拟-git-仓库" class="headerlink" title="模拟 git 仓库"></a>模拟 git 仓库</h3><p>为了比较好追踪问题，我们先模拟出一个 git 仓库，这样数据量小，排查起来会比较方便。</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225731_20200924204405069_1004966953.png" alt="模拟git仓库"></p>
+<p>看一下 objects 文件夹：</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225731_20200924201712993_1027804611.png" alt="本地git目录"></p>
+<p>在操作之前，先看一下仓库大小，使用 <code>git count-objects -v</code> 命令可以计算仓库大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">count: 27</span><br><span class="line">size: 31528</span><br><span class="line">in-pack: 0</span><br><span class="line">packs: 0</span><br><span class="line">size-pack: 0</span><br><span class="line">prune-packable: 0</span><br><span class="line">garbage: 0</span><br><span class="line">size-garbage: 0</span><br></pre></td></tr></table></figure>
+<h3 id="查找仓库里的大文件"><a href="#查找仓库里的大文件" class="headerlink" title="查找仓库里的大文件"></a>查找仓库里的大文件</h3><p>使用下面的命令可以查找仓库中的大文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git rev-list --all --objects | \</span><br><span class="line">grep &quot;$(git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -n 3 | awk -F &apos; &apos;  &apos;&#123;print $1&#125;&apos;)&quot;</span><br></pre></td></tr></table></figure>
+<p>大概说明一下上面脚本使用到的命令：</p>
+<p><code>git rev-list</code>：查看指定对象的文件路径、文件名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git rev-list --objects --all |grep a6d75f</span><br><span class="line">//将列出文件路径</span><br><span class="line">a6d75f7315534b7cfe73597f1ae0f388b9494332 aaa/Main.java</span><br></pre></td></tr></table></figure>
+<p><code>git verify-pack</code>：查看 git 打包文件的信息，输出 SHA-1、size 等字段。这里用到 $ 先保存 <code>git verify-pack</code> 的输出。</p>
+<p>如果直接使用上述脚本会发现什么也没输出，因为脚本首先是分析 git 打包文件，然后再进行大小排序的。所以我们需要先使用命令 <code>git gc</code> 打包 git 本地目录存储的文件。</p>
+<p>执行 gc 命令后，blob 对象会被打包，再查看 objects 目录可以看到创建了一个包文件（pack 文件）和一个索引文件。Git 会对大文件进行打包，生成 <code>.pack</code> 格式的文件以及同名的 <code>.idx</code> 格式的索引文件，存放在 .git/object/pack 目录中。通常来说，Git仓库的大文件都是.pack格式的，存放在这个目录中。</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924201741616_2101124256.png" alt="git pack 目录"></p>
+<p>gc 后，我们再看一下仓库大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">count: 0</span><br><span class="line">size: 0</span><br><span class="line">in-pack: 27</span><br><span class="line">packs: 1</span><br><span class="line">size-pack: 30671</span><br><span class="line">prune-packable: 0</span><br><span class="line">garbage: 0</span><br><span class="line">size-garbage: 0</span><br></pre></td></tr></table></figure>
+<p>可以看到比 gc 之前稍稍少了一点。现在可以列出 idex 索引文件中存储的文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">git verify-pack -v .git/objects/pack/pack-e3b9f038d3df8b6214fef04e37477f98a0b48911.idx                                          </span><br><span class="line">690898ddaf1b386531b9c1c81eec09eb18f4efa8 commit 208 166 12</span><br><span class="line">2c9790dbda1a83f64c7c7a8660f11aea87e14e78 commit 215 168 178</span><br><span class="line">c4111b93fc90f70885dc71eae6be44811658197c commit 209 163 346</span><br><span class="line">0c5e8cf09a2574a38e26c1c7cb0361f8e3b7f2b1 commit 218 175 509</span><br><span class="line">50b29eb5e83cf486a72c3dfa6f0ba5ee3b2b2e32 commit 214 166 684</span><br><span class="line">f05893bf834b85795e8e592bbe51130bc1792ce1 commit 252 192 850</span><br><span class="line">dbd772576def32be5be8aa55fdbc2e5143551d5d commit 157 117 1042</span><br><span class="line">2095176e6f0116345c3fe223f724deb057ee8b73 blob   166 136 1159</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>上述每行里各项值分别对应着：</p>
+<p><code>SHA-1， type， size， size-in-packfile， offset-in-packfile</code></p>
+<h3 id="执行-filter-branch"><a href="#执行-filter-branch" class="headerlink" title="执行 filter-branch"></a>执行 filter-branch</h3><p><code>filter-branch</code> 需要指定目录，拆分仓库时可能需要同时保留多个目录，可以使用以下脚本（这里仅保留 aaa，如果填的是 aaa bbb，即可同时保留 aaa 和 bbb 文件夹）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git filter-branch --index-filter &apos;git rm --cached -qr --ignore-unmatch -- . &amp;&amp; git reset -q $GIT_COMMIT -- aaa&apos; --prune-empty -- --all</span><br></pre></td></tr></table></figure>
+<p>执行完命令后，git 图表变成：</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924204424979_520695416.png" alt="git 图表"></p>
+<p>可以看到，与 aaa 文件夹下文件无关的 commit 都被移除了。分支也都被保留了，棒棒的！正是我们想要的效果。再看保留下来的各个 commit 的内容：</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924203145451_532996405.png" alt="操作后的 commit"></p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924203229773_916287198.png" alt="操作后的 commit"></p>
+<p>可以看到，虽然 commit 的提交信息没有变，但是内容却变了，first commit 原先新增了 aaa/Main.java 和 bbb/Main.java，但是操作后，提交记录里只剩下了 aaa/Main.java。内容变化了，同样的 SHA1 值也变化了。</p>
+<p>再查看一下仓库大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">count: 10</span><br><span class="line">size: 40</span><br><span class="line">in-pack: 27</span><br><span class="line">packs: 1</span><br><span class="line">size-pack: 30671</span><br><span class="line">prune-packable: 0</span><br><span class="line">garbage: 0</span><br><span class="line">size-garbage: 0</span><br></pre></td></tr></table></figure>
+<p>额，size-pack 的大小没有变化，我们直接查看一下 objects 目录。</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924203511461_433704149.png" alt="git本地目录"></p>
+<p>虽然工作目录中不需要的文件已经被清除了，但是 git/objects/pack 目录里存储的 pack 文件和索引文件却没有被删除，重新读取一下 idx 文件的索引：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">git verify-pack -v .git/objects/pack/pack-e3b9f038d3df8b6214fef04e37477f98a0b48911.idx</span><br><span class="line">——————</span><br><span class="line">690898ddaf1b386531b9c1c81eec09eb18f4efa8 commit 208 166 12</span><br><span class="line">2c9790dbda1a83f64c7c7a8660f11aea87e14e78 commit 215 168 178</span><br><span class="line">c4111b93fc90f70885dc71eae6be44811658197c commit 209 163 346</span><br><span class="line">0c5e8cf09a2574a38e26c1c7cb0361f8e3b7f2b1 commit 218 175 509</span><br><span class="line">50b29eb5e83cf486a72c3dfa6f0ba5ee3b2b2e32 commit 214 166 684</span><br><span class="line">f05893bf834b85795e8e592bbe51130bc1792ce1 commit 252 192 850</span><br><span class="line">dbd772576def32be5be8aa55fdbc2e5143551d5d commit 157 117 1042</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>和执行 <code>filter-branch</code> 之前是一模一样的。要不再 gc 一下看看？再次 gc 后，blob 文件又被打包，并生成了两个新的 idx 文件和 pack 文件：</p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924204214140_706134325.png" alt="git pack 目录"></p>
+<p>再次查看索引：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">git verify-pack -v .git/objects/pack/pack-af08fc2fbea78dfae1503ae4b03578a4113da969.idx</span><br><span class="line">——————</span><br><span class="line">690898ddaf1b386531b9c1c81eec09eb18f4efa8 commit 208 166 12</span><br><span class="line">fa322194e3401dfd14591d82951a9aca3b620631 commit 215 169 178</span><br><span class="line">2c9790dbda1a83f64c7c7a8660f11aea87e14e78 commit 215 168 347</span><br><span class="line">c4111b93fc90f70885dc71eae6be44811658197c commit 209 163 515</span><br><span class="line">bb57bc14d163c5fc7b9bbce7f6e006a8e5c37564 commit 218 172 678</span><br><span class="line">0c5e8cf09a2574a38e26c1c7cb0361f8e3b7f2b1 commit 218 175 850</span><br><span class="line">50b29eb5e83cf486a72c3dfa6f0ba5ee3b2b2e32 commit 214 166 1025</span><br><span class="line">2c4d78cfe2251613b1f23693a3ebe6f4ee9e793d commit 214 166 1191</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><code>690898</code> 这个 commit 对象是最初添加大文件时的 commit，可以看到该 commit 对象依然存在在最新的 idx 文件中。实锤了，一番操作实际上只是工作目录看起来空旷了，git 仓库里不该有的文件还是一样没落下。</p>
+<h3 id="移除无用文件"><a href="#移除无用文件" class="headerlink" title="移除无用文件"></a>移除无用文件</h3><p>执行到这一步目标很清楚，就是把 <code>690898</code>  这类已经不可达的 commit 和 <code>pack-af08fc2fbea78dfae1503ae4b03578a4113da969.pack</code> 这些已经没有任何历史提交引用的文件都删除掉。</p>
+<p>谷歌一搜，网络上流传的方法试一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rm -Rf .git/refs/original</span><br><span class="line">rm -Rf .git/logs</span><br><span class="line">git gc</span><br></pre></td></tr></table></figure>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924205128548_331995187.png" alt="git 本地路径"></p>
+<p>可以看到，执行到这里，<code>git/refs/original</code> 里空空如也，并不需要删什么东西，而且 git gc 我们刚也试过了，并没有什么卵用。<code>git prune</code> 也是一样的，因为 gc 实际上就是调用 <code>git prune</code>。</p>
+<p>事已至此，不妨用 Java 垃圾回收的思想来理解：文件之所以没有被删掉，肯定是哪里还存在这引用，找出引用应该是解决问题的关键。</p>
+<p>引入的大文件，从上面可以看出就是 <code>04ddd8</code> 这个，使用命令查看以下文件路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git rev-list --objects --all |grep 04ddd8</span><br><span class="line">————</span><br><span class="line">04ddd80c36932757f15327b35f5bcc123082c454 bigfile.zip</span><br></pre></td></tr></table></figure>
+<p>再随便翻翻 git 本地目录，查看 <code>packed-refs</code> 文件，<code>refs</code> = <code>references</code>，感觉有点东西啊，打开一看果然发现文本里记录着 refs/original 相关的东西。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># pack-refs with: peeled fully-peeled sorted </span><br><span class="line">fa322194e3401dfd14591d82951a9aca3b620631 refs/heads/master</span><br><span class="line">bb57bc14d163c5fc7b9bbce7f6e006a8e5c37564 refs/heads/test</span><br><span class="line">690898ddaf1b386531b9c1c81eec09eb18f4efa8 refs/original/refs/heads/master</span><br><span class="line">c4111b93fc90f70885dc71eae6be44811658197c refs/original/refs/heads/test</span><br></pre></td></tr></table></figure>
+<p><code>690898</code> 这个 SHA1 值很眼熟了，就是最开始的一个 commitID。再回看最初的 git 图表，可以看到 <code>690898</code> 和 <code>c4111b</code> 分别指向操作前的 master 分支和 test 分支。</p>
+<p><code>filter-branch</code> 后，整个 git commit 树都变了，大清都亡了，之前的这两个引用肯定是没用的旧引用了，删删删！然后再使用命令检查可达性 ：</p>
+<p><code>git fsck --full --unreachable</code>：验证数据库中对象的连通性和有效性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Checking object directories: 100% (256/256), done.</span><br><span class="line">Checking objects: 100% (37/37), done.</span><br><span class="line">unreachable blob 04ddd80c36932757f15327b35f5bcc123082c454</span><br><span class="line">unreachable commit 0c5e8cf09a2574a38e26c1c7cb0361f8e3b7f2b1</span><br><span class="line">unreachable blob ab7268ccda89f9f58e6ae60050b360301cc91a71</span><br><span class="line">unreachable commit 2c9790dbda1a83f64c7c7a8660f11aea87e14e78</span><br><span class="line">unreachable tree 2fc5bb169f78176029674d4b5234d51e287df50f</span><br><span class="line">unreachable commit c4111b93fc90f70885dc71eae6be44811658197c</span><br><span class="line">unreachable tree 45a12cd512c7ae28d05b7b391e8d872031f1a89c</span><br><span class="line">unreachable tree 4ed47074261cd7cb9f26b38452b56f88014ff2ac</span><br><span class="line">unreachable commit 50b29eb5e83cf486a72c3dfa6f0ba5ee3b2b2e32</span><br><span class="line">unreachable tree 5207eed7e90f90d9c6b6bf63cfea997033136def</span><br><span class="line">unreachable tree 53b3421a3db498b5b15e96141a46e3c0b2431881</span><br><span class="line">unreachable tree 598e2a6bb6dec5bb9b62c0bd757b66504413d5a2</span><br><span class="line">unreachable commit dbd772576def32be5be8aa55fdbc2e5143551d5d</span><br><span class="line">unreachable tree e27ea026bb5098ab33079172ae7835b27e40f4c4</span><br><span class="line">unreachable tree 651d867dfc1f337090bf8bec6fef4459b369ac1a</span><br><span class="line">unreachable commit 690898ddaf1b386531b9c1c81eec09eb18f4efa8</span><br><span class="line">unreachable tree ed9833e93207376f729c517a5780aa7063bca0bb</span><br><span class="line">unreachable commit f05893bf834b85795e8e592bbe51130bc1792ce1</span><br><span class="line">unreachable tree 708923165513ea1259dcaff627b201b142545c6d</span><br></pre></td></tr></table></figure>
+<p>可以看到我们最想删掉的大文件 <code>04ddd8</code> 被列出来，并且是不可达的。</p>
+<p>再执行命令 <code>git repack -A -d</code>，确保不可达的对象被解压并保持解压。然后再调用 <code>git prune</code></p>
+<p><img src="https://yazhidev.oss-cn-hangzhou.aliyuncs.com/20200926_225732_20200924211032564_680593003.png" alt="git 本地目录"></p>
+<p>重新计算项目大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">count: 0</span><br><span class="line">size: 0</span><br><span class="line">in-pack: 18</span><br><span class="line">packs: 1</span><br><span class="line">size-pack: 2</span><br><span class="line">prune-packable: 0</span><br><span class="line">garbage: 0</span><br><span class="line">size-garbage: 0</span><br></pre></td></tr></table></figure>
+<p>可以看到，无用的旧文件已经被清除了~</p>
+<h2 id="相关命令"><a href="#相关命令" class="headerlink" title="相关命令"></a>相关命令</h2><p>这里记录以下调研过程中遇到的命令，git 接触很久了，但是很多命令却还是第一次见，深感自己之渺小。</p>
+<p><strong>保存镜像</strong></p>
+<p><code>git clone --mirror xxx地址</code></p>
+<p><strong>查看仓库大小</strong></p>
+<p><code>git count-objects -v</code></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/08/Android-OpenGL-ES-开发（二）：绘制图形/" rel="next" title="Android OpenGL ES 开发（二）：绘制图形">
+                <i class="fa fa-chevron-left"></i> Android OpenGL ES 开发（二）：绘制图形
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/10/10/聊聊-Android-App-Bundle/" rel="prev" title="聊聊 Android App Bundle">
+                聊聊 Android App Bundle <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/link.png" alt="Taki">
+            
+              <p class="site-author-name" itemprop="name">Taki</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#方案对比"><span class="nav-number">1.</span> <span class="nav-text">方案对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#subtree"><span class="nav-number">1.1.</span> <span class="nav-text">subtree</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#filter-branch"><span class="nav-number">1.2.</span> <span class="nav-text">filter-branch</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实战"><span class="nav-number">2.</span> <span class="nav-text">实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模拟-git-仓库"><span class="nav-number">2.1.</span> <span class="nav-text">模拟 git 仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查找仓库里的大文件"><span class="nav-number">2.2.</span> <span class="nav-text">查找仓库里的大文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行-filter-branch"><span class="nav-number">2.3.</span> <span class="nav-text">执行 filter-branch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#移除无用文件"><span class="nav-number">2.4.</span> <span class="nav-text">移除无用文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关命令"><span class="nav-number">3.</span> <span class="nav-text">相关命令</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Taki</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

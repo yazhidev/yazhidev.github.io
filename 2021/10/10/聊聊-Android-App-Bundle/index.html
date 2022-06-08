@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="8UOZuQDq-BH1tVPdDgSiPq7FkqJB3-3wRwcvzozjmac">
+<meta name="baidu-site-verification" content="oN4T9YsHyS">
+<meta name="referrer" content="no-referrer">
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="美丽新世界" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="什么是 Android App Bundle关于 Android App Bundle（下文简称 aab），引用以下官方的定义：  Android App Bundle 是一种发布格式，其中包含您应用的所有经过编译的代码和资源，它会将 APK 生成及签名交由 Google Play 来完成。Google Play 会使用您的 App Bundle 针对每种设备配置生成并提供经过优化的 APK，因此">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊聊 Android App Bundle">
+<meta property="og:url" content="https://yazhidev.github.io/2021/10/10/聊聊-Android-App-Bundle/index.html">
+<meta property="og:site_name" content="美丽新世界">
+<meta property="og:description" content="什么是 Android App Bundle关于 Android App Bundle（下文简称 aab），引用以下官方的定义：  Android App Bundle 是一种发布格式，其中包含您应用的所有经过编译的代码和资源，它会将 APK 生成及签名交由 Google Play 来完成。Google Play 会使用您的 App Bundle 针对每种设备配置生成并提供经过优化的 APK，因此">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607164932235-1692310588.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165045311-359794394.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165059085-377360846.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165116221-1332567525.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165511746-959711736.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165520833-1062132253.png">
+<meta property="og:updated_time" content="2022-06-08T00:00:00.275Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="聊聊 Android App Bundle">
+<meta name="twitter:description" content="什么是 Android App Bundle关于 Android App Bundle（下文简称 aab），引用以下官方的定义：  Android App Bundle 是一种发布格式，其中包含您应用的所有经过编译的代码和资源，它会将 APK 生成及签名交由 Google Play 来完成。Google Play 会使用您的 App Bundle 针对每种设备配置生成并提供经过优化的 APK，因此">
+<meta name="twitter:image" content="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607164932235-1692310588.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yazhidev.github.io/2021/10/10/聊聊-Android-App-Bundle/">
+
+
+
+
+
+  <title>聊聊 Android App Bundle | 美丽新世界</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-125080992-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?638091a8d8717585b52d0e3ef0b65002";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美丽新世界</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yazhidev.github.io/2021/10/10/聊聊-Android-App-Bundle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Taki">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/link.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美丽新世界">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">聊聊 Android App Bundle</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-10-10T07:54:15+08:00">
+                2021-10-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是-Android-App-Bundle"><a href="#什么是-Android-App-Bundle" class="headerlink" title="什么是 Android App Bundle"></a>什么是 Android App Bundle</h2><p>关于 Android App Bundle（下文简称 aab），引用以下官方的定义：</p>
+<blockquote>
+<p>Android App Bundle 是一种发布格式，其中包含您应用的所有经过编译的代码和资源，它会将 APK 生成及签名交由 Google Play 来完成。Google Play 会使用您的 App Bundle 针对每种设备配置生成并提供经过优化的 APK，因此只会下载特定设备所需的代码和资源来运行您的应用。您不必再构建、签署和管理多个 APK 来优化对不同设备的支持，而用户也可以获得更小且更优化的下载文件包。</p>
+</blockquote>
+<p>从 2021 年 8 月起，新应用需要使用 Android App Bundle 才能在 Google Play 中发布。因此对开发者来说，了解什么是 aab 非常重要。</p>
+<h2 id="如何构建-aab"><a href="#如何构建-aab" class="headerlink" title="如何构建 aab"></a>如何构建 aab</h2><p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607164932235-1692310588.png" alt="构建 aab"></p>
+<p>像 CI、脚本等环境使用命令行构建，可以使用 Gradle 命令打包 debug 版本的 aab 包：<code>./gradlew bundleDebug</code></p>
+<p>aab 严格上来说是一种发布格式，真正在安装 app 时还是使用 apk 包。只是借助于 aab 这种发布格式，Google Play 提供了按条件分发或按需下载应用的某些功能。</p>
+<h2 id="动态下发能力"><a href="#动态下发能力" class="headerlink" title="动态下发能力"></a>动态下发能力</h2><p>提到动态下发，大家可能首先会想到热修复。业内的热修复方案使用的比较多的是类加载方案，基于 dex 分包，从 Java 类加载机制作为切入点，将需要动态下发（修复）的代码打成 dex 包或者通过算法合成差量 dex 包下发至客户端，并在下次 APP 启动时优先加载新的修复过的类，Java 类加载机制会保证旧的类不再被加载，从而实现动态修复的效果。</p>
+<p>Google Play 的动态下发方案有别于热修复，它不适用于对已有代码的动态修改，它更像一种插件化方案，借助于 aab 包的格式，将原来一个庞大的 apk 按照不同的维度拆分成独立的 apk，当用户在 Google Play 商店下载应用时，Android 系统通过与 Google Play 商店通信，为当前设备匹配并下载最小的 apk，从而实现更快的下载速度。</p>
+<p>不仅如此，借助于 Dynamic Feature 的特性，配合 com.google.android.play:core 组件的动态加载代码功能（详见 <a href="https://developer.android.google.cn/guide/app-bundle/dynamic-delivery#dynamic_feature_modules" target="_blank" rel="noopener">Play Feature Delivery</a> ），还可以实现按需下载模块，实现真正的插件化。</p>
+<p>那么 aab 是如何为插件化方案助力的呢？</p>
+<h2 id="创建功能模块"><a href="#创建功能模块" class="headerlink" title="创建功能模块"></a>创建功能模块</h2><p>首先我们创建一个功能模块（Dynamic Feature）看一下效果，在 Android Studio 中新建模块时选择 Dynamic Feature Module：</p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165045311-359794394.png" alt="功能模块"></p>
+<p>这里我们添加一个名为 dynamicfeature 的模块。通过这种方式添加的模块，Android Studio 会自动对该模块的 build.gradle 应用插件 apply plugin: ‘com.android.dynamic-feature’ 用于编译功能模块。</p>
+<p>我们打出 aab 包看下添加了功能模块之后的包结构和普通的模块有什么不同：</p>
+<p>﻿<img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165059085-377360846.png" alt="模块结构"></p>
+<p>对比一下 apk 格式：</p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165116221-1332567525.png" alt="apk 格式"></p>
+<p>可以看到 aab 格式和传统的 apk 格式有以下几个区别：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>aab 格式</th>
+<th>apk 格式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模块划分</td>
+<td>分为 base 模块和 dynamic feature 模块。</td>
+<td>无模块划分</td>
+</tr>
+<tr>
+<td>manifest.xml</td>
+<td>每个模块都有一个</td>
+<td>只有一个</td>
+</tr>
+<tr>
+<td>dex</td>
+<td>每个模块的 dex 存储在各自模块的目录中</td>
+<td>全部存放于根目录</td>
+</tr>
+<tr>
+<td>资源索引表</td>
+<td>resources.pb，使用 ProtoBuf 协议格式，每个模块都有一个</td>
+<td>resource.arsc</td>
+</tr>
+</tbody>
+</table>
+<p>除了上面提到的 resources.pb 以外，还有 assets.pb、native.pb，这三个 pb 文件是 aab 格式的重要部分，它们描述了 APP 的不同服务目标，动态下发时会根据这些目标而组织不同的资源进行下发。</p>
+<h2 id="动态下载功能模块"><a href="#动态下载功能模块" class="headerlink" title="动态下载功能模块"></a>动态下载功能模块</h2><p>动态下载功能模块的示例代码详见 <a href="https://github.com/android/app-bundle-samples" target="_blank" rel="noopener">app-bundle-samples</a>。下载并安装功能模块大致分为以下几个步骤：</p>
+<p>一、使用工厂类创建下载服务 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var manager: SplitInstallManager = SplitInstallManagerFactory.create(this)</span><br></pre></td></tr></table></figure>
+<p>二、通过模块名创建下载功能模块的请求</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">val request = SplitInstallRequest.newBuilder()</span><br><span class="line">                .addModule(name)</span><br><span class="line">                .build()</span><br></pre></td></tr></table></figure>
+<p>三、启动请求，并在下载后执行安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">manager.startInstall(request)</span><br></pre></td></tr></table></figure>
+<p>借助于 aab 格式对功能模块代码与资源的模块划分，因此可以很方便地从 aab 包中提取出功能模块的内容，再配合 Google Play 的下载服务，就可以无侵入地实现插件化，按需下载、安装、卸载功能模块，除此之外，还可以按需请求指定的资源，例如语言包等等。</p>
+<h2 id="如何使用-aab"><a href="#如何使用-aab" class="headerlink" title="如何使用 aab"></a>如何使用 aab</h2><p>上文有提到，aab 是一种发布格式，用于上传至 Google Play 对外发布，日常开发、测试时依然使用的是 apk 包。但如果想要对 aab 包做兼容测试，例如验证是否可以正确地提取 apk ，或者使用功能模块后，对应用的基本模块是否有影响等问题，这种情况下要怎么使用  aab 格式文件呢？这就需要用到官方提供的工具 BundleTool （<a href="https://github.com/google/bundletool/releases" target="_blank" rel="noopener">下载地址</a>）。下载 jar 后配置下环境变量就可以使用了。</p>
+<p>bundletool 提供了诸多命令用于本地测试 aab 包，例如 build-apks 命令用于生成 apk：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bundletool build-apks --bundle=/xxx/test.aab --output=/xxx/test.apks --connected-device</span><br></pre></td></tr></table></figure>
+<p>上述命令的 output 的路径必须以 .apks 后缀结尾。上述命令会为应用支持的所有设备配置生成一组 APK，并将这些 APK 纳入到一个名为“APK set archive”的容器中，该容器以 .apks 作为文件扩展名。</p>
+<p>根据名称 apks 顾名思义，大胆猜测 .apks 文件应该也只是一个压缩包，尝试手动把后缀改为 .zip 后解压可以看到文件的结构：</p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165511746-959711736.png" alt="文件结构"></p>
+<p><img src="https://img2022.cnblogs.com/blog/1751786/202206/1751786-20220607165520833-1062132253.png" alt="文件结构"></p>
+<p>包含了 splits 和 standalones 文件夹和一个 .pb 后缀的文件。</p>
+<p>生成的 apks 文件不同于 apk，我们无法直接使用 apks 文件安装 app，bundletool 另外提供了 install-apks 命令，用于在生成一组 apk 后，将其中适当的<br>apk 组合部署到已连接的设备。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bundletool install-apks --apks=/xxx/test.apks</span><br></pre></td></tr></table></figure>
+<p>通过 build-apks、install apks 组合使用，可以实现使用 aab 格式文件来安装 apk。通过我们上面的分析，我们大概能了解到在文章开头提到的“Google play 只会下载特定设备所需的代码和资源来运行您的应用”，其本质就是对不同的代码和资源做了分包，然后当不同的设备访问 Google Play 商店下载应用时，只需要下发对应的代码和资源包即可。bundletool 是开源的，我们跟随源码看一下 install-apks 命令做了什么：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">//src/main/java/com/android/tools/build/bundletool/commands/InstallApksCommand.java</span><br><span class="line"></span><br><span class="line">DeviceSpec deviceSpec = new DeviceAnalyzer(adbServer).getDeviceSpec(getDeviceId());</span><br><span class="line">//执行安装前，获取需要安装的代码和资源</span><br><span class="line">final ImmutableList&lt;Path&gt; apksToInstall =</span><br><span class="line">          getApksToInstall(toc, deviceSpec, tempDirectory.getPath());</span><br><span class="line"></span><br><span class="line">//src/main/java/com/android/tools/build/bundletool/device/DeviceAnalyzer.java</span><br><span class="line"></span><br><span class="line">//组合设备的各种信息，用于提取对应的资源</span><br><span class="line">DeviceSpec.Builder builder =</span><br><span class="line">  DeviceSpec.newBuilder()</span><br><span class="line">  .setSdkVersion(deviceSdkVersion)</span><br><span class="line">  .addAllSupportedAbis(supportedAbis)</span><br><span class="line">  .addAllSupportedLocales(deviceLocales)</span><br><span class="line">  .setScreenDensity(deviceDensity)</span><br><span class="line">  .addAllDeviceFeatures(deviceFeatures)</span><br><span class="line">  .addAllGlExtensions(glExtensions);</span><br><span class="line">if (codename != null) &#123;</span><br><span class="line">  builder.setCodename(codename);</span><br><span class="line">&#125;</span><br><span class="line">return builder.build();</span><br></pre></td></tr></table></figure>
+<p>正是通过获取设备的 sdk 版本、支持的 abi、设备屏幕密度等等信息，从 aab 中提取出对应的资源，从而达到“瘦身”下载的效果。</p>
+<p>就像下图所示，完整的 aab 包里包含了应用的所有资源，例如 xhdpi、xxhdpi 等各类屏幕密度的图片资源；x86、arm64 等各类架构的 so 库；en、zh 等各国语言资源包，等等，aab 是一种大而全的存在（apk 也一样），但是通过 Google Play 商店的动态分发，实现了针对不同的设备的小而精的瘦身下载。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>aab 作为一种新的发布格式，海外市场通过 Google Play 商店可以便捷地实现“瘦身”下载与插件化能力，但在国内市场因为大部分手机都没搭载 Google 服务套件，因此无法体验到这些服务。但是通过探究其实现原理，我们可以借助 aab 实现自己的插件化方案，这种无侵入的插件化思想值得我们学习。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/12/Git-仓库拆分/" rel="next" title="Git 仓库拆分">
+                <i class="fa fa-chevron-left"></i> Git 仓库拆分
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/03/08/每个开发都应该懂的正则表达式/" rel="prev" title="每个开发都应该懂的正则表达式">
+                每个开发都应该懂的正则表达式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/link.png" alt="Taki">
+            
+              <p class="site-author-name" itemprop="name">Taki</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yazhidev" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是-Android-App-Bundle"><span class="nav-number">1.</span> <span class="nav-text">什么是 Android App Bundle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何构建-aab"><span class="nav-number">2.</span> <span class="nav-text">如何构建 aab</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态下发能力"><span class="nav-number">3.</span> <span class="nav-text">动态下发能力</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建功能模块"><span class="nav-number">4.</span> <span class="nav-text">创建功能模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态下载功能模块"><span class="nav-number">5.</span> <span class="nav-text">动态下载功能模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何使用-aab"><span class="nav-number">6.</span> <span class="nav-text">如何使用 aab</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Taki</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
